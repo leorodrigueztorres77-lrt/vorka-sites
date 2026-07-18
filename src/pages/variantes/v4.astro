@@ -1,0 +1,99 @@
+---
+// Restaurante — Variante 4 "HeavenPalate" (Capa 2).
+// Argumento de conversión: "La prueba social primero" — para restaurantes
+// nuevos o en zonas muy competidas donde la credibilidad convence antes que
+// el menú. Contador de rating visible sin scroll, testimonios completos
+// ANTES del menú, categorías como portadas visuales clickeables.
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/common/Header.astro';
+import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
+import Testimonials from '@/components/common/Testimonials.astro';
+import LocationMap from '@/components/common/LocationMap.astro';
+import ContactForm from '@/components/common/ContactForm.astro';
+import Footer from '@/components/common/Footer.astro';
+import FloatingWhatsApp from '@/components/common/FloatingWhatsApp.astro';
+
+import HeroStats from '@/components/restaurant/HeroStats.astro';
+import StatsFila from '@/components/restaurant/StatsFila.astro';
+import MenuPortadas from '@/components/restaurant/MenuPortadas.astro';
+import LoyaltyStatus from '@/components/restaurant/LoyaltyStatus.astro';
+import CartBar from '@/components/restaurant/CartBar.astro';
+
+import { siteConfig } from '@/data/site.config';
+import {
+  menuSample,
+  galeriaSample,
+  horariosSample,
+  testimoniosSample,
+  estadoFidelizacionSample,
+  statsSample,
+} from '@/data/restaurant.sample';
+
+const mostrarFidelizacion = Boolean(estadoFidelizacionSample);
+
+// Placeholder — demo-personalizer reemplaza con un titular de confianza real
+// del cliente (ver skill vertical-web-builder, V4), ej. "El restaurante que
+// ya conocen 500 familias de {barrio}".
+const titularHero = `El restaurante que ya conoce ${siteConfig.ciudad}`;
+---
+
+<BaseLayout site={siteConfig}>
+  <Header site={siteConfig} transparente={false} />
+
+  <HeroStats site={siteConfig} imagenFondo={galeriaSample[0].src} titular={titularHero} stats={statsSample}>
+    <Fragment slot="cta">
+      <WhatsAppButton
+        phone={siteConfig.telefonoWhatsApp}
+        message={`Hola, quiero hacer un pedido en ${siteConfig.nombre}`}
+        negocioSlug={siteConfig.negocioSlug}
+        label="Pedir por WhatsApp"
+        variante="primario"
+      />
+    </Fragment>
+  </HeroStats>
+
+  <Testimonials testimonios={testimoniosSample} fondoSolido />
+
+  <StatsFila stats={statsSample} />
+
+  <MenuPortadas
+    categorias={menuSample}
+    phone={siteConfig.telefonoWhatsApp}
+    negocioSlug={siteConfig.negocioSlug}
+  />
+
+  {mostrarFidelizacion && (
+    <section class="section" aria-labelledby="fidelizacion-titulo">
+      <div class="container fidelizacion-grid">
+        <h2 id="fidelizacion-titulo" class="section-title">Tu progreso como cliente frecuente</h2>
+        <LoyaltyStatus estado={estadoFidelizacionSample} />
+      </div>
+    </section>
+  )}
+
+  <LocationMap site={siteConfig} horarios={horariosSample} />
+
+  <ContactForm site={siteConfig} productoLabel="Plato de interés" />
+
+  <Footer site={siteConfig} />
+
+  <CartBar
+    phone={siteConfig.telefonoWhatsApp}
+    negocioSlug={siteConfig.negocioSlug}
+    nombreNegocio={siteConfig.nombre}
+  />
+
+  <FloatingWhatsApp
+    phone={siteConfig.telefonoWhatsApp}
+    message={`Hola, quiero hacer un pedido en ${siteConfig.nombre}`}
+    negocioSlug={siteConfig.negocioSlug}
+    bottomOffset="88px"
+  />
+</BaseLayout>
+
+<style>
+  .fidelizacion-grid {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+</style>

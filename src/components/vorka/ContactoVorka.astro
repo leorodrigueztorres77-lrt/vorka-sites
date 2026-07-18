@@ -1,0 +1,157 @@
+---
+// Vorka — formulario de contacto propio. NO reutiliza ContactForm.astro: ese
+// componente es del vertical restaurante (campos producto/cantidad/RUC para
+// pedidos). Aquí el lead es un prospecto de agencia, así que los campos son
+// Nombre, Negocio, WhatsApp, Mensaje. Mismo mecanismo de envío estructurado
+// por webhook que Capa 1 (ver ContactForm.astro) — canal de respaldo, nunca
+// compite con el CTA de WhatsApp (jerarquía de CTA, CLAUDE.md).
+import type { SiteConfig } from '@/data/types';
+
+interface Props {
+  site: SiteConfig;
+}
+
+const { site } = Astro.props;
+const formId = 'form-contacto-vorka';
+---
+
+<section id="contacto" class="contacto section section--alterno" aria-labelledby="contacto-titulo">
+  <div class="container">
+    <h2 id="contacto-titulo" class="section-title reveal">Hablemos de tu negocio</h2>
+    <p class="contacto__subtitulo reveal">
+      Para una respuesta inmediata usa el botón de WhatsApp — este formulario
+      es para dejarnos tus datos si prefieres que te contactemos nosotros.
+    </p>
+    <form id={formId} class="contacto__form reveal" data-webhook-url={site.webhookContactoUrl ?? ''}>
+      <div class="campo">
+        <label for="nombre">Nombre completo</label>
+        <input id="nombre" name="nombre" type="text" required />
+      </div>
+
+      <div class="campo">
+        <label for="negocio">Nombre del negocio</label>
+        <input id="negocio" name="negocio" type="text" required />
+      </div>
+
+      <div class="campo">
+        <label for="whatsapp">WhatsApp</label>
+        <input id="whatsapp" name="whatsapp" type="tel" required />
+      </div>
+
+      <div class="campo campo--full">
+        <label for="mensaje">Mensaje</label>
+        <textarea id="mensaje" name="mensaje" rows="4"></textarea>
+      </div>
+
+      <div class="campo campo--full">
+        <button type="submit" class="btn btn--primario">Enviar</button>
+        <p class="contacto__estado" role="status" aria-live="polite"></p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<style>
+  .contacto__subtitulo {
+    max-width: 560px;
+    margin: 0 auto 32px;
+    text-align: center;
+    font-family: var(--font-texto);
+    color: var(--color-gris);
+  }
+
+  .contacto__form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .campo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .campo--full {
+    grid-column: 1 / -1;
+  }
+
+  label {
+    font-family: var(--font-texto);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--color-texto);
+  }
+
+  input,
+  textarea {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background: var(--color-fondo);
+    color: var(--color-texto);
+    font-family: var(--font-texto);
+    font-size: 1rem;
+    min-height: 44px;
+  }
+
+  textarea {
+    min-height: 88px;
+  }
+
+  .contacto__estado {
+    margin: 0.75rem 0 0;
+    font-family: var(--font-texto);
+    font-size: 1rem;
+    color: var(--color-gris);
+  }
+
+  @media (max-width: 720px) {
+    .contacto__form {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script define:vars={{ formId }}>
+  const form = document.getElementById(formId);
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const estado = form.querySelector('.contacto__estado');
+    const formData = new FormData(form);
+    const payload = {
+      nombre: formData.get('nombre'),
+      negocio: formData.get('negocio'),
+      whatsapp: formData.get('whatsapp'),
+      mensaje: formData.get('mensaje') || null,
+      enviadoEn: new Date().toISOString(),
+    };
+
+    const webhookUrl = form.dataset.webhookUrl;
+
+    if (!webhookUrl) {
+      if (estado) estado.textContent = 'Formulario listo. Configura el webhook de contacto para recibir envíos.';
+      return;
+    }
+
+    try {
+      if (estado) estado.textContent = 'Enviando...';
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) throw new Error('Respuesta no exitosa del webhook');
+
+      if (estado) estado.textContent = '¡Gracias! Te contactaremos pronto.';
+      form.reset();
+    } catch (error) {
+      if (estado) estado.textContent = 'No se pudo enviar. Intenta de nuevo o escríbenos por WhatsApp.';
+    }
+  });
+</script>

@@ -1,0 +1,75 @@
+---
+// Capa 2 (restaurante) — sección de beneficios numerados de la Variante 5,
+// ej. "01. Ingredientes frescos cada día", "02. Pedido directo por WhatsApp".
+interface Beneficio {
+  titulo: string;
+  descripcion?: string;
+}
+
+interface Props {
+  beneficios: Beneficio[];
+}
+
+const { beneficios } = Astro.props;
+---
+
+<section class="section" aria-labelledby="beneficios-titulo">
+  <div class="container">
+    <h2 id="beneficios-titulo" class="section-title">Por qué elegirnos</h2>
+    <ol class="beneficios-numerados">
+      {beneficios.map((b, i) => (
+        <li class="beneficios-numerados__item reveal">
+          <span class="beneficios-numerados__numero">{String(i + 1).padStart(2, '0')}</span>
+          <div>
+            <p class="beneficios-numerados__titulo">{b.titulo}</p>
+            {b.descripcion && <p class="beneficios-numerados__descripcion">{b.descripcion}</p>}
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .beneficios-numerados {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 2rem;
+  }
+
+  @media (min-width: 700px) {
+    .beneficios-numerados {
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: 3rem;
+    }
+  }
+
+  .beneficios-numerados__item {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+
+  .beneficios-numerados__numero {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: 2.25rem;
+    color: var(--color-acento);
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .beneficios-numerados__titulo {
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin: 0 0 0.35rem;
+  }
+
+  .beneficios-numerados__descripcion {
+    margin: 0;
+    font-size: 1rem;
+    opacity: 0.75;
+  }
+</style>

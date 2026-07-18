@@ -1,0 +1,123 @@
+---
+// Vorka — Footer propio. No reutiliza Footer.astro (esas columnas son de
+// negocio de restaurante: horario, menú, ubicación — no aplican aquí).
+import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
+import type { SiteConfig } from '@/data/types';
+import { ORDERCASH_URL } from '@/data/site.vorka';
+
+interface Props {
+  site: SiteConfig;
+}
+
+const { site } = Astro.props;
+
+const INSTAGRAM_URL = 'https://instagram.com/vorka.ecu';
+
+const anioActual = new Date().getFullYear();
+---
+
+<footer class="footer-vorka">
+  <div class="container footer-vorka__grid">
+    <div class="footer-vorka__col">
+      <span class="footer-vorka__marca">{site.nombre}</span>
+      <p class="footer-vorka__tagline">{site.tagline}</p>
+    </div>
+
+    <nav class="footer-vorka__col" aria-label="Enlaces del sitio">
+      <span class="footer-vorka__titulo-col">Navegación</span>
+      <a href="#servicios">Servicios</a>
+      <a href="#portafolio">Portafolio</a>
+      <a href="#nosotros">Nosotros</a>
+      <a href={ORDERCASH_URL} target="_blank" rel="noopener noreferrer">Ordercash</a>
+    </nav>
+
+    <div class="footer-vorka__col">
+      <span class="footer-vorka__titulo-col">Contacto</span>
+      <WhatsAppButton
+        phone={site.telefonoWhatsApp}
+        message="Hola Vorka, quiero información"
+        negocioSlug={site.negocioSlug}
+        label="WhatsApp →"
+        variante="primario"
+      />
+      <a class="footer-vorka__instagram" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+        Instagram
+      </a>
+    </div>
+  </div>
+
+  <div class="container footer-vorka__legal">
+    <p>© {anioActual} Vorka. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<style>
+  .footer-vorka {
+    background: #0d0d0d;
+    padding: 48px 0 24px;
+  }
+
+  .footer-vorka__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .footer-vorka__col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .footer-vorka__col a {
+    font-family: var(--font-texto);
+    color: var(--color-texto);
+    text-decoration: none;
+    opacity: 0.75;
+  }
+
+  .footer-vorka__col a:hover {
+    opacity: 1;
+  }
+
+  .footer-vorka__marca {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--color-texto);
+  }
+
+  .footer-vorka__tagline {
+    font-family: var(--font-texto);
+    color: var(--color-gris);
+    margin: 0;
+  }
+
+  .footer-vorka__titulo-col {
+    font-family: var(--font-texto);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-gris);
+  }
+
+  .footer-vorka__legal {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-family: var(--font-texto);
+    font-size: 0.875rem;
+    color: var(--color-gris);
+  }
+
+  .footer-vorka__legal p {
+    margin: 0;
+  }
+
+  @media (max-width: 720px) {
+    .footer-vorka__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

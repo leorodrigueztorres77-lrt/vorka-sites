@@ -1,0 +1,119 @@
+---
+// Capa 1 — layout base compartido por cualquier vertical. Recibe la identidad
+// visual y el SEO del negocio del cliente vía props; nunca hardcodea nada de
+// un cliente específico ni de la marca Vorka/Ordercash.
+import '@/styles/global.css';
+import type { SiteConfig } from '@/data/types';
+
+interface Props {
+  site: SiteConfig;
+  titulo?: string;
+  descripcion?: string;
+  /** URL absoluta de imagen para og:image. Opcional — sin ella, no se emite la etiqueta. */
+  ogImage?: string;
+}
+
+const { site, titulo, descripcion, ogImage } = Astro.props;
+const tituloPagina = titulo ?? site.seo.tituloDefault;
+const descripcionPagina = descripcion ?? site.seo.descripcionDefault;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{tituloPagina}</title>
+    <meta name="description" content={descripcionPagina} />
+
+    <!-- SEO local -->
+    <meta property="og:type" content="business.business" />
+    <meta property="og:title" content={tituloPagina} />
+    <meta property="og:description" content={descripcionPagina} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="robots" content="index, follow" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    {site.fuentes?.googleFontsUrl && (
+      <>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link rel="stylesheet" href={site.fuentes.googleFontsUrl} />
+      </>
+    )}
+
+    <!--
+      OJO: este bloque debe permanecer como UN SOLO <style define:vars> estático
+      (nunca envuelto en `{condicion && (...)}`). Astro solo fusiona/hoistea al
+      final del <head> los <style> que se renderizan incondicionalmente; un
+      <style> dentro de una expresión condicional se emite como una etiqueta
+      literal aparte, ANTES de ese bundle final — con lo que el :root de
+      global.css (que sí queda en el bundle) lo pisa en la cascada y el
+      override nunca se aplica. Por eso cada override usa `??` con el default
+      de global.css en vez de renderizarse condicionalmente.
+    -->
+    <style define:vars={{
+      colorPrimario: site.colores.primario,
+      colorAcento: site.colores.acento,
+      colorTexto: site.colores.texto,
+      colorFondo: site.colores.fondo ?? '#ffffff',
+      colorFondoAlterno: site.colores.fondoAlterno ?? site.colores.fondo ?? '#f7f7f7',
+      colorGris: site.colores.gris ?? '#999999',
+      fuenteTitulos: site.fuentes?.titulos ?? "'Cormorant Garamond', Georgia, serif",
+      fuenteTexto: site.fuentes?.texto ?? "'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif",
+    }}>
+      :root {
+        --color-primario: var(--colorPrimario);
+        --color-acento: var(--colorAcento);
+        --color-texto: var(--colorTexto);
+        --color-fondo: var(--colorFondo);
+        --color-fondo-alterno: var(--colorFondoAlterno);
+        --color-gris: var(--colorGris);
+        --font-titulos: var(--fuenteTitulos);
+        --font-texto: var(--fuenteTexto);
+      }
+    </style>
+  </head>
+  <body>
+    <slot />
+
+    <script>
+      // Estándar de animación de entrada de Capa 1 (skill vertical-web-builder):
+      // threshold 0.12, cascada de 80ms entre elementos .reveal que comparten
+      // el mismo padre directo (tope de 6 para no acumular delays absurdos en
+      // listas largas de menú).
+      document.documentElement.classList.add('js-reveal');
+
+      const revealables = document.querySelectorAll('.reveal, .reveal--scale, .reveal--iris, .reveal--cortina');
+      if ('IntersectionObserver' in window && revealables.length) {
+        const porPadre = new Map<Element | null, HTMLElement[]>();
+        revealables.forEach((el) => {
+          const padre = el.parentElement;
+          if (!porPadre.has(padre)) porPadre.set(padre, []);
+          porPadre.get(padre)!.push(el as HTMLElement);
+        });
+        porPadre.forEach((hermanos) => {
+          hermanos.forEach((el, i) => {
+            el.style.transitionDelay = `${Math.min(i, 6) * 80}ms`;
+          });
+        });
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.12 },
+        );
+        revealables.forEach((el) => observer.observe(el));
+      } else {
+        revealables.forEach((el) => el.classList.add('is-visible'));
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,128 @@
+---
+// Capa 2 (restaurante) — sección "Nuestra historia", usada por las variantes
+// que priorizan contarla antes que mostrar el menú. La foto es opcional y
+// sigue el proceso de 3 niveles de CLAUDE.md ("Manejo de imágenes") cuando
+// demo-personalizer la reemplace con contenido real del cliente.
+//
+// `fotos` (opcional) integra aquí las fotos de ambiente/platos que antes
+// vivían en una sección "Galería" flotante y desconectada — CLAUDE.md
+// documenta que ningún sitio de referencia real hace eso; las fotos siempre
+// están integradas dentro de otro contenido (aquí, junto al relato).
+//
+// `revealFoto`: este componente es compartido por V2, V3 y V5 — si las tres
+// animaran la foto exactamente igual, un cliente que viera dos demos de
+// Vorka reconocería la repetición y detectaría que es un template genérico
+// (justo lo que las 5 variantes de Capa 2 existen para evitar). Cada
+// variante pasa su propio valor: V2 "escala" (fade+zoom simple, ya
+// distinguida por su hero/menú dramáticos), V3 "cortina" (marco que se
+// abre, más lento — encaja con "la atmósfera y la experiencia"), V5 "iris"
+// (mismo efecto que ya usa GaleriaMasonry ahí, coherencia dentro de esa
+// variante). No cambiar el default sin revisar qué variante lo usa.
+import type { FotoGaleria, HistoriaNegocio } from '@/data/types';
+
+interface Props {
+  historia: HistoriaNegocio;
+  nombreNegocio: string;
+  /** La variante que ensambla esta sección decide el fondo según lo que venga antes/después. */
+  fondoAlterno?: boolean;
+  /** Regla de profundidad visual #2 (CLAUDE.md): fondo de color primario sólido
+   * + texto claro. Tiene prioridad sobre fondoAlterno si ambos se pasan. */
+  bloqueSolido?: boolean;
+  /** Fotos de ambiente/platos mostradas junto al relato. Si se pasa, reemplaza
+   * a historia.foto (que solo admite una sola imagen). */
+  fotos?: FotoGaleria[];
+  /** Tratamiento de entrada de la(s) foto(s) — distinto por variante, ver nota arriba. */
+  revealFoto?: 'iris' | 'cortina' | 'escala';
+}
+
+const {
+  historia,
+  nombreNegocio,
+  fondoAlterno = true,
+  bloqueSolido = false,
+  fotos,
+  revealFoto = 'iris',
+} = Astro.props;
+const tieneFotoUnica = !fotos?.length && historia.foto;
+const claseReveal = revealFoto === 'escala' ? 'reveal--scale' : `reveal--${revealFoto}`;
+---
+
+<section
+  id="historia"
+  class:list={['section', { 'section--alterno': fondoAlterno && !bloqueSolido, 'section--solido': bloqueSolido }]}
+  aria-labelledby="historia-titulo"
+>
+  <div class="container historia-grid">
+    <div class="reveal">
+      <h2 id="historia-titulo" class="section-title">Nuestra historia</h2>
+      <p class="historia-texto">{historia.texto}</p>
+    </div>
+    {fotos && fotos.length > 0 && (
+      <div class="historia-fotos">
+        {fotos.map((foto) => (
+          <img class:list={[claseReveal]} src={foto.src} alt={foto.alt} loading="lazy" />
+        ))}
+      </div>
+    )}
+    {tieneFotoUnica && (
+      <div class:list={['historia-foto', claseReveal]}>
+        <img src={historia.foto} alt={`Foto de ${nombreNegocio}`} loading="lazy" />
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .historia-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  @media (min-width: 800px) {
+    .historia-grid {
+      grid-template-columns: 3fr 2fr;
+    }
+  }
+
+  .historia-texto {
+    font-size: 1rem;
+    line-height: 1.6rem;
+    opacity: 0.9;
+  }
+
+  .historia-foto img {
+    width: 100%;
+    height: 100%;
+    max-height: 320px;
+    object-fit: cover;
+    border-radius: 16px;
+  }
+
+  .historia-fotos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .historia-fotos img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 12px;
+    /* Regla de profundidad visual #3 (CLAUDE.md): sombra sutil en contenido
+       repetitivo, portada desde la antigua Gallery.astro. */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    /* Regla de profundidad visual #1 (CLAUDE.md): tratamiento de color
+       unificado entre fotos de fuentes distintas — portado desde Gallery.astro. */
+    filter: saturate(1.08) contrast(1.05);
+  }
+
+  @media (min-width: 480px) {
+    .historia-fotos img:first-child {
+      grid-column: 1 / -1;
+      height: 180px;
+    }
+  }
+</style>

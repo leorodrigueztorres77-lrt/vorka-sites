@@ -1,0 +1,86 @@
+---
+// Página interna de desarrollo — NO es una web de cliente ni se despliega
+// para un negocio real. Solo enlaza las 5 variantes de Capa 2 (restaurante)
+// para que Leo/el equipo las revise localmente. demo-personalizer nunca
+// personaliza este archivo; el archivo que sí se convierte en la entrega
+// final de un cliente es la variante elegida dentro de src/pages/variantes/.
+const variantes = [
+  {
+    href: '/variantes/v1/',
+    nombre: 'V1',
+    menu: 'Grid de tarjetas',
+    hero: 'Foto grande',
+    orden: 'Menú primero',
+    demos: [{ href: '/demo-el-fogon-ecuatoriano/', nombre: 'El Fogón Ecuatoriano' }],
+  },
+  {
+    href: '/variantes/v2/',
+    nombre: 'V2',
+    menu: 'Lista simple',
+    hero: 'Dividido texto/foto',
+    orden: 'Testimonios primero',
+    demos: [{ href: '/demo-shangrila/', nombre: 'Shangrila' }],
+  },
+  {
+    href: '/variantes/v3/',
+    nombre: 'V3',
+    menu: 'Acordeón',
+    hero: 'Foto grande',
+    orden: 'Historia primero',
+    demos: [],
+  },
+  {
+    href: '/variantes/v4/',
+    nombre: 'V4',
+    menu: 'Grid de tarjetas',
+    hero: 'Dividido texto/foto',
+    orden: 'Historia + galería primero',
+    demos: [],
+  },
+  {
+    href: '/variantes/v5/',
+    nombre: 'V5',
+    menu: 'Lista simple',
+    hero: 'Foto grande',
+    orden: 'Galería primero',
+    demos: [],
+  },
+];
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vorka — Librería de variantes (restaurante)</title>
+    <meta name="robots" content="noindex, nofollow" />
+  </head>
+  <body>
+    <main style="max-width: 640px; margin: 3rem auto; padding: 0 1.5rem; font-family: system-ui, sans-serif;">
+      <h1>Librería de variantes — Restaurante (Capa 2)</h1>
+      <p>Herramienta interna: cada link abre una variante completa con los datos de muestra de <code>restaurant.sample.ts</code>. `demo-personalizer` toma la variante asignada y la personaliza con los datos reales del cliente.</p>
+      <ul style="list-style: none; padding: 0; display: grid; gap: 1rem;">
+        {variantes.map((v) => (
+          <li style="border: 1px solid #ddd; border-radius: 8px; padding: 1rem;">
+            <a href={v.href} style="font-weight: 600; font-size: 1.1rem;">{v.nombre}</a>
+            <p style="margin: 0.5rem 0 0; font-size: 0.95rem; color: #555;">
+              Menú: {v.menu} · Hero: {v.hero} · Orden: {v.orden}
+            </p>
+            {v.demos.length > 0 && (
+              <p style="margin: 0.5rem 0 0; font-size: 0.9rem;">
+                Demos reales en esta variante:{' '}
+                {v.demos.map((d, i) => (
+                  <>
+                    <a href={d.href}>{d.nombre}</a>
+                    {i < v.demos.length - 1 ? ', ' : ''}
+                  </>
+                ))}
+              </p>
+            )}
+          </li>
+        ))}
+      </ul>
+    </main>
+  </body>
+</html>

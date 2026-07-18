@@ -1,0 +1,102 @@
+---
+// Capa 2 (restaurante) — control de cantidad por plato. Alimenta el carrito
+// consolidado de CartBar (un solo mensaje de WhatsApp con todos los platos
+// elegidos, en vez de un envío por plato). Sin JavaScript cae a un link
+// "Pedir" individual para no perder la conversión.
+import { buildWhatsAppLink } from '@/lib/whatsapp';
+
+interface Props {
+  phone: string;
+  negocioSlug: string;
+  nombrePlato: string;
+  precio: number;
+}
+
+const { phone, negocioSlug, nombrePlato, precio } = Astro.props;
+const hrefFallback = buildWhatsAppLink({
+  phone,
+  message: `Hola, quiero pedir ${nombrePlato}`,
+  negocioSlug,
+});
+---
+
+<div class="cart-stepper" data-cart-item data-nombre={nombrePlato} data-precio={precio}>
+  <button
+    type="button"
+    class="cart-stepper__btn"
+    data-cart-minus
+    aria-label={`Quitar ${nombrePlato} del pedido`}
+    disabled
+  >
+    −
+  </button>
+  <span class="cart-stepper__cantidad" data-cart-cantidad aria-live="polite">0</span>
+  <button
+    type="button"
+    class="cart-stepper__btn"
+    data-cart-plus
+    aria-label={`Agregar ${nombrePlato} al pedido`}
+  >
+    +
+  </button>
+</div>
+
+<noscript>
+  <a class="order-btn" href={hrefFallback} target="_blank" rel="noopener noreferrer">
+    Pedir
+  </a>
+</noscript>
+
+<style>
+  /* Oculto por defecto: sin JS los botones +/− no hacen nada, así que el
+     fallback de <noscript> es lo único visible hasta que BaseLayout marque
+     .js-reveal en <html>. */
+  .cart-stepper {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .js-reveal .cart-stepper {
+    display: flex;
+  }
+
+  .cart-stepper__btn {
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 999px;
+    border: none;
+    background: var(--color-acento);
+    color: #1a1a1a;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .cart-stepper__btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .cart-stepper__cantidad {
+    min-width: 1.5rem;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .order-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.5rem 1.25rem;
+    border-radius: 999px;
+    background: var(--color-acento);
+    color: #1a1a1a;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+</style>

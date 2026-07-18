@@ -1,0 +1,66 @@
+---
+// Vorka — Stats. Deliberadamente NO usa cifras de clientes/reseñas fabricadas
+// (CLAUDE.md prohíbe inventar datos de reputación/fidelización) — son 4
+// hechos verificables sobre el propio estándar de producción de Vorka en vez
+// de prueba social inflada que todavía no existe.
+const stats = [
+  { valor: '2', label: 'Verticales activos' },
+  { valor: '5', label: 'Variantes de diseño por vertical' },
+  { valor: '<3s', label: 'Carga en móvil' },
+  { valor: '100%', label: 'WhatsApp como CTA principal' },
+];
+---
+
+<section class="stats section">
+  <div class="container">
+    <ul class="stats__grid">
+      {stats.map((stat) => (
+        <li class="stats__item reveal--scale">
+          <span class="stats__valor">{stat.valor}</span>
+          <span class="stats__label">{stat.label}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .stats {
+    background: var(--color-fondo);
+  }
+
+  .stats__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+  }
+
+  .stats__item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .stats__valor {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    color: var(--color-primario);
+  }
+
+  .stats__label {
+    font-family: var(--font-texto);
+    font-size: 0.9375rem;
+    color: var(--color-gris);
+  }
+
+  @media (max-width: 720px) {
+    .stats__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,166 @@
+---
+// Capa 2 (restaurante) — menú de la Variante 3 ("La atmósfera y la
+// experiencia"). Sin fotos por ítem — el nombre y una descripción cuidada
+// bastan, estilo fine dining. Una sola foto grande del plato estrella encima
+// del menú completo, categorías separadas por espacio generoso (no líneas).
+import type { CategoriaMenu } from '@/data/types';
+import MenuItemQuantity from './MenuItemQuantity.astro';
+
+interface Props {
+  categorias: CategoriaMenu[];
+  fotoPlatoEstrella?: string;
+  nombrePlatoEstrella?: string;
+  phone: string;
+  negocioSlug: string;
+}
+
+const { categorias, fotoPlatoEstrella, nombrePlatoEstrella, phone, negocioSlug } = Astro.props;
+---
+
+<section id="menu" class="section" aria-labelledby="menu-titulo">
+  <div class="container">
+    <h2 id="menu-titulo" class="section-title menu-tipografico__titulo">Nuestro Menú</h2>
+
+    {fotoPlatoEstrella && (
+      <figure class="menu-tipografico__estrella reveal--scale">
+        <img src={fotoPlatoEstrella} alt={nombrePlatoEstrella ?? 'Plato estrella'} loading="lazy" width="900" height="500" />
+        {nombrePlatoEstrella && <figcaption>{nombrePlatoEstrella}</figcaption>}
+      </figure>
+    )}
+
+    <div class="menu-tipografico">
+      {categorias.map((cat) => (
+        <div class="menu-tipografico__categoria reveal">
+          <h3>{cat.categoria}</h3>
+          <ul class="menu-tipografico__lista">
+            {cat.platos.map((plato) => (
+              <li class="menu-tipografico__plato">
+                <div class="menu-tipografico__texto">
+                  <p class="menu-tipografico__nombre">{plato.nombre}</p>
+                  {plato.descripcion && <p class="menu-tipografico__descripcion">{plato.descripcion}</p>}
+                </div>
+                <div class="menu-tipografico__accion">
+                  <span class="menu-tipografico__precio">${plato.precio.toFixed(2)}</span>
+                  <MenuItemQuantity
+                    phone={phone}
+                    negocioSlug={negocioSlug}
+                    nombrePlato={plato.nombre}
+                    precio={plato.precio}
+                  />
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .menu-tipografico__titulo {
+    text-align: center;
+  }
+
+  .menu-tipografico__estrella {
+    margin: 0 0 4rem;
+  }
+
+  .menu-tipografico__estrella img {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  }
+
+  .menu-tipografico__estrella figcaption {
+    text-align: center;
+    font-family: var(--font-titulos);
+    font-style: italic;
+    font-size: 1.25rem;
+    margin-top: 1rem;
+    color: var(--color-primario);
+  }
+
+  .menu-tipografico {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .menu-tipografico__categoria {
+    margin-bottom: 4rem;
+  }
+
+  .menu-tipografico__categoria:last-child {
+    margin-bottom: 0;
+  }
+
+  .menu-tipografico__categoria h3 {
+    font-family: var(--font-titulos);
+    font-style: italic;
+    font-weight: 600;
+    font-size: 1.75rem;
+    text-align: center;
+    margin: 0 0 2rem;
+    color: var(--color-primario);
+  }
+
+  .menu-tipografico__lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.75rem;
+  }
+
+  .menu-tipografico__plato {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .menu-tipografico__texto {
+    flex: 1;
+  }
+
+  .menu-tipografico__nombre {
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin: 0 0 0.35rem;
+  }
+
+  .menu-tipografico__descripcion {
+    margin: 0;
+    font-size: 1rem;
+    font-style: italic;
+    opacity: 0.75;
+  }
+
+  .menu-tipografico__accion {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .menu-tipografico__precio {
+    font-weight: 700;
+    color: var(--color-primario);
+  }
+
+  @media (max-width: 560px) {
+    .menu-tipografico__plato {
+      flex-direction: column;
+    }
+
+    .menu-tipografico__accion {
+      flex-direction: row;
+      align-items: center;
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+</style>

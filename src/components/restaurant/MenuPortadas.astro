@@ -1,0 +1,223 @@
+---
+// Capa 2 (restaurante) — menú de la Variante 4 ("La prueba social primero").
+// Categorías como portadas visuales clickeables (foto grande + nombre) que
+// hacen scroll a su propia sección; dentro, lista compacta con foto pequeña
+// por ítem. Si una categoría no tiene imagenPortada, usa la del primer plato
+// con foto como respaldo — nunca deja el bloque de portada vacío.
+//
+// Al hacer click en una portada, la sección destino se re-revela (fade
+// escalonado vía Capa 1 src/lib/motion.ts) en vez de aparecer instantánea si
+// ya estaba marcada visible por el observer de scroll — mismo principio que
+// el cambio de tab de MenuTabs (V2): el click debe sentirse como un evento,
+// no solo un salto de ancla silencioso.
+import type { CategoriaMenu } from '@/data/types';
+import MenuItemQuantity from './MenuItemQuantity.astro';
+
+interface Props {
+  categorias: CategoriaMenu[];
+  phone: string;
+  negocioSlug: string;
+}
+
+const { categorias, phone, negocioSlug } = Astro.props;
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+const portadaDe = (cat: CategoriaMenu) => cat.imagenPortada ?? cat.platos.find((p) => p.imagen)?.imagen;
+---
+
+<section id="menu" class="section" aria-labelledby="menu-titulo">
+  <div class="container">
+    <h2 id="menu-titulo" class="section-title">Nuestro Menú</h2>
+
+    <div class="menu-portadas">
+      {categorias.map((cat) => {
+        const portada = portadaDe(cat);
+        return (
+          <a href={`#menu-cat-${slug(cat.categoria)}`} class="menu-portadas__card reveal--scale">
+            {portada && <img src={portada} alt={cat.categoria} loading="lazy" width="320" height="200" />}
+            <span class="menu-portadas__nombre">{cat.categoria} →</span>
+          </a>
+        );
+      })}
+    </div>
+
+    {categorias.map((cat) => (
+      <div id={`menu-cat-${slug(cat.categoria)}`} class="menu-portadas__seccion">
+        <h3>{cat.categoria}</h3>
+        <ul class="menu-portadas__lista">
+          {cat.platos.map((plato) => (
+            <li class="menu-portadas__plato reveal">
+              {plato.imagen && (
+                <img class="menu-portadas__foto-item" src={plato.imagen} alt={plato.nombre} loading="lazy" width="80" height="80" />
+              )}
+              <div class="menu-portadas__info">
+                <p class="menu-portadas__plato-nombre">{plato.nombre}</p>
+                {plato.descripcion && <p class="menu-portadas__descripcion">{plato.descripcion}</p>}
+              </div>
+              <div class="menu-portadas__accion">
+                <span class="menu-portadas__precio">${plato.precio.toFixed(2)}</span>
+                <MenuItemQuantity
+                  phone={phone}
+                  negocioSlug={negocioSlug}
+                  nombrePlato={plato.nombre}
+                  precio={plato.precio}
+                />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+</section>
+
+<script>
+  import { revelarEscalonado, ocultarReveal } from '@/lib/motion';
+
+  document.querySelectorAll<HTMLAnchorElement>('.menu-portadas__card').forEach((tarjeta) => {
+    tarjeta.addEventListener('click', () => {
+      const destino = tarjeta.getAttribute('href');
+      const seccion = destino ? document.querySelector<HTMLElement>(destino) : null;
+      if (!seccion) return;
+      const elementos = Array.from(seccion.querySelectorAll<HTMLElement>('.reveal, .reveal--scale'));
+      ocultarReveal(elementos);
+      requestAnimationFrame(() => revelarEscalonado(elementos, 50));
+    });
+  });
+</script>
+
+<style>
+  .menu-portadas {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 3.5rem;
+  }
+
+  @media (min-width: 700px) {
+    .menu-portadas {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .menu-portadas__card {
+    position: relative;
+    display: block;
+    border-radius: 14px;
+    overflow: hidden;
+    height: 160px;
+    text-decoration: none;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 300ms ease;
+  }
+
+  .menu-portadas__card:hover {
+    transform: translateY(-4px);
+  }
+
+  .menu-portadas__card img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .menu-portadas__card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.5));
+  }
+
+  .menu-portadas__nombre {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-end;
+    height: 100%;
+    padding: 1rem;
+    color: #fff;
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: 1.25rem;
+  }
+
+  .menu-portadas__seccion {
+    margin-bottom: 2.5rem;
+    scroll-margin-top: 90px;
+  }
+
+  .menu-portadas__seccion h3 {
+    color: var(--color-primario);
+    border-bottom: 2px solid var(--color-acento);
+    padding-bottom: 0.4rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .menu-portadas__lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .menu-portadas__plato {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem;
+    border-radius: 12px;
+    background: var(--color-fondo, #fff);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  }
+
+  .menu-portadas__foto-item {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+
+  .menu-portadas__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .menu-portadas__plato-nombre {
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .menu-portadas__descripcion {
+    margin: 0.25rem 0 0;
+    font-size: 1rem;
+    opacity: 0.75;
+  }
+
+  .menu-portadas__accion {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .menu-portadas__precio {
+    font-weight: 700;
+    color: var(--color-primario);
+  }
+
+  @media (max-width: 560px) {
+    .menu-portadas__plato {
+      flex-wrap: wrap;
+    }
+
+    .menu-portadas__accion {
+      width: 100%;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+</style>

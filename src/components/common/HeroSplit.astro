@@ -1,0 +1,187 @@
+---
+// Capa 1 — hero dividido (texto + foto lado a lado), alternativa de peso
+// visual al Hero de foto grande a pantalla completa. Mismo slot de CTA y
+// misma lógica de tracking de WhatsApp que Hero.astro — ninguno de los dos
+// contiene lógica específica de vertical, ambos son Capa 1.
+//
+// Modo "superpuesto": foto a pantalla completa con el titular tipográfico
+// grande superpuesto encima (en vez de lado a lado) — cierra la brecha de
+// "planitud" frente a la referencia real de V2 (template Restro/Restroo),
+// cuyo hero es un evento visual, no dos columnas discretas. Capa 1 porque
+// cualquier variante/vertical futuro puede necesitar este mismo modo, no
+// solo V2 — solo lo activa quien lo pida vía prop.
+import type { SiteConfig } from '@/data/types';
+
+interface Props {
+  site: SiteConfig;
+  imagen?: string;
+  imagenAlt?: string;
+  /** Invierte el lado de la foto (por defecto: texto izquierda, foto derecha). Solo aplica a estilo="dividido". */
+  invertido?: boolean;
+  /** V2 ("Restroo"): fondo crema cálido en vez de --color-fondo, para que el
+   * hero no compita con la foto ni dependa de la paleta aún sin definir del
+   * cliente. Puramente Capa 2 — no toca --color-fondo global. Solo aplica a estilo="dividido". */
+  fondoCrema?: boolean;
+  /** 'dividido' (default, texto + foto lado a lado) o 'superpuesto' (foto a
+   * pantalla completa con titular grande superpuesto encima). */
+  estilo?: 'dividido' | 'superpuesto';
+}
+
+// .webp por defecto: estándar de rendimiento (CLAUDE.md) exige WebP/AVIF.
+const {
+  site,
+  imagen = '/images/placeholder-hero.webp',
+  imagenAlt = site.nombre,
+  invertido = false,
+  fondoCrema = false,
+  estilo = 'dividido',
+} = Astro.props;
+---
+
+{estilo === 'superpuesto' ? (
+  <section id="inicio" class="hero-split hero-split--superpuesto">
+    <div class="hero-split__fondo">
+      <img src={imagen} alt={imagenAlt} loading="eager" />
+      <div class="hero-split__degradado" aria-hidden="true"></div>
+    </div>
+    <div class="container hero-split__superpuesto-inner">
+      <h1 class="hero-split__titulo-grande reveal">{site.nombre}</h1>
+      <p class="hero-split__tagline hero-split__tagline--claro reveal">{site.tagline}</p>
+      <div class="hero-split__cta reveal">
+        <slot name="cta" />
+      </div>
+    </div>
+  </section>
+) : (
+  <section
+    id="inicio"
+    class:list={['hero-split', { 'hero-split--invertido': invertido, 'hero-split--crema': fondoCrema }]}
+  >
+    <div class="container hero-split__inner">
+      <div class="hero-split__texto">
+        <h1 class="reveal">{site.nombre}</h1>
+        <p class="hero-split__tagline reveal">{site.tagline}</p>
+        <div class="hero-split__cta reveal">
+          <slot name="cta" />
+        </div>
+      </div>
+      <div class="hero-split__foto reveal--scale">
+        <img src={imagen} alt={imagenAlt} loading="eager" />
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .hero-split {
+    padding: 4rem 0;
+  }
+
+  .hero-split--crema {
+    background: #faf7f2;
+  }
+
+  .hero-split__inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  @media (min-width: 800px) {
+    .hero-split__inner {
+      /* ~55/45 (V2 "Restroo", skill vertical-web-builder). */
+      grid-template-columns: 1.2fr 1fr;
+      gap: 3rem;
+    }
+
+    .hero-split--invertido .hero-split__inner {
+      direction: rtl;
+    }
+
+    .hero-split--invertido .hero-split__texto,
+    .hero-split--invertido .hero-split__foto {
+      direction: ltr;
+    }
+  }
+
+  .hero-split__texto h1 {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    color: var(--color-primario);
+  }
+
+  .hero-split__tagline {
+    font-size: 1.15rem;
+    margin-bottom: 2rem;
+    opacity: 0.85;
+  }
+
+  .hero-split__cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .hero-split__foto img {
+    width: 100%;
+    height: 100%;
+    max-height: 420px;
+    object-fit: cover;
+    border-radius: 16px;
+  }
+
+  /* Modo superpuesto — foto a pantalla completa, titular grande encima. */
+  .hero-split--superpuesto {
+    position: relative;
+    min-height: 640px;
+    display: flex;
+    align-items: flex-end;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  @media (min-width: 800px) {
+    .hero-split--superpuesto {
+      min-height: 88vh;
+    }
+  }
+
+  .hero-split__fondo {
+    position: absolute;
+    inset: 0;
+  }
+
+  .hero-split__fondo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-split__degradado {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.75) 100%);
+  }
+
+  .hero-split__superpuesto-inner {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 0 4rem;
+    max-width: var(--max-width);
+  }
+
+  .hero-split__titulo-grande {
+    font-family: var(--font-titulos);
+    font-size: clamp(3rem, 10vw, 6.5rem);
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 0.75rem;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-split__tagline--claro {
+    color: #fff;
+    opacity: 0.9;
+  }
+</style>

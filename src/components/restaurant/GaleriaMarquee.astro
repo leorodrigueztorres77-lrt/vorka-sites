@@ -1,0 +1,68 @@
+---
+// Capa 2 (restaurante) — galería de la Variante 1 ("El producto es la estrella").
+// Nunca una sección "Galería" flotante desconectada (CLAUDE.md): banda de
+// scroll automático horizontal, pausa en hover, fotos duplicadas para el
+// efecto seamless. Filtro de color unificado sobre todas las fotos.
+import type { FotoGaleria } from '@/data/types';
+
+interface Props {
+  fotos: FotoGaleria[];
+}
+
+const { fotos } = Astro.props;
+const duplicadas = [...fotos, ...fotos];
+---
+
+<section id="galeria" class="galeria-marquee" aria-label="Galería de fotos">
+  <div class="galeria-marquee__track">
+    {duplicadas.map((foto) => (
+      <img src={foto.src} alt={foto.alt} loading="lazy" />
+    ))}
+  </div>
+</section>
+
+<style>
+  .galeria-marquee {
+    overflow: hidden;
+    padding: 2rem 0;
+    background: var(--color-fondo-alterno);
+  }
+
+  .galeria-marquee__track {
+    display: flex;
+    gap: 1rem;
+    width: max-content;
+    animation: desplazar 32s linear infinite;
+  }
+
+  .galeria-marquee:hover .galeria-marquee__track {
+    animation-play-state: paused;
+  }
+
+  .galeria-marquee__track img {
+    width: 260px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+    flex-shrink: 0;
+    /* Regla de profundidad visual #1 (CLAUDE.md): tratamiento de color
+       unificado — mismo filtro que Historia.astro/Testimonials.astro. */
+    filter: saturate(1.15) brightness(0.95) contrast(1.03) sepia(0.06);
+  }
+
+  @keyframes desplazar {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .galeria-marquee__track {
+      animation: none;
+      overflow-x: auto;
+    }
+  }
+</style>

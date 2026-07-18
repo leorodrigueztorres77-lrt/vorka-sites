@@ -1,0 +1,94 @@
+---
+// Capa 1 — layout base compartido por cualquier vertical. Recibe la identidad
+// visual y el SEO del negocio del cliente vía props; nunca hardcodea nada de
+// un cliente específico ni de la marca Vorka/Ordercash.
+import '@/styles/global.css';
+import type { SiteConfig } from '@/data/types';
+
+interface Props {
+  site: SiteConfig;
+  titulo?: string;
+  descripcion?: string;
+  /** URL absoluta de imagen para og:image. Opcional — sin ella, no se emite la etiqueta. */
+  ogImage?: string;
+}
+
+const { site, titulo, descripcion, ogImage } = Astro.props;
+const tituloPagina = titulo ?? site.seo.tituloDefault;
+const descripcionPagina = descripcion ?? site.seo.descripcionDefault;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{tituloPagina}</title>
+    <meta name="description" content={descripcionPagina} />
+
+    <!-- SEO local -->
+    <meta property="og:type" content="business.business" />
+    <meta property="og:title" content={tituloPagina} />
+    <meta property="og:description" content={descripcionPagina} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="robots" content="index, follow" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    {site.fuentes?.googleFontsUrl && (
+      <>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link rel="stylesheet" href={site.fuentes.googleFontsUrl} />
+      </>
+    )}
+
+    <style define:vars={{
+      colorPrimario: site.colores.primario,
+      colorAcento: site.colores.acento,
+      colorTexto: site.colores.texto,
+    }}>
+      :root {
+        --color-primario: var(--colorPrimario);
+        --color-acento: var(--colorAcento);
+        --color-texto: var(--colorTexto);
+      }
+    </style>
+    {site.fuentes && (
+      <style define:vars={{
+        fuenteTitulos: site.fuentes.titulos,
+        fuenteTexto: site.fuentes.texto,
+      }}>
+        :root {
+          --font-titulos: var(--fuenteTitulos);
+          --font-texto: var(--fuenteTexto);
+        }
+      </style>
+    )}
+  </head>
+  <body>
+    <slot />
+
+    <script>
+      document.documentElement.classList.add('js-reveal');
+
+      const revealables = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window && revealables.length) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.15 },
+        );
+        revealables.forEach((el) => observer.observe(el));
+      } else {
+        revealables.forEach((el) => el.classList.add('is-visible'));
+      }
+    </script>
+  </body>
+</html>

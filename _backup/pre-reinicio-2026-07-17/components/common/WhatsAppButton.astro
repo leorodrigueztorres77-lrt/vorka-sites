@@ -1,0 +1,32 @@
+---
+// Capa 1 — botón de WhatsApp reutilizable con tracking. Cualquier vertical
+// pasa su propio mensaje pre-cargado; el link y el tracking no cambian.
+import { buildWhatsAppLink } from '@/lib/whatsapp';
+
+interface Props {
+  phone: string;
+  message: string;
+  negocioSlug: string;
+  label?: string;
+  variante?: 'primario' | 'acento';
+}
+
+const {
+  phone,
+  message,
+  negocioSlug,
+  label = 'Escríbenos por WhatsApp',
+  variante = 'primario',
+} = Astro.props;
+
+const href = buildWhatsAppLink({ phone, message, negocioSlug });
+---
+
+<a
+  class={`btn btn--${variante}`}
+  href={href}
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  {label}
+</a>

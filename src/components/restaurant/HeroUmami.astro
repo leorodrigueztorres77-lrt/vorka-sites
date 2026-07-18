@@ -1,0 +1,149 @@
+---
+// Capa 2 (restaurante) — Hero de la Variante 1 ("El producto es la estrella",
+// referencia visual: Umami). Foto de fondo a pantalla completa + overlay
+// oscuro, titular partido en 3 líneas con fotos de platos intercaladas entre
+// palabras (el elemento diferenciador de esta variante), badges de señal
+// social visibles sin scroll.
+import type { EstadisticasNegocio, SiteConfig } from '@/data/types';
+
+interface Props {
+  site: SiteConfig;
+  imagenFondo: string;
+  /** Titular partido en 3 líneas, ej. ["EL SABOR", "QUE", "RECUERDAS"]. La foto
+   * de plato se intercala entre la línea 1 y 2, y entre la 2 y 3. */
+  titular: [string, string, string];
+  fotoPlato1: string;
+  fotoPlato2: string;
+  stats?: EstadisticasNegocio;
+}
+
+const { site, imagenFondo, titular, fotoPlato1, fotoPlato2, stats } = Astro.props;
+const badgeAnio = site.anioFundacion ? `${site.ciudad} · Desde ${site.anioFundacion}` : site.ciudad;
+---
+
+<section
+  id="inicio"
+  class="hero-umami"
+  style={`background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.55)), url(${imagenFondo})`}
+>
+  <div class="container hero-umami__inner">
+    <p class="hero-umami__badge reveal">{badgeAnio}</p>
+
+    <h1 class="hero-umami__titular">
+      <span class="hero-umami__linea reveal">{titular[0]}</span>
+      <span class="hero-umami__fila-foto reveal">
+        <img src={fotoPlato1} alt="" loading="eager" />
+        <span>{titular[1]}</span>
+        <img src={fotoPlato2} alt="" loading="eager" />
+      </span>
+      <span class="hero-umami__linea reveal">{titular[2]}</span>
+    </h1>
+
+    <p class="hero-umami__subtitulo reveal">{site.tagline}</p>
+
+    {stats && (stats.ratingGoogle || stats.pedidosPorMes) && (
+      <div class="hero-umami__badges reveal">
+        {stats.ratingGoogle && <span class="hero-umami__badge-social">⭐ {stats.ratingGoogle} Google</span>}
+        {stats.pedidosPorMes && (
+          <span class="hero-umami__badge-social">{stats.pedidosPorMes}+ pedidos/mes</span>
+        )}
+      </div>
+    )}
+
+    <div class="hero-umami__cta reveal">
+      <slot name="cta" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-umami {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    text-align: center;
+    padding: 6rem 0 4rem;
+  }
+
+  .hero-umami__inner {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .hero-umami__badge {
+    display: inline-block;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 100px;
+    padding: 0.4rem 1.25rem;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-umami__titular {
+    font-family: var(--font-titulos);
+    font-style: italic;
+    font-weight: 700;
+    color: #fff;
+    font-size: clamp(2.75rem, 8vw, 6.5rem);
+    line-height: 1.05;
+    margin: 0 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .hero-umami__fila-foto {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .hero-umami__fila-foto img {
+    width: 140px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  @media (min-width: 640px) {
+    .hero-umami__fila-foto img {
+      width: 200px;
+      height: 140px;
+    }
+  }
+
+  .hero-umami__subtitulo {
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 560px;
+    margin: 0 auto 1.75rem;
+  }
+
+  .hero-umami__badges {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .hero-umami__badge-social {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 100px;
+    padding: 0.45rem 1.1rem;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .hero-umami__cta {
+    display: flex;
+    justify-content: center;
+  }
+</style>

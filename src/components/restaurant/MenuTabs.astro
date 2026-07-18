@@ -1,0 +1,323 @@
+---
+// Capa 2 (restaurante) — menú de la Variante 2 ("El menú completo es el
+// argumento"). Tabs filtrables por categoría (el elemento diferenciador de
+// esta variante) con JS mínimo: sin JS, con:visible cae a mostrar todas las
+// categorías seguidas (degradación segura, nunca un menú vacío).
+//
+// Portada dramática por categoría (nombre tipográfico grande sobre bloque de
+// color sólido + hasta 4 fotos destacadas en cuadrante con precio en burbuja
+// flotante) — añadido para cerrar la brecha de "planitud" frente a la
+// referencia real de esta variante (template Restro/Restroo): el cambio de
+// categoría ahí se siente como un evento, no un simple toggle de texto. La
+// transición al cambiar de tab usa la utilidad compartida de Capa 1
+// (src/lib/motion.ts) — el mismo fade-escalonado que ya usa MenuFiltrable
+// (V5), para no reinventar el patrón por variante.
+import type { CategoriaMenu } from '@/data/types';
+import MenuItemQuantity from './MenuItemQuantity.astro';
+
+interface Props {
+  categorias: CategoriaMenu[];
+  phone: string;
+  negocioSlug: string;
+}
+
+const { categorias, phone, negocioSlug } = Astro.props;
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+---
+
+<section id="menu" class="section" aria-labelledby="menu-titulo">
+  <div class="container">
+    <h2 id="menu-titulo" class="section-title">Nuestro Menú</h2>
+
+    <div class="menu-tabs" data-menu-tabs>
+      <div class="menu-tabs__botones" role="tablist">
+        {categorias.map((cat, i) => (
+          <button
+            type="button"
+            class="menu-tabs__boton"
+            class:list={{ 'is-activo': i === 0 }}
+            data-tab-target={slug(cat.categoria)}
+            role="tab"
+            aria-selected={i === 0}
+          >
+            {cat.categoria}
+          </button>
+        ))}
+      </div>
+
+      {categorias.map((cat, i) => {
+        const destacados = cat.platos.filter((p) => p.imagen).slice(0, 4);
+        return (
+          <div
+            class="menu-tabs__panel"
+            class:list={{ 'is-activo': i === 0 }}
+            data-tab-panel={slug(cat.categoria)}
+            role="tabpanel"
+          >
+            <div class="menu-tabs__portada">
+              <div class="container menu-tabs__portada-inner">
+                <h3 class="menu-tabs__nombre-categoria reveal--scale">{cat.categoria}</h3>
+                {destacados.length > 0 && (
+                  <div class="menu-tabs__destacados">
+                    {destacados.map((plato) => (
+                      <div class="menu-tabs__destacado-item reveal--scale">
+                        <img src={plato.imagen} alt={plato.nombre} loading="lazy" width="280" height="280" />
+                        <span class="menu-tabs__precio-burbuja">${plato.precio.toFixed(2)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <ul class="menu-tabs__lista">
+              {cat.platos.map((plato) => (
+                <li class:list={['menu-tabs__plato', 'reveal--scale', { 'menu-tabs__plato--destacado': plato.destacado }]}>
+                  {plato.imagen && (
+                    <img class="menu-tabs__imagen" src={plato.imagen} alt={plato.nombre} loading="lazy" width="120" height="120" />
+                  )}
+                  <div class="menu-tabs__info">
+                    <p class="menu-tabs__nombre">{plato.nombre}</p>
+                    {plato.calificacion && (
+                      <p class="menu-tabs__estrellas" aria-label={`${plato.calificacion} de 5 estrellas`}>
+                        {'★'.repeat(plato.calificacion)}{'☆'.repeat(5 - plato.calificacion)}
+                      </p>
+                    )}
+                    {plato.descripcion && <p class="menu-tabs__descripcion">{plato.descripcion}</p>}
+                  </div>
+                  <div class="menu-tabs__accion">
+                    <span class="menu-tabs__precio">${plato.precio.toFixed(2)}</span>
+                    <MenuItemQuantity
+                      phone={phone}
+                      negocioSlug={negocioSlug}
+                      nombrePlato={plato.nombre}
+                      precio={plato.precio}
+                    />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<script>
+  import { revelarEscalonado, ocultarReveal } from '@/lib/motion';
+
+  document.querySelectorAll<HTMLElement>('[data-menu-tabs]').forEach((contenedor) => {
+    const botones = contenedor.querySelectorAll<HTMLButtonElement>('[data-tab-target]');
+    const paneles = contenedor.querySelectorAll<HTMLElement>('[data-tab-panel]');
+
+    botones.forEach((boton) => {
+      boton.addEventListener('click', () => {
+        const destino = boton.dataset.tabTarget;
+        botones.forEach((b) => {
+          b.classList.toggle('is-activo', b === boton);
+          b.setAttribute('aria-selected', String(b === boton));
+        });
+        paneles.forEach((p) => {
+          const activo = p.dataset.tabPanel === destino;
+          p.classList.toggle('is-activo', activo);
+          if (activo) {
+            const elementos = Array.from(p.querySelectorAll<HTMLElement>('.reveal--scale'));
+            ocultarReveal(elementos);
+            requestAnimationFrame(() => revelarEscalonado(elementos, 50));
+          }
+        });
+      });
+    });
+  });
+</script>
+
+<style>
+  .menu-tabs__botones {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .menu-tabs__boton {
+    min-height: 44px;
+    padding: 0.6rem 1.4rem;
+    border-radius: 100px;
+    border: 1px solid var(--color-fondo-alterno);
+    background: var(--color-fondo, #fff);
+    font-family: var(--font-titulos);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 200ms ease, color 200ms ease;
+  }
+
+  .menu-tabs__boton.is-activo {
+    background: var(--color-primario);
+    color: #fff;
+    border-color: var(--color-primario);
+  }
+
+  /* Sin JS: no hay botón activo real, así que todos los paneles se muestran
+     seguidos en vez de esconder contenido detrás de tabs que no funcionan. */
+  .menu-tabs__panel {
+    display: none;
+  }
+
+  .menu-tabs__panel.is-activo {
+    display: block;
+  }
+
+  html:not(.js-reveal) .menu-tabs__panel {
+    display: block;
+  }
+
+  /* Portada dramática — bloque de color sólido a todo el ancho de la
+     pantalla (rompe el .container para full-bleed), con el nombre de la
+     categoría en tipografía grande y hasta 4 fotos destacadas en cuadrante
+     con precio en burbuja flotante. Regla de profundidad visual #2 de
+     CLAUDE.md (bloque de color sólido) resuelta aquí mismo, por categoría. */
+  .menu-tabs__portada {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    background: var(--color-primario);
+    color: #fff;
+    padding: 3rem 0;
+    margin-bottom: 2.5rem;
+  }
+
+  .menu-tabs__portada-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .menu-tabs__nombre-categoria {
+    font-size: clamp(2.5rem, 9vw, 5rem);
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  .menu-tabs__destacados {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(120px, 200px));
+    gap: 1rem;
+    width: 100%;
+    max-width: 460px;
+  }
+
+  .menu-tabs__destacado-item {
+    position: relative;
+    aspect-ratio: 1 / 1;
+  }
+
+  .menu-tabs__destacado-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
+  }
+
+  .menu-tabs__precio-burbuja {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #fff;
+    color: var(--color-texto);
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 100px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  }
+
+  .menu-tabs__lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .menu-tabs__plato {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    background: var(--color-fondo, #fff);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  .menu-tabs__plato--destacado {
+    outline: 2px solid var(--color-acento);
+  }
+
+  .menu-tabs__imagen {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+
+  .menu-tabs__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .menu-tabs__nombre {
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .menu-tabs__estrellas {
+    color: var(--color-acento);
+    letter-spacing: 1px;
+    margin: 0.2rem 0 0;
+    font-size: 1rem;
+  }
+
+  .menu-tabs__descripcion {
+    margin: 0.3rem 0 0;
+    font-size: 1rem;
+    opacity: 0.75;
+  }
+
+  .menu-tabs__accion {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .menu-tabs__precio {
+    font-weight: 700;
+    color: var(--color-primario);
+  }
+
+  @media (max-width: 560px) {
+    .menu-tabs__plato {
+      flex-wrap: wrap;
+    }
+
+    .menu-tabs__accion {
+      width: 100%;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .menu-tabs__destacados {
+      grid-template-columns: repeat(2, 1fr);
+      max-width: 320px;
+    }
+  }
+</style>

@@ -1,0 +1,39 @@
+---
+// VORKA — sitio propio de la agencia (vorka.io). Identidad exclusiva de
+// Vorka (ver CLAUDE.md) — nunca reutilizar esta paleta/tipografía/copy en la
+// web de un cliente. Se construye sección por sección, confirmando cada una
+// con Leo antes de avanzar (ver conversación). Progreso: Nav ✅, Hero ✅,
+// Ticker ✅, Servicios ✅, Portafolio ✅, Nosotros ✅, Stats ✅, FAQ ✅,
+// Contacto ✅, Footer ✅ — sitio completo, pendiente solo reemplazar
+// placeholders: webhook de contacto (Zapier, esperando URL de Leo) y capturas
+// reales de portafolio.
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Nav from '@/components/vorka/Nav.astro';
+import Hero from '@/components/vorka/Hero.astro';
+import Ticker from '@/components/vorka/Ticker.astro';
+import Servicios from '@/components/vorka/Servicios.astro';
+import Portafolio from '@/components/vorka/Portafolio.astro';
+import Nosotros from '@/components/vorka/Nosotros.astro';
+import Stats from '@/components/vorka/Stats.astro';
+import Faq from '@/components/vorka/Faq.astro';
+import ContactoVorka from '@/components/vorka/ContactoVorka.astro';
+import FooterVorka from '@/components/vorka/FooterVorka.astro';
+import { siteConfigVorka } from '@/data/site.vorka';
+
+const site = siteConfigVorka;
+---
+
+<BaseLayout site={site}>
+  <Nav site={site} />
+  <main id="inicio">
+    <Hero site={site} />
+    <Ticker />
+    <Servicios site={site} />
+    <Portafolio />
+    <Nosotros />
+    <Stats />
+    <Faq />
+    <ContactoVorka site={site} />
+  </main>
+  <FooterVorka site={site} />
+</BaseLayout>

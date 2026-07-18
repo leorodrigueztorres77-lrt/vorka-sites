@@ -1,0 +1,56 @@
+---
+// Capa 1 — hero genérico. El CTA principal se pasa como slot para que cada
+// vertical decida su acción (pedir por WhatsApp, agendar cita, etc.).
+import type { SiteConfig } from '@/data/types';
+
+interface Props {
+  site: SiteConfig;
+  imagenFondo?: string;
+}
+
+// .webp por defecto: estándar de rendimiento (CLAUDE.md) exige WebP/AVIF,
+// nunca JPEG/PNG sin optimizar.
+const { site, imagenFondo = '/images/placeholder-hero.webp' } = Astro.props;
+---
+
+<section id="inicio" class="hero" style={`background-image: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url(${imagenFondo})`}>
+  <div class="container hero__inner">
+    <h1>{site.nombre}</h1>
+    <p class="hero__tagline">{site.tagline}</p>
+    <div class="hero__cta">
+      <slot name="cta" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    text-align: center;
+    padding: 6rem 0;
+  }
+
+  .hero__inner {
+    max-width: 720px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: #fff;
+  }
+
+  .hero__tagline {
+    font-size: 1.15rem;
+    margin-bottom: 2rem;
+    opacity: 0.95;
+  }
+
+  .hero__cta {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+</style>

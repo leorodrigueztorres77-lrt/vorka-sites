@@ -1,0 +1,223 @@
+---
+// Capa 2 (restaurante) — menú de la Variante 1 ("El producto es la estrella").
+// Los platos marcados `destacado` (con foto) se muestran como tarjetas grandes
+// con badge de categoría y hover-lift; el resto del menú va debajo en formato
+// lista compacta. Misma data y MenuItemQuantity que las demás variantes de menú.
+import type { CategoriaMenu } from '@/data/types';
+import MenuItemQuantity from './MenuItemQuantity.astro';
+
+interface Props {
+  categorias: CategoriaMenu[];
+  phone: string;
+  negocioSlug: string;
+}
+
+const { categorias, phone, negocioSlug } = Astro.props;
+
+const destacados = categorias.flatMap((cat) =>
+  cat.platos.filter((p) => p.destacado && p.imagen).map((p) => ({ ...p, categoria: cat.categoria })),
+);
+---
+
+<section id="menu" class="section" aria-labelledby="menu-titulo">
+  <div class="container">
+    <h2 id="menu-titulo" class="section-title">Nuestro Menú</h2>
+
+    {destacados.length > 0 && (
+      <div class="menu-destacado-grid">
+        {destacados.map((plato) => (
+          <article class="menu-destacado-card reveal--scale">
+            <div class="menu-destacado-card__foto">
+              <img src={plato.imagen} alt={plato.nombre} loading="lazy" width="400" height="240" />
+              <span class="menu-destacado-card__badge">
+                {plato.categoria === 'Platos Fuertes' ? 'Plato estrella' : 'Más pedido'}
+              </span>
+            </div>
+            <div class="menu-destacado-card__cuerpo">
+              <p class="menu-destacado-card__nombre">{plato.nombre}</p>
+              {plato.descripcion && <p class="menu-destacado-card__descripcion">{plato.descripcion}</p>}
+              <div class="menu-destacado-card__fila">
+                <span class="menu-destacado-card__precio">${plato.precio.toFixed(2)}</span>
+                <MenuItemQuantity
+                  phone={phone}
+                  negocioSlug={negocioSlug}
+                  nombrePlato={plato.nombre}
+                  precio={plato.precio}
+                />
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    )}
+
+    <div class="menu-completo">
+      {categorias.map((cat) => (
+        <div class="menu-completo__categoria">
+          <h3>{cat.categoria}</h3>
+          <ul class="menu-completo__lista">
+            {cat.platos.map((plato) => (
+              <li class="menu-completo__plato reveal">
+                <div class="menu-completo__info">
+                  <p class="menu-completo__nombre">{plato.nombre}</p>
+                  {plato.descripcion && <p class="menu-completo__descripcion">{plato.descripcion}</p>}
+                </div>
+                <div class="menu-completo__accion">
+                  <span class="menu-completo__precio">${plato.precio.toFixed(2)}</span>
+                  <MenuItemQuantity
+                    phone={phone}
+                    negocioSlug={negocioSlug}
+                    nombrePlato={plato.nombre}
+                    precio={plato.precio}
+                  />
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .menu-destacado-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  @media (min-width: 700px) {
+    .menu-destacado-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .menu-destacado-card {
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--color-fondo, #fff);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 300ms ease, box-shadow 300ms ease;
+  }
+
+  .menu-destacado-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .menu-destacado-card__foto {
+    position: relative;
+    height: 240px;
+  }
+
+  .menu-destacado-card__foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .menu-destacado-card__badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: var(--color-primario);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.3rem 0.85rem;
+    border-radius: 100px;
+  }
+
+  .menu-destacado-card__cuerpo {
+    padding: 1.25rem;
+  }
+
+  .menu-destacado-card__nombre {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin: 0 0 0.35rem;
+  }
+
+  .menu-destacado-card__descripcion {
+    margin: 0 0 0.85rem;
+    font-size: 1rem;
+    opacity: 0.75;
+  }
+
+  .menu-destacado-card__fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .menu-destacado-card__precio {
+    font-weight: 700;
+    color: var(--color-primario);
+  }
+
+  .menu-completo__categoria {
+    margin-bottom: 2rem;
+  }
+
+  .menu-completo__categoria h3 {
+    color: var(--color-primario);
+    border-bottom: 2px solid var(--color-acento);
+    padding-bottom: 0.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .menu-completo__lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .menu-completo__plato {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--color-fondo-alterno);
+  }
+
+  .menu-completo__nombre {
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .menu-completo__descripcion {
+    margin: 0.2rem 0 0;
+    font-size: 1rem;
+    opacity: 0.7;
+  }
+
+  .menu-completo__accion {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .menu-completo__precio {
+    font-weight: 700;
+    color: var(--color-primario);
+  }
+
+  @media (max-width: 560px) {
+    .menu-completo__plato {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .menu-completo__accion {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+</style>

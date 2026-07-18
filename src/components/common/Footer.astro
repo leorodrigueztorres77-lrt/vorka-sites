@@ -1,0 +1,54 @@
+---
+// Capa 1 — footer genérico.
+import type { SiteConfig } from '@/data/types';
+
+interface Props {
+  site: SiteConfig;
+}
+
+const { site } = Astro.props;
+const anio = 2026;
+---
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <div>
+      <p class="footer__nombre">{site.nombre}</p>
+      <p>{site.direccion}, {site.ciudad}</p>
+      {site.email && <p>{site.email}</p>}
+    </div>
+    <p class="footer__legal">
+      &copy; {anio} {site.nombre}. Todos los derechos reservados.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--color-texto, #222);
+    color: #fff;
+    padding: 2.5rem 0 1.5rem;
+  }
+
+  .footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .footer__nombre {
+    font-family: var(--font-titulos);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .footer__legal {
+    opacity: 0.75;
+    font-size: 1rem;
+  }
+
+  .footer p {
+    margin: 0.15rem 0;
+  }
+</style>

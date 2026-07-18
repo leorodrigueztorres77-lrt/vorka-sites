@@ -1,0 +1,143 @@
+---
+// Capa 2 (restaurante) — barra de pedido consolidado. Junta la cantidad
+// elegida en cada MenuItemQuantity de la página y arma un solo mensaje de
+// WhatsApp con todos los platos, en vez de un envío por plato. Oculta por
+// defecto hasta que haya al menos un plato seleccionado. Una sola instancia
+// por página, colocada junto al componente de menú.
+interface Props {
+  phone: string;
+  negocioSlug: string;
+  nombreNegocio: string;
+}
+
+const { phone, negocioSlug, nombreNegocio } = Astro.props;
+---
+
+<div
+  id="cart-bar"
+  class="cart-bar"
+  data-phone={phone}
+  data-negocio-slug={negocioSlug}
+  data-nombre-negocio={nombreNegocio}
+  hidden
+>
+  <div class="container cart-bar__inner">
+    <p class="cart-bar__resumen">
+      <span data-cart-total-items>0</span> platos seleccionados,
+      <span data-cart-total-precio>$0.00</span>
+    </p>
+    <button type="button" class="btn cart-bar__enviar" data-cart-enviar>
+      Enviar pedido por WhatsApp
+    </button>
+  </div>
+</div>
+
+<script>
+  interface SeleccionItem {
+    cantidad: number;
+    precio: number;
+  }
+
+  const bar = document.getElementById('cart-bar');
+
+  if (bar) {
+    const phone = bar.dataset.phone ?? '';
+    const negocioSlug = bar.dataset.negocioSlug ?? '';
+    const totalItemsEl = bar.querySelector('[data-cart-total-items]');
+    const totalPrecioEl = bar.querySelector('[data-cart-total-precio]');
+    const enviarBtn = bar.querySelector('[data-cart-enviar]');
+
+    const seleccion = new Map<string, SeleccionItem>();
+
+    function actualizarResumen() {
+      let totalItems = 0;
+      let totalPrecio = 0;
+      seleccion.forEach(({ cantidad, precio }) => {
+        totalItems += cantidad;
+        totalPrecio += cantidad * precio;
+      });
+      if (totalItemsEl) totalItemsEl.textContent = String(totalItems);
+      if (totalPrecioEl) totalPrecioEl.textContent = `$${totalPrecio.toFixed(2)}`;
+      if (bar) bar.hidden = totalItems === 0;
+    }
+
+    document.querySelectorAll('[data-cart-item]').forEach((item) => {
+      const nombre = item.getAttribute('data-nombre') ?? '';
+      const precio = parseFloat(item.getAttribute('data-precio') ?? '0');
+      const cantidadEl = item.querySelector('[data-cart-cantidad]');
+      const minusBtn = item.querySelector<HTMLButtonElement>('[data-cart-minus]');
+      const plusBtn = item.querySelector('[data-cart-plus]');
+      if (!cantidadEl || !minusBtn || !plusBtn) return;
+
+      function setCantidad(nueva: number) {
+        const cantidad = Math.max(0, nueva);
+        if (cantidad === 0) {
+          seleccion.delete(nombre);
+        } else {
+          seleccion.set(nombre, { cantidad, precio });
+        }
+        if (cantidadEl) cantidadEl.textContent = String(cantidad);
+        if (minusBtn) minusBtn.disabled = cantidad === 0;
+        actualizarResumen();
+      }
+
+      minusBtn.addEventListener('click', () => {
+        setCantidad((seleccion.get(nombre)?.cantidad ?? 0) - 1);
+      });
+      plusBtn.addEventListener('click', () => {
+        setCantidad((seleccion.get(nombre)?.cantidad ?? 0) + 1);
+      });
+    });
+
+    enviarBtn?.addEventListener('click', () => {
+      const lineas: string[] = [];
+      let total = 0;
+      seleccion.forEach(({ cantidad, precio }, nombre) => {
+        lineas.push(`${cantidad}x ${nombre} ($${precio.toFixed(2)} c/u)`);
+        total += cantidad * precio;
+      });
+      if (lineas.length === 0) return;
+
+      // Mismo formato de tracking que buildWhatsAppLink en lib/whatsapp.ts,
+      // repetido aquí porque este bloque corre en el navegador, no en build:
+      // si cambia el esquema de tracking allá, actualizar también acá.
+      const mensaje = `Hola, quiero pedir:\n${lineas.join('\n')}\n\nTotal: $${total.toFixed(2)}`;
+      const cleanPhone = phone.replace(/[^\d]/g, '');
+      const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(mensaje)}&utm_source=web&negocio=${encodeURIComponent(negocioSlug)}`;
+      window.open(url, '_blank', 'noopener');
+    });
+  }
+</script>
+
+<style>
+  .cart-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    background: var(--color-primario);
+    color: #fff;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.18);
+    padding: 0.75rem 0 calc(0.75rem + env(safe-area-inset-bottom));
+  }
+
+  .cart-bar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .cart-bar__resumen {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .cart-bar__enviar {
+    background: #fff;
+    color: var(--color-primario);
+    white-space: nowrap;
+  }
+</style>

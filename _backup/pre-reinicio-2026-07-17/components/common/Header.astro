@@ -1,0 +1,89 @@
+---
+// Capa 1 — header genérico. El logo/nombre viene del negocio del cliente
+// (Capa 3); la estructura de navegación es la misma para todos los verticales.
+import WhatsAppButton from './WhatsAppButton.astro';
+import type { SiteConfig } from '@/data/types';
+
+interface Props {
+  site: SiteConfig;
+  navItems?: { label: string; href: string }[];
+}
+
+const {
+  site,
+  navItems = [
+    { label: 'Menú', href: '#menu' },
+    { label: 'Galería', href: '#galeria' },
+    { label: 'Ubicación', href: '#ubicacion' },
+    { label: 'Contacto', href: '#contacto' },
+  ],
+} = Astro.props;
+---
+
+<header class="header">
+  <div class="container header__inner">
+    <a class="header__marca" href="#inicio">{site.nombre}</a>
+    <nav class="header__nav" aria-label="Navegación principal">
+      <ul>
+        {navItems.map((item) => (
+          <li><a href={item.href}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <div class="header__cta">
+      <WhatsAppButton
+        phone={site.telefonoWhatsApp}
+        message={`Hola, me gustaría más información sobre ${site.nombre}`}
+        negocioSlug={site.negocioSlug}
+        label="WhatsApp"
+        variante="primario"
+      />
+    </div>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: var(--color-fondo, #fff);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.85rem;
+    padding-bottom: 0.85rem;
+  }
+
+  .header__marca {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: 1.25rem;
+    text-decoration: none;
+    color: var(--color-primario);
+  }
+
+  .header__nav ul {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .header__nav a {
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  @media (max-width: 720px) {
+    .header__nav {
+      display: none;
+    }
+  }
+</style>

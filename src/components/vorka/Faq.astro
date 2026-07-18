@@ -1,0 +1,91 @@
+---
+// Vorka — FAQ (acordeón nativo <details>/<summary>, sin JS extra). Respuestas
+// alineadas a los datos reales de CLAUDE.md (pricing vigente, proceso de
+// manejo de imágenes, y el mensaje seguro de Ordercash — nunca prometer una
+// integración que no existe todavía).
+const preguntas = [
+  {
+    pregunta: '¿Cuánto cuesta una web con Vorka?',
+    respuesta:
+      'Desde $350 (plan Básico) hasta $750+ (Premium), según el alcance. El mantenimiento mensual ($40–80) incluye cambios de contenido, reportes y soporte — no es solo hosting.',
+  },
+  {
+    pregunta: '¿Cuánto tiempo toma tener mi web lista?',
+    respuesta:
+      'Días, no meses — construimos sobre una base ya lista y solo personalizamos tu marca, fotos y contenido.',
+  },
+  {
+    pregunta: '¿Qué es Ordercash y aplica a mi negocio?',
+    respuesta:
+      'Es nuestro producto hermano: pedidos, cobro y facturación electrónica SRI por WhatsApp. Hoy aplica solo al vertical restaurante — tu web ya queda lista para el salto a Ordercash cuando esté disponible para tu negocio.',
+  },
+  {
+    pregunta: '¿Qué pasa si mi negocio no tiene fotos o logo?',
+    respuesta:
+      'No es un problema — mejoramos tus fotos reales con IA o usamos banco de fotos apropiado como paso temporal, y si no tienes identidad de marca, te ayudamos a crear una básica (colores y tipografía) antes de personalizar tu sitio.',
+  },
+];
+---
+
+<section class="faq section section--alterno" id="faq">
+  <div class="container">
+    <h2 class="section-title reveal">Preguntas frecuentes</h2>
+    <div class="faq__lista">
+      {preguntas.map((item) => (
+        <details class="faq__item reveal">
+          <summary class="faq__pregunta">{item.pregunta}</summary>
+          <p class="faq__respuesta">{item.respuesta}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq__lista {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .faq__item {
+    padding: 20px 24px;
+    border-radius: 12px;
+    background: var(--color-fondo);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .faq__pregunta {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: 1.0625rem;
+    color: var(--color-texto);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .faq__pregunta::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__pregunta::after {
+    content: '+';
+    float: right;
+    color: var(--color-primario);
+    font-weight: 700;
+  }
+
+  .faq__item[open] .faq__pregunta::after {
+    content: '−';
+  }
+
+  .faq__respuesta {
+    margin: 12px 0 0;
+    font-family: var(--font-texto);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-gris);
+  }
+</style>

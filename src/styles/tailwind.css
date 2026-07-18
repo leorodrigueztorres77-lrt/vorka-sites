@@ -1,0 +1,7 @@
+/* Capa 3 (El Fogón Ecuatoriano) — importado únicamente por
+   demo-el-fogon-ecuatoriano.astro. No importar en BaseLayout ni en ninguna
+   página compartida: Preflight de Tailwind resetea encabezados/márgenes y
+   pisaría el sistema base de global.css en las páginas que no lo esperan. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

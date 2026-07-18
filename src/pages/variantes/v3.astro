@@ -1,0 +1,85 @@
+---
+// Restaurante — Variante 3 "Qitchen" (Capa 2).
+// Argumento de conversión: "La atmósfera y la experiencia" — para
+// restaurantes que venden ocasión, no solo plato. Hero de video/foto a
+// pantalla completa minimalista (sin señal social visible ahí), menú
+// tipográfico sin fotos por ítem, una sola cita de reseña bien elegida.
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/common/Header.astro';
+import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
+import Testimonials from '@/components/common/Testimonials.astro';
+import LocationMap from '@/components/common/LocationMap.astro';
+import ContactForm from '@/components/common/ContactForm.astro';
+import Footer from '@/components/common/Footer.astro';
+import FloatingWhatsApp from '@/components/common/FloatingWhatsApp.astro';
+
+import HeroVideo from '@/components/restaurant/HeroVideo.astro';
+import Historia from '@/components/restaurant/Historia.astro';
+import MenuTipografico from '@/components/restaurant/MenuTipografico.astro';
+import CartBar from '@/components/restaurant/CartBar.astro';
+
+import { siteConfig } from '@/data/site.config';
+import { menuSample, galeriaSample, horariosSample, testimoniosSample, historiaSample } from '@/data/restaurant.sample';
+
+const platoEstrella = menuSample.flatMap((c) => c.platos).find((p) => p.destacado && p.imagen);
+---
+
+<BaseLayout site={siteConfig}>
+  <Header
+    site={siteConfig}
+    navItems={[
+      { label: 'Menú', href: '#menu' },
+      { label: 'Nuestra historia', href: '#historia' },
+      { label: 'Contacto', href: '#contacto' },
+    ]}
+  />
+
+  <HeroVideo imagenFondo="/images/placeholder-hero.webp" titular={siteConfig.nombre}>
+    <Fragment slot="cta">
+      <WhatsAppButton
+        phone={siteConfig.telefonoWhatsApp}
+        message={`Hola, quiero reservar mesa en ${siteConfig.nombre}`}
+        negocioSlug={siteConfig.negocioSlug}
+        label="Reservar mesa por WhatsApp"
+        variante="acento"
+      />
+    </Fragment>
+  </HeroVideo>
+
+  <Historia
+    historia={historiaSample}
+    nombreNegocio={siteConfig.nombre}
+    bloqueSolido
+    fotos={galeriaSample.slice(0, 2)}
+    revealFoto="cortina"
+  />
+
+  <MenuTipografico
+    categorias={menuSample}
+    fotoPlatoEstrella={platoEstrella?.imagen}
+    nombrePlatoEstrella={platoEstrella?.nombre}
+    phone={siteConfig.telefonoWhatsApp}
+    negocioSlug={siteConfig.negocioSlug}
+  />
+
+  <Testimonials testimonios={testimoniosSample.slice(0, 1)} />
+
+  <LocationMap site={siteConfig} horarios={horariosSample} />
+
+  <ContactForm site={siteConfig} productoLabel="Plato de interés" />
+
+  <Footer site={siteConfig} />
+
+  <CartBar
+    phone={siteConfig.telefonoWhatsApp}
+    negocioSlug={siteConfig.negocioSlug}
+    nombreNegocio={siteConfig.nombre}
+  />
+
+  <FloatingWhatsApp
+    phone={siteConfig.telefonoWhatsApp}
+    message={`Hola, quiero reservar mesa en ${siteConfig.nombre}`}
+    negocioSlug={siteConfig.negocioSlug}
+    bottomOffset="88px"
+  />
+</BaseLayout>

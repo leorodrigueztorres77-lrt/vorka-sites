@@ -1,0 +1,140 @@
+---
+// Capa 1 — header genérico. El logo/nombre viene del negocio del cliente
+// (Capa 3); la estructura de navegación es la misma para todos los verticales.
+//
+// Transición transparente → blur al hacer scroll (estándar Capa 1, skill
+// vertical-web-builder): sobre un hero de foto/video a pantalla completa el
+// header nace transparente con texto claro, y al pasar los 40px de scroll
+// gana fondo semi-opaco + backdrop-filter blur(12px). Desactivar `transparente`
+// solo cuando el hero de la variante tiene fondo claro propio y NO es una foto
+// a pantalla completa (ej. HeroSplit en su modo "dividido" con fondoCrema) —
+// ahí un header transparente perdería contraste en vez de ganarlo. V2 usa
+// HeroSplit estilo="superpuesto" (foto a pantalla completa), así que mantiene
+// `transparente` en su valor por defecto.
+import WhatsAppButton from './WhatsAppButton.astro';
+import type { SiteConfig } from '@/data/types';
+
+interface Props {
+  site: SiteConfig;
+  navItems?: { label: string; href: string }[];
+  transparente?: boolean;
+}
+
+const {
+  site,
+  navItems = [
+    { label: 'Menú', href: '#menu' },
+    { label: 'Galería', href: '#galeria' },
+    { label: 'Ubicación', href: '#ubicacion' },
+    { label: 'Contacto', href: '#contacto' },
+  ],
+  transparente = true,
+} = Astro.props;
+---
+
+<header class:list={['header', { 'header--transparente': transparente }]} data-header>
+  <div class="container header__inner">
+    <a class="header__marca" href="#inicio">{site.nombre}</a>
+    <nav class="header__nav" aria-label="Navegación principal">
+      <ul>
+        {navItems.map((item) => (
+          <li><a href={item.href}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <div class="header__cta">
+      <WhatsAppButton
+        phone={site.telefonoWhatsApp}
+        message={`Hola, me gustaría más información sobre ${site.nombre}`}
+        negocioSlug={site.negocioSlug}
+        label="WhatsApp"
+        variante="primario"
+      />
+    </div>
+  </div>
+</header>
+
+<script>
+  // Un solo listener de scroll compartido por todas las instancias .header
+  // de la página (normalmente hay una sola por sitio).
+  const headers = document.querySelectorAll('[data-header]');
+  if (headers.length) {
+    const alActualizar = () => {
+      const conScroll = window.scrollY > 40;
+      headers.forEach((header) => header.classList.toggle('is-scrolled', conScroll));
+    };
+    alActualizar();
+    window.addEventListener('scroll', alActualizar, { passive: true });
+  }
+</script>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: var(--color-fondo, #fff);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
+    transition: background-color 300ms ease, box-shadow 300ms ease, backdrop-filter 300ms ease;
+  }
+
+  .header--transparente {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .header--transparente .header__marca,
+  .header--transparente .header__nav a {
+    color: #fff;
+  }
+
+  .header--transparente.is-scrolled {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
+  }
+
+  .header--transparente.is-scrolled .header__marca,
+  .header--transparente.is-scrolled .header__nav a {
+    color: var(--color-primario);
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.85rem;
+    padding-bottom: 0.85rem;
+  }
+
+  .header__marca {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: 1.25rem;
+    text-decoration: none;
+    color: var(--color-primario);
+    transition: color 300ms ease;
+  }
+
+  .header__nav ul {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .header__nav a {
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 300ms ease;
+  }
+
+  @media (max-width: 720px) {
+    .header__nav {
+      display: none;
+    }
+  }
+</style>

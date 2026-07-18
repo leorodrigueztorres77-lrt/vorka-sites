@@ -1,0 +1,932 @@
+---
+// Capa 3 — El Fogón Ecuatoriano (Conocoto, Quito). Entrega de demo, no
+// template genérico: NO editar este archivo para otro cliente, copiarlo.
+//
+// Segunda reconstrucción completa pedida por Leo (2026-07), referencia
+// visual: template "Umami" de Framer — hero con titular partido en 3 líneas
+// y fotos intercaladas, header transparente→blur al hacer scroll, galería en
+// banda de auto-scroll infinito, testimonios en carrusel oscuro. Reemplaza
+// por completo la reconstrucción anterior ("Savaro").
+//
+// Sigue siendo la única página que importa Tailwind (@/styles/tailwind.css)
+// — v1-v5 e index no se tocan.
+//
+// CARRITO CONSOLIDADO: el brief describe un botón "Pedir"/"Pedir este
+// plato →" individual por plato. Se mantiene el patrón de carrito
+// consolidado (stepper +/- y una sola barra flotante de envío) en su lugar,
+// por regla de producto ya confirmada por Leo — ver memoria
+// feedback-whatsapp-cart-ux: nunca un WhatsApp por plato. El plato "Hornado"
+// (y otros) aparece tanto en "Platos destacados" como en "Menú completo";
+// ambos controles están sincronizados por nombre de plato (ver script al
+// final) para que sumar en uno actualice el otro y el total de la barra.
+//
+// GAPS CONOCIDOS, NO RESUELTOS — flags para Leo antes de publicar:
+// 1) TELEFONO_PLACEHOLDER_PENDIENTE en site.el-fogon-ecuatoriano.ts —
+//    número de WhatsApp real todavía no proporcionado.
+// 2) "⭐ 4.8 en Google" y "200+ pedidos este mes" (hero) y las 3 stats de
+//    "Sobre nosotros" (6+ años / 200+ familias) son cifras SIN VERIFICAR —
+//    el brief las pidió explícitamente, pero no existe todavía una fuente
+//    real (ficha de Google Business, conteo real de pedidos). Publicar una
+//    calificación o cifra de negocio falsa es un riesgo real de publicidad
+//    engañosa, no solo un placeholder cosmético como una foto de banco —
+//    CONFIRMAR LA CIFRA REAL CON LEO/CLIENTE ANTES DE PUBLICAR, o quitar
+//    esos elementos si no hay forma de verificarlos a tiempo.
+// 3) No existe una foto verificada de "hornado" ni "llapingachos"
+//    específicamente (ver notas en restaurant.el-fogon-ecuatoriano.ts). Las
+//    fotos intercaladas del hero y las fotos de "Platos destacados" para
+//    Hornado/Fritada/Seco de pollo/Llapingachos/Choclo reutilizan el banco
+//    de fotos genéricas ya verificadas como comida ecuatoriana real (nunca
+//    presentadas en el alt como si fueran ese plato específico) — solo
+//    "Empanadas de morocho" tiene una foto realmente correspondiente.
+//    Reemplazar por fotos reales del cliente en cuanto estén disponibles.
+// 4) Testimonios: nombres y citas de placeholder creíble (autorizado
+//    explícitamente por el brief), NO reseñas reales de Google todavía —
+//    ver comentario en restaurant.el-fogon-ecuatoriano.ts.
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import '@/styles/tailwind.css';
+import { buildWhatsAppLink } from '@/lib/whatsapp';
+import { siteConfigElFogon } from '@/data/site.el-fogon-ecuatoriano';
+import {
+  menuElFogon,
+  horariosElFogon,
+  historiaElFogon,
+  galeriaElFogon,
+  heroFotoElFogon,
+  testimoniosElFogon,
+} from '@/data/restaurant.el-fogon-ecuatoriano';
+import type { PlatoMenu } from '@/data/types';
+
+const site = siteConfigElFogon;
+
+const mensajePedido = 'Hola, quiero hacer un pedido';
+const whatsappHref = buildWhatsAppLink({
+  phone: site.telefonoWhatsApp,
+  message: mensajePedido,
+  negocioSlug: site.negocioSlug,
+});
+
+const direccionMapsHref = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(site.direccion)}`;
+
+function formatearTelefono(tel: string): string {
+  const limpio = tel.replace(/\D/g, '');
+  return `+${limpio.slice(0, 3)} ${limpio.slice(3, 6)} ${limpio.slice(6, 9)} ${limpio.slice(9)}`;
+}
+const telefonoFormateado = formatearTelefono(site.telefonoWhatsApp);
+
+function iniciales(nombre: string): string {
+  return nombre
+    .split(' ')
+    .map((p) => p[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+}
+
+const todosPlatos: PlatoMenu[] = menuElFogon.flatMap((c) => c.platos);
+function buscarPlato(nombre: string): PlatoMenu {
+  const plato = todosPlatos.find((p) => p.nombre === nombre);
+  if (!plato) throw new Error(`Plato no encontrado en menuElFogon: ${nombre}`);
+  return plato;
+}
+
+// Fotos de "Platos destacados": solo Empanadas de morocho tiene foto
+// realmente correspondiente (ver gap #3 arriba) — el resto reutiliza el
+// banco genérico ya verificado como comida ecuatoriana real, sin afirmar
+// en el alt que es ese plato específico.
+const destacados = [
+  {
+    plato: buscarPlato('Hornado'),
+    imagen: heroFotoElFogon,
+    alt: 'Plato de comida ecuatoriana tradicional de El Fogón Ecuatoriano (foto de referencia)',
+    badge: 'Plato estrella',
+  },
+  {
+    plato: buscarPlato('Llapingachos completos'),
+    imagen: galeriaElFogon[0].src,
+    alt: galeriaElFogon[0].alt,
+    badge: 'Más pedido',
+  },
+  {
+    plato: buscarPlato('Seco de pollo'),
+    imagen: galeriaElFogon[1].src,
+    alt: galeriaElFogon[1].alt,
+    badge: 'Más pedido',
+  },
+  {
+    plato: buscarPlato('Fritada'),
+    imagen: galeriaElFogon[3].src,
+    alt: galeriaElFogon[3].alt,
+    badge: 'Más pedido',
+  },
+  {
+    plato: buscarPlato('Empanadas de morocho'),
+    imagen: galeriaElFogon[2].src,
+    alt: galeriaElFogon[2].alt,
+    badge: 'Más pedido',
+  },
+  {
+    plato: buscarPlato('Choclo con queso'),
+    imagen: galeriaElFogon[0].src,
+    alt: galeriaElFogon[0].alt,
+    badge: 'Más pedido',
+  },
+];
+
+const filtroGaleria = 'saturate(1.15) brightness(0.95) contrast(1.03) sepia(0.06)';
+const fotosMarquee = [...galeriaElFogon, ...galeriaElFogon];
+---
+
+<BaseLayout site={site} ogImage={heroFotoElFogon}>
+  <!-- Header -->
+  <header id="site-header" class="fixed top-0 left-0 right-0 z-50">
+    <div class="mx-auto max-w-6xl px-6 flex items-center justify-between h-20">
+      <a href="#inicio" class="logo-text font-sans text-[13px] font-semibold uppercase tracking-[0.15em]">
+        {site.nombre}
+      </a>
+      <nav class="hidden md:flex items-center gap-10" aria-label="Navegación principal">
+        <a href="#menu" class="nav-link font-sans text-[13px] uppercase tracking-[0.1em]">Menú</a>
+        <a href="#galeria" class="nav-link font-sans text-[13px] uppercase tracking-[0.1em]">Galería</a>
+        <a href="#visitanos" class="nav-link font-sans text-[13px] uppercase tracking-[0.1em]">Visítanos</a>
+      </nav>
+      <a
+        href={whatsappHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center justify-center min-h-11 px-6 rounded-full bg-[#9B3510] text-white font-sans text-sm font-semibold hover:bg-[#7c2a0c] transition-colors"
+      >
+        Pedir por WhatsApp
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section id="inicio" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <img
+      src={heroFotoElFogon}
+      alt="Ambiente de El Fogón Ecuatoriano"
+      width="1600"
+      height="1000"
+      class="absolute inset-0 w-full h-full object-cover"
+    />
+    <div class="absolute inset-0 bg-black/45"></div>
+
+    <div class="relative z-10 mx-auto max-w-5xl px-6 py-32 flex flex-col items-center text-center gap-8">
+      <span
+        class="fogon-reveal inline-flex items-center border border-white/70 text-white font-sans text-[11px] uppercase tracking-[0.15em] px-4 py-1.5 rounded-full"
+        style="transition-delay:0ms"
+      >
+        Conocoto, Quito · Desde 2018
+      </span>
+
+      <h1 class="fogon-reveal uppercase flex flex-col items-center gap-2 md:gap-4 font-display italic font-bold text-white leading-[0.95]" style="transition-delay:100ms">
+        <span class="text-[clamp(2.5rem,9vw,8.75rem)]">El sabor</span>
+        <span class="flex items-center gap-4 md:gap-6">
+          <img
+            src={galeriaElFogon[0].src}
+            alt={galeriaElFogon[0].alt}
+            width="200"
+            height="140"
+            loading="lazy"
+            class="w-[90px] h-[63px] md:w-[200px] md:h-[140px] object-cover rounded-2xl not-italic"
+          />
+          <span class="text-[clamp(2.5rem,9vw,8.75rem)]">que</span>
+          <img
+            src={galeriaElFogon[2].src}
+            alt={galeriaElFogon[2].alt}
+            width="200"
+            height="140"
+            loading="lazy"
+            class="w-[90px] h-[63px] md:w-[200px] md:h-[140px] object-cover rounded-2xl not-italic"
+          />
+        </span>
+        <span class="text-[clamp(2.5rem,9vw,8.75rem)]">recuerdas</span>
+      </h1>
+
+      <p class="fogon-reveal font-sans text-base text-white/80 max-w-md" style="transition-delay:200ms">
+        Comida ecuatoriana tradicional · Pedidos por WhatsApp
+      </p>
+
+      <div class="fogon-reveal flex flex-wrap items-center justify-center gap-3" style="transition-delay:300ms">
+        <span class="inline-flex items-center bg-white/15 text-white font-sans text-xs px-4 py-1.5 rounded-full">
+          ⭐ 4.8 en Google
+        </span>
+        <span class="inline-flex items-center bg-white/15 text-white font-sans text-xs px-4 py-1.5 rounded-full">
+          200+ pedidos este mes
+        </span>
+      </div>
+
+      <a
+        href={whatsappHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="fogon-reveal inline-flex items-center justify-center min-h-11 px-10 py-4 rounded-full bg-[#C1440E] text-white font-sans text-[15px] font-semibold hover:bg-[#9B3510] transition-colors"
+        style="transition-delay:400ms"
+      >
+        Pedir por WhatsApp
+      </a>
+    </div>
+  </section>
+
+  <!-- Sobre nosotros -->
+  <section id="nosotros" class="bg-[#FAF7F2] py-24">
+    <div class="mx-auto max-w-6xl px-6 grid md:grid-cols-2 gap-14 items-center">
+      <div class="fogon-reveal-scale">
+        <img
+          src={galeriaElFogon[1].src}
+          alt={galeriaElFogon[1].alt}
+          width="700"
+          height="500"
+          loading="lazy"
+          class="w-full h-[500px] object-cover rounded-2xl"
+        />
+      </div>
+      <div>
+        <span class="fogon-reveal badge-eyebrow inline-block" style="transition-delay:0ms">Nuestra historia</span>
+        <h2
+          class="fogon-reveal font-display font-bold text-[#1A1A1A] text-[clamp(2.5rem,5vw,3.5rem)] mt-4"
+          style="transition-delay:100ms"
+        >
+          Cocinamos como en casa desde el primer día
+        </h2>
+        <p class="fogon-reveal font-sans text-base leading-[1.7] text-[#1A1A1A] mt-6" style="transition-delay:200ms">
+          {historiaElFogon.texto}
+        </p>
+        <div class="fogon-reveal flex gap-10 mt-10" style="transition-delay:300ms">
+          <div>
+            <p class="stat-num">6+ años</p>
+            <p class="stat-label">Trayectoria</p>
+          </div>
+          <div>
+            <p class="stat-num">200+</p>
+            <p class="stat-label">Familias</p>
+          </div>
+          <div>
+            <p class="stat-num">Conocoto</p>
+            <p class="stat-label">Barrio</p>
+          </div>
+        </div>
+        <a
+          href="#menu"
+          class="fogon-reveal inline-block mt-8 font-sans text-sm font-semibold text-[#C1440E] hover:underline"
+          style="transition-delay:400ms"
+        >
+          Conocer más →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Platos destacados -->
+  <section id="destacados" class="bg-[#FAF7F2] py-24">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mb-16 text-center">
+        <span class="fogon-reveal badge-eyebrow inline-block" style="transition-delay:0ms">Lo que más piden</span>
+        <h2
+          class="fogon-reveal font-display font-bold text-[#1A1A1A] text-[clamp(2.5rem,6vw,4rem)] mt-4"
+          style="transition-delay:100ms"
+        >
+          Los Favoritos del Fogón
+        </h2>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8">
+        {destacados.map((d, i) => (
+          <div
+            class="fogon-reveal-scale card-hover bg-white rounded-2xl overflow-hidden border-[0.5px] border-[#E8E4DF]"
+            style={`transition-delay:${i * 100}ms`}
+            data-cart-item
+            data-nombre={d.plato.nombre}
+            data-precio={d.plato.precio}
+          >
+            <div class="relative h-[240px] w-full overflow-hidden">
+              <img src={d.imagen} alt={d.alt} width="480" height="240" loading="lazy" class="w-full h-full object-cover" />
+              <span class="absolute top-3 left-3 bg-[#C1440E] text-white font-sans text-[10px] uppercase px-[10px] py-1 rounded-full">
+                {d.badge}
+              </span>
+            </div>
+            <div class="p-6">
+              <p class="font-sans text-base font-bold text-[#1A1A1A]">{d.plato.nombre}</p>
+              {d.plato.descripcion && <p class="font-sans text-sm text-[#6B6B6B] mt-1">{d.plato.descripcion}</p>}
+              <p class="font-sans text-base font-semibold text-[#C1440E] mt-3">${d.plato.precio.toFixed(2)}</p>
+              <div class="mt-4 flex items-center justify-between border-t border-[#F0EDE8] pt-4">
+                <span class="font-sans text-sm text-[#6B6B6B]">Agregar al pedido</span>
+                <div class="stepper-pill">
+                  <button type="button" class="stepper-btn" data-cart-minus aria-label={`Quitar ${d.plato.nombre} del pedido`} disabled>
+                    −
+                  </button>
+                  <span class="w-5 text-center font-sans font-semibold" data-cart-cantidad aria-live="polite">0</span>
+                  <button
+                    type="button"
+                    class="stepper-btn stepper-btn--add"
+                    data-cart-plus
+                    aria-label={`Agregar ${d.plato.nombre} al pedido`}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonios -->
+  <section id="testimonios" class="bg-[#1A1A1A] py-24">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mb-16 text-center">
+        <span class="fogon-reveal badge-eyebrow inline-block" style="transition-delay:0ms; color:#C1440E">Lo que dicen</span>
+        <h2
+          class="fogon-reveal font-display font-bold text-[#FAF7F2] text-[clamp(2.5rem,6vw,4rem)] mt-4"
+          style="transition-delay:100ms"
+        >
+          Cientos de familias ya nos conocen
+        </h2>
+      </div>
+
+      <div class="relative">
+        <div id="testimonios-track" class="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 no-scrollbar">
+          {testimoniosElFogon.map((t, i) => (
+            <div
+              class="fogon-reveal-scale snap-center shrink-0 w-[85%] sm:w-[360px] bg-[#2A2A2A] rounded-2xl p-8"
+              style={`transition-delay:${i * 100}ms`}
+            >
+              <div class="flex items-center gap-3 mb-4">
+                <span class="avatar-circle">{iniciales(t.nombre)}</span>
+                <div>
+                  <p class="font-sans text-sm font-semibold text-[#FAF7F2]">{t.nombre}</p>
+                  <p class="font-sans text-xs text-[#6B6B6B]">Reseña de Google</p>
+                </div>
+              </div>
+              <p class="font-sans text-base text-[#FAF7F2] leading-[1.6]">"{t.texto}"</p>
+            </div>
+          ))}
+        </div>
+        <div class="flex justify-center gap-4 mt-8">
+          <button type="button" id="testimonios-prev" aria-label="Testimonio anterior" class="carousel-arrow">←</button>
+          <button type="button" id="testimonios-next" aria-label="Siguiente testimonio" class="carousel-arrow">→</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Galería -->
+  <section id="galeria" class="bg-[#FAF7F2] py-24 overflow-hidden">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mb-16 text-center">
+        <span class="fogon-reveal badge-eyebrow inline-block" style="transition-delay:0ms">El Fogón en fotos</span>
+        <h2
+          class="fogon-reveal font-display font-bold text-[#1A1A1A] text-[clamp(2.25rem,5vw,3.5rem)] mt-4"
+          style="transition-delay:100ms"
+        >
+          Así se ve nuestra cocina
+        </h2>
+      </div>
+    </div>
+    <div class="marquee">
+      <div class="marquee-track">
+        {fotosMarquee.map((foto) => (
+          <img
+            src={foto.src}
+            alt={foto.alt}
+            width="320"
+            height="240"
+            loading="lazy"
+            style={`filter:${filtroGaleria}`}
+            class="marquee-img"
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Menú completo -->
+  <section id="menu" class="bg-[#FAF7F2] py-24">
+    <div class="mx-auto max-w-4xl px-6">
+      <div class="mb-16 text-center">
+        <span class="fogon-reveal badge-eyebrow inline-block" style="transition-delay:0ms">Lo que cocinamos</span>
+        <h2
+          class="fogon-reveal font-display font-bold text-[#1A1A1A] text-[clamp(2.5rem,6vw,4rem)] mt-4"
+          style="transition-delay:100ms"
+        >
+          Nuestro Menú
+        </h2>
+      </div>
+      <div class="flex flex-col gap-14">
+        {menuElFogon.map((cat) => (
+          <div class="fogon-reveal">
+            <h3 class="font-sans text-[11px] uppercase tracking-[0.15em] text-[#C1440E] font-semibold pb-4 border-b border-[#E8E4DF]">
+              {cat.categoria}
+            </h3>
+            <div class="flex flex-col">
+              {cat.platos.map((plato) => (
+                <div
+                  class="flex items-start justify-between gap-4 py-5 border-b border-[#F0EDE8]"
+                  data-cart-item
+                  data-nombre={plato.nombre}
+                  data-precio={plato.precio}
+                >
+                  <div>
+                    <p class="font-sans text-base font-bold text-[#1A1A1A]">{plato.nombre}</p>
+                    {plato.descripcion && <p class="font-sans text-base text-[#6B6B6B] mt-1">{plato.descripcion}</p>}
+                  </div>
+                  <div class="flex items-center gap-4 shrink-0">
+                    <span class="font-sans text-[15px] font-semibold text-[#C1440E]">${plato.precio.toFixed(2)}</span>
+                    <div class="stepper-pill">
+                      <button type="button" class="stepper-btn" data-cart-minus aria-label={`Quitar ${plato.nombre} del pedido`} disabled>
+                        −
+                      </button>
+                      <span class="w-5 text-center font-sans font-semibold" data-cart-cantidad aria-live="polite">0</span>
+                      <button
+                        type="button"
+                        class="stepper-btn stepper-btn--add"
+                        data-cart-plus
+                        aria-label={`Agregar ${plato.nombre} al pedido`}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Visítanos -->
+  <section id="visitanos" class="bg-[#1A1A1A] py-24">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mb-16 text-center md:text-left">
+        <span class="fogon-reveal badge-eyebrow inline-block" style="transition-delay:0ms; color:#C1440E">Encuéntranos</span>
+        <h2
+          class="fogon-reveal font-display font-bold text-[#FAF7F2] text-[clamp(2.5rem,6vw,4rem)] mt-4"
+          style="transition-delay:100ms"
+        >
+          Visítanos en Conocoto
+        </h2>
+      </div>
+      <div class="grid md:grid-cols-2 gap-10 items-stretch">
+        <div class="fogon-reveal" style="transition-delay:200ms">
+          <h3 class="font-display font-bold text-2xl text-[#FAF7F2] mb-4">Horarios</h3>
+          <ul class="flex flex-col gap-2 font-sans text-base">
+            {horariosElFogon.map((h) => (
+              <li class="flex justify-between gap-4 border-b border-[#2A2A2A] py-2">
+                <span class="text-[#9B9B9B]">{h.dia}</span>
+                <span class="font-semibold text-[#FAF7F2]">{h.horario}</span>
+              </li>
+            ))}
+          </ul>
+          <h3 class="font-display font-bold text-2xl text-[#FAF7F2] mt-8 mb-4">Dirección</h3>
+          <p class="font-sans text-base text-[#9B9B9B]">{site.direccion}</p>
+          <a
+            href={direccionMapsHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mt-6 inline-flex items-center justify-center min-h-11 px-6 rounded-full bg-[#9B3510] text-white font-sans text-sm font-semibold hover:bg-[#7c2a0c] transition-colors"
+          >
+            Cómo llegar
+          </a>
+        </div>
+        <div class="fogon-reveal min-h-[400px] rounded-2xl overflow-hidden" style="transition-delay:300ms">
+          <iframe
+            src={site.mapaEmbedUrl}
+            width="100%"
+            height="100%"
+            style="border:0; min-height:400px;"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title={`Mapa de ubicación de ${site.nombre}`}
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-[#1A1A1A] py-16">
+    <div class="mx-auto max-w-6xl px-6">
+      <h2 class="font-display italic font-bold text-[#FAF7F2] text-[clamp(2rem,6vw,3rem)] text-center">
+        El Fogón Ecuatoriano
+      </h2>
+      <div class="border-t border-[#2A2A2A] mt-10 pt-10 grid md:grid-cols-3 gap-10 text-center md:text-left">
+        <div>
+          <h3 class="footer-heading">Páginas</h3>
+          <ul class="flex flex-col gap-2 font-sans text-base text-[#9B9B9B]">
+            <li><a href="#menu" class="hover:text-[#FAF7F2] transition-colors">Menú</a></li>
+            <li><a href="#galeria" class="hover:text-[#FAF7F2] transition-colors">Galería</a></li>
+            <li><a href="#visitanos" class="hover:text-[#FAF7F2] transition-colors">Visítanos</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="footer-heading">Horarios</h3>
+          <ul class="flex flex-col gap-1 font-sans text-base text-[#9B9B9B]">
+            {horariosElFogon.map((h) => (
+              <li>{h.dia}: {h.horario}</li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h3 class="footer-heading">Contacto</h3>
+          <p class="font-sans text-base text-[#9B9B9B]">{site.direccion}</p>
+          <a href={whatsappHref} target="_blank" rel="noopener noreferrer" class="mt-2 inline-block font-sans text-base text-[#FAF7F2] hover:underline">
+            WhatsApp: {telefonoFormateado}
+          </a>
+        </div>
+      </div>
+      <p class="mt-12 text-center font-sans text-xs text-[#4A4A4A]">
+        © {new Date().getFullYear()} {site.nombre}. Todos los derechos reservados.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Barra de pedido consolidado — carrito, no envío por plato (ver
+       memoria feedback-whatsapp-cart-ux). Oculta hasta que haya >=1 plato. -->
+  <div
+    id="cart-bar"
+    class="fixed left-0 right-0 bottom-0 z-40 bg-[#9B3510] text-white shadow-[0_-4px_16px_rgba(0,0,0,0.18)]"
+    data-phone={site.telefonoWhatsApp}
+    data-negocio-slug={site.negocioSlug}
+    hidden
+  >
+    <div class="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between gap-4 flex-wrap">
+      <p class="font-sans text-base font-semibold">
+        <span data-cart-total-items>0</span> platos seleccionados, <span data-cart-total-precio>$0.00</span>
+      </p>
+      <button
+        type="button"
+        data-cart-enviar
+        class="inline-flex items-center justify-center min-h-11 px-6 rounded-full bg-white text-[#9B3510] font-sans text-base font-semibold whitespace-nowrap"
+      >
+        Enviar pedido por WhatsApp
+      </button>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Header: transparente sobre el hero -> fondo con blur al hacer scroll. */
+  #site-header {
+    background: transparent;
+    transition: background-color 300ms ease, backdrop-filter 300ms ease;
+  }
+
+  #site-header.is-scrolled {
+    background: rgba(250, 247, 242, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  #site-header .logo-text,
+  #site-header .nav-link {
+    color: #fff;
+    transition: color 300ms ease;
+  }
+
+  #site-header.is-scrolled .logo-text,
+  #site-header.is-scrolled .nav-link {
+    color: #1a1a1a;
+  }
+
+  #site-header.is-scrolled .nav-link:hover {
+    color: #c1440e;
+  }
+
+  /* Etiqueta/badge compartida (Inter 11px uppercase, letter-spacing 0.15em). */
+  .badge-eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #c1440e;
+  }
+
+  .stat-num {
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+
+  .stat-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #6b6b6b;
+    margin-top: 4px;
+  }
+
+  .card-hover {
+    transition: transform 300ms ease, box-shadow 300ms ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Control de cantidad estilo "botón Pedir" del brief (borde 1.5px
+     terracota oscuro, fondo transparente, hover invierte) — carrito
+     consolidado en vez de un link instantáneo por plato. */
+  .stepper-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: 1.5px solid #9b3510;
+    border-radius: 999px;
+    padding: 2px;
+  }
+
+  .stepper-btn {
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 999px;
+    border: none;
+    background: transparent;
+    color: #9b3510;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 200ms ease, color 200ms ease;
+  }
+
+  .stepper-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .stepper-btn--add:hover:not(:disabled) {
+    background: #9b3510;
+    color: #fff;
+  }
+
+  .stepper-btn:not(.stepper-btn--add):hover:not(:disabled) {
+    background: #f1ded4;
+  }
+
+  .avatar-circle {
+    width: 56px;
+    height: 56px;
+    border-radius: 999px;
+    background: #9b3510;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .carousel-arrow {
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: transparent;
+    color: #faf7f2;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 200ms ease;
+  }
+
+  .carousel-arrow:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .footer-heading {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #6b6b6b;
+    margin-bottom: 16px;
+  }
+
+  /* Galería: banda de auto-scroll infinita, pura CSS, pausa en hover. */
+  .marquee {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .marquee-track {
+    display: flex;
+    gap: 16px;
+    width: max-content;
+    animation: marquee-scroll 30s linear infinite;
+  }
+
+  .marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
+
+  .marquee-img {
+    width: 320px;
+    height: 240px;
+    object-fit: cover;
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+
+  @keyframes marquee-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Reveal on scroll — timing/threshold propios de esta página (distintos
+     de la utilidad .reveal compartida de global.css), gateados por la
+     misma clase .js-reveal que ya agrega BaseLayout.astro. */
+  .js-reveal .fogon-reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 700ms cubic-bezier(0.25, 0.1, 0.25, 1), transform 700ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .js-reveal .fogon-reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  .js-reveal .fogon-reveal-scale {
+    opacity: 0;
+    transform: scale(0.96);
+    transition: opacity 700ms cubic-bezier(0.25, 0.1, 0.25, 1), transform 700ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .js-reveal .fogon-reveal-scale.is-visible {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .js-reveal .fogon-reveal,
+    .js-reveal .fogon-reveal-scale {
+      transition: none;
+      opacity: 1;
+      transform: none;
+    }
+    .marquee-track {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  // Reveal on scroll — threshold 0.12, triggerOnce (unobserve tras disparar).
+  const revealables = document.querySelectorAll('.fogon-reveal, .fogon-reveal-scale');
+  if ('IntersectionObserver' in window && revealables.length) {
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            revealObserver.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.12 },
+    );
+    revealables.forEach((el) => revealObserver.observe(el));
+  } else {
+    revealables.forEach((el) => el.classList.add('is-visible'));
+  }
+
+  // Header: transparente -> fondo con blur al hacer scroll.
+  const header = document.getElementById('site-header');
+  if (header) {
+    const onScroll = () => {
+      if (window.scrollY > 40) header.classList.add('is-scrolled');
+      else header.classList.remove('is-scrolled');
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  // Carrusel de testimonios: flechas izquierda/derecha sobre un track con
+  // scroll-snap (sin dependencias externas).
+  const testimoniosTrack = document.getElementById('testimonios-track');
+  const testimoniosPrev = document.getElementById('testimonios-prev');
+  const testimoniosNext = document.getElementById('testimonios-next');
+  if (testimoniosTrack && testimoniosPrev && testimoniosNext) {
+    const anchoTarjeta = () => {
+      const tarjeta = testimoniosTrack.querySelector<HTMLElement>(':scope > div');
+      return tarjeta ? tarjeta.offsetWidth + 24 : 300;
+    };
+    testimoniosPrev.addEventListener('click', () => {
+      testimoniosTrack.scrollBy({ left: -anchoTarjeta(), behavior: 'smooth' });
+    });
+    testimoniosNext.addEventListener('click', () => {
+      testimoniosTrack.scrollBy({ left: anchoTarjeta(), behavior: 'smooth' });
+    });
+  }
+
+  // Carrito consolidado — agrupado por nombre de plato porque un mismo
+  // plato puede tener un control en "Platos destacados" y otro en "Menú
+  // completo"; ambos deben quedar sincronizados (ver comentario al inicio
+  // del archivo).
+  interface SeleccionItem {
+    cantidad: number;
+    precio: number;
+  }
+
+  const bar = document.getElementById('cart-bar');
+
+  if (bar) {
+    const phone = bar.dataset.phone ?? '';
+    const negocioSlug = bar.dataset.negocioSlug ?? '';
+    const totalItemsEl = bar.querySelector('[data-cart-total-items]');
+    const totalPrecioEl = bar.querySelector('[data-cart-total-precio]');
+    const enviarBtn = bar.querySelector('[data-cart-enviar]');
+
+    const seleccion = new Map<string, SeleccionItem>();
+    const grupos = new Map<string, HTMLElement[]>();
+
+    document.querySelectorAll<HTMLElement>('[data-cart-item]').forEach((item) => {
+      const nombre = item.getAttribute('data-nombre') ?? '';
+      const lista = grupos.get(nombre) ?? [];
+      lista.push(item);
+      grupos.set(nombre, lista);
+    });
+
+    function actualizarResumen() {
+      let totalItems = 0;
+      let totalPrecio = 0;
+      seleccion.forEach(({ cantidad, precio }) => {
+        totalItems += cantidad;
+        totalPrecio += cantidad * precio;
+      });
+      if (totalItemsEl) totalItemsEl.textContent = String(totalItems);
+      if (totalPrecioEl) totalPrecioEl.textContent = `$${totalPrecio.toFixed(2)}`;
+      if (bar) bar.hidden = totalItems === 0;
+    }
+
+    grupos.forEach((items, nombre) => {
+      const precio = parseFloat(items[0]?.getAttribute('data-precio') ?? '0');
+
+      function setCantidad(nueva: number) {
+        const cantidad = Math.max(0, nueva);
+        if (cantidad === 0) {
+          seleccion.delete(nombre);
+        } else {
+          seleccion.set(nombre, { cantidad, precio });
+        }
+        items.forEach((item) => {
+          const cantidadEl = item.querySelector('[data-cart-cantidad]');
+          const minusBtn = item.querySelector<HTMLButtonElement>('[data-cart-minus]');
+          if (cantidadEl) cantidadEl.textContent = String(cantidad);
+          if (minusBtn) minusBtn.disabled = cantidad === 0;
+        });
+        actualizarResumen();
+      }
+
+      items.forEach((item) => {
+        const minusBtn = item.querySelector('[data-cart-minus]');
+        const plusBtn = item.querySelector('[data-cart-plus]');
+        minusBtn?.addEventListener('click', () => {
+          setCantidad((seleccion.get(nombre)?.cantidad ?? 0) - 1);
+        });
+        plusBtn?.addEventListener('click', () => {
+          setCantidad((seleccion.get(nombre)?.cantidad ?? 0) + 1);
+        });
+      });
+    });
+
+    enviarBtn?.addEventListener('click', () => {
+      const lineas: string[] = [];
+      let total = 0;
+      seleccion.forEach(({ cantidad, precio }, nombre) => {
+        lineas.push(`${cantidad}x ${nombre} ($${precio.toFixed(2)} c/u)`);
+        total += cantidad * precio;
+      });
+      if (lineas.length === 0) return;
+
+      // Mismo formato de tracking que buildWhatsAppLink en lib/whatsapp.ts,
+      // repetido aquí porque este bloque corre en el navegador, no en build:
+      // si cambia el esquema de tracking allá, actualizar también acá.
+      const mensaje = `Hola, quiero pedir:\n${lineas.join('\n')}\n\nTotal: $${total.toFixed(2)}`;
+      const cleanPhone = phone.replace(/[^\d]/g, '');
+      const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(mensaje)}&utm_source=web&negocio=${encodeURIComponent(negocioSlug)}`;
+      window.open(url, '_blank', 'noopener');
+    });
+  }
+</script>

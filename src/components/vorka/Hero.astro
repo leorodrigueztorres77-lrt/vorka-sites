@@ -1,0 +1,123 @@
+---
+// Vorka — Hero (sitio propio de la agencia). Centrado, fondo oscuro con
+// degradado sutil hacia --color-fondo-alterno (regla de profundidad visual
+// #2, CLAUDE.md: bloque de color con peso, no plano). CTA único de WhatsApp
+// como acción principal (misma jerarquía de CTA que el resto de Capa 1) +
+// link secundario de scroll a Portafolio, sin competir en peso visual.
+import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
+import type { SiteConfig } from '@/data/types';
+
+interface Props {
+  site: SiteConfig;
+}
+
+const { site } = Astro.props;
+---
+
+<section class="hero">
+  <div class="container hero__inner">
+    <span class="hero__badge reveal">Agencia digital · Ecuador</span>
+    <h1 class="hero__titulo reveal">
+      Webs que venden.<br />
+      <span class="hero__acento">Ventas que se automatizan.</span>
+    </h1>
+    <p class="hero__sub reveal">
+      Creamos la presencia digital de tu restaurante o consultorio — lista en
+      días, no en meses — y la conectamos con automatización de ventas por
+      WhatsApp.
+    </p>
+    <div class="hero__cta reveal">
+      <WhatsAppButton
+        phone={site.telefonoWhatsApp}
+        message="Hola Vorka, quiero información"
+        negocioSlug={site.negocioSlug}
+        label="Hablemos por WhatsApp →"
+        variante="primario"
+      />
+      <a class="hero__cta-secundario" href="#portafolio">Ver portafolio</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-top: 96px;
+    padding-bottom: 96px;
+    background: linear-gradient(180deg, var(--color-fondo) 0%, var(--color-fondo-alterno) 100%);
+    text-align: center;
+  }
+
+  .hero__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .hero__badge {
+    display: inline-block;
+    padding: 8px 16px;
+    border: 1px solid var(--color-primario);
+    border-radius: 100px;
+    color: var(--color-primario);
+    font-family: var(--font-texto);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .hero__titulo {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    line-height: 1.1;
+    color: var(--color-texto);
+    margin: 0;
+  }
+
+  .hero__acento {
+    color: var(--color-primario);
+  }
+
+  .hero__sub {
+    font-family: var(--font-texto);
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: var(--color-gris);
+    max-width: 560px;
+    margin: 0;
+  }
+
+  .hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 8px;
+  }
+
+  .hero__cta-secundario {
+    font-family: var(--font-texto);
+    font-weight: 600;
+    color: var(--color-texto);
+    text-decoration: none;
+    opacity: 0.75;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 2px;
+    transition: opacity 200ms ease;
+  }
+
+  .hero__cta-secundario:hover {
+    opacity: 1;
+  }
+
+  @media (max-width: 720px) {
+    .hero {
+      padding-top: 64px;
+      padding-bottom: 64px;
+    }
+  }
+</style>

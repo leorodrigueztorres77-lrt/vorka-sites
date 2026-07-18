@@ -1,0 +1,134 @@
+---
+// Vorka — Portafolio (2 proyectos reales de Capa 3, ver demo-el-fogon-ecuatoriano
+// y demo-shangrila). Sin capturas de pantalla todavía — Leo debe proporcionarlas;
+// mientras tanto cada tarjeta usa un bloque de color con el degradado real de la
+// marca del cliente (ver brandkit.*.ts) en vez de una imagen genérica, para que
+// no se vea como un placeholder vacío. PENDIENTE: reemplazar por captura real.
+const proyectos = [
+  {
+    nombre: 'El Fogón Ecuatoriano',
+    vertical: 'Restaurante',
+    descripcion: 'Comida ecuatoriana tradicional en Conocoto, Quito.',
+    href: '/demo-el-fogon-ecuatoriano/',
+    colorInicio: '#C1440E',
+    colorFin: '#9B3510',
+  },
+  {
+    nombre: 'Shangrila',
+    vertical: 'Restaurante',
+    descripcion: 'Parrilla casual y enérgica.',
+    href: '/demo-shangrila/',
+    colorInicio: '#E85D2C',
+    colorFin: '#C2410C',
+  },
+];
+---
+
+<section class="portafolio section section--alterno" id="portafolio">
+  <div class="container">
+    <h2 class="section-title reveal">Proyectos</h2>
+    <div class="portafolio__grid">
+      {proyectos.map((proyecto) => (
+        <a class="proyecto reveal--scale" href={proyecto.href} target="_blank" rel="noopener noreferrer">
+          <div
+            class="proyecto__portada"
+            style={`background: linear-gradient(135deg, ${proyecto.colorInicio}, ${proyecto.colorFin});`}
+          >
+            <span class="proyecto__portada-nombre">{proyecto.nombre}</span>
+          </div>
+          <div class="proyecto__info">
+            <span class="proyecto__vertical">{proyecto.vertical}</span>
+            <h3 class="proyecto__titulo">{proyecto.nombre}</h3>
+            <p class="proyecto__desc">{proyecto.descripcion}</p>
+            <span class="proyecto__cta">Ver demo →</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .portafolio__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+  }
+
+  .proyecto {
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--color-fondo);
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25);
+    text-decoration: none;
+    transition: transform 250ms ease;
+  }
+
+  .proyecto:hover {
+    transform: translateY(-4px);
+  }
+
+  .proyecto__portada {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 220px;
+  }
+
+  .proyecto__portada-nombre {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 2rem;
+    color: #ffffff;
+    text-align: center;
+    padding: 0 24px;
+  }
+
+  .proyecto__info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 24px;
+  }
+
+  .proyecto__vertical {
+    font-family: var(--font-texto);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-primario);
+  }
+
+  .proyecto__titulo {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: 1.375rem;
+    color: var(--color-texto);
+    margin: 0;
+  }
+
+  .proyecto__desc {
+    font-family: var(--font-texto);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-gris);
+    margin: 0;
+  }
+
+  .proyecto__cta {
+    margin-top: 8px;
+    font-family: var(--font-texto);
+    font-weight: 600;
+    color: var(--color-texto);
+  }
+
+  @media (max-width: 720px) {
+    .portafolio__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

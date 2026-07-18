@@ -1,0 +1,145 @@
+---
+// Capa 2 (restaurante) — variante de menú en formato lista simple (sin
+// tarjetas), separada por divisores. Misma data y MenuItemQuantity que
+// Menu.astro (formato grid); solo cambia la presentación visual.
+import type { CategoriaMenu } from '@/data/types';
+import MenuItemQuantity from './MenuItemQuantity.astro';
+
+interface Props {
+  categorias: CategoriaMenu[];
+  phone: string;
+  negocioSlug: string;
+}
+
+const { categorias, phone, negocioSlug } = Astro.props;
+---
+
+<section id="menu" class="section" aria-labelledby="menu-titulo">
+  <div class="container">
+    <h2 id="menu-titulo" class="section-title">Nuestro Menú</h2>
+    {categorias.map((cat) => (
+      <div class="menu-lista-categoria">
+        <h3>{cat.categoria}</h3>
+        <ul class="menu-lista-items">
+          {cat.platos.map((plato) => (
+            <li class:list={['menu-lista-plato', { 'menu-lista-plato--destacado': plato.destacado }]}>
+              <div class="menu-lista-plato__principal">
+                {plato.imagen && (
+                  <img class="menu-lista-plato__imagen" src={plato.imagen} alt={plato.nombre} loading="lazy" width="56" height="56" />
+                )}
+                <div class="menu-lista-plato__contenido">
+                  <div class="menu-lista-plato__fila">
+                    <p class="menu-lista-plato__nombre">{plato.nombre}</p>
+                    <span class="menu-lista-plato__precio">${plato.precio.toFixed(2)}</span>
+                  </div>
+                  {plato.descripcion && <p class="menu-lista-plato__descripcion">{plato.descripcion}</p>}
+                </div>
+              </div>
+              <div class="menu-lista-plato__accion">
+                <MenuItemQuantity
+                  phone={phone}
+                  negocioSlug={negocioSlug}
+                  nombrePlato={plato.nombre}
+                  precio={plato.precio}
+                />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  /* Regla de profundidad visual #4 (CLAUDE.md): mismo patrón textural sutil
+     que Menu.astro/MenuAcordeon.astro, para que las 3 variantes de menú
+     compartan el mismo lenguaje visual de fondo. */
+  #menu {
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.06) 0,
+      rgba(0, 0, 0, 0.06) 1px,
+      transparent 1px,
+      transparent 14px
+    );
+  }
+
+  .menu-lista-categoria {
+    margin-bottom: 2.5rem;
+  }
+
+  .menu-lista-categoria h3 {
+    color: var(--color-primario);
+    margin-bottom: 0.5rem;
+  }
+
+  .menu-lista-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  /* Regla de profundidad visual #3 (CLAUDE.md): tarjetas con sombra sutil, no
+     solo líneas divisorias planas. */
+  .menu-lista-plato {
+    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    background: var(--color-fondo-alterno);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  }
+
+  .menu-lista-plato--destacado {
+    outline: 2px solid var(--color-acento);
+  }
+
+  /* Checklist de conversión (CLAUDE.md): platos de mayor valor necesitan foto. */
+  .menu-lista-plato__principal {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .menu-lista-plato__imagen {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .menu-lista-plato__contenido {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .menu-lista-plato__fila {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+  }
+
+  .menu-lista-plato__nombre {
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .menu-lista-plato__precio {
+    font-weight: 700;
+    color: var(--color-primario);
+    white-space: nowrap;
+  }
+
+  .menu-lista-plato__descripcion {
+    margin: 0.35rem 0 0;
+    font-size: 1rem;
+    opacity: 0.75;
+  }
+
+  .menu-lista-plato__accion {
+    margin-top: 0.6rem;
+  }
+</style>

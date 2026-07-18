@@ -1,0 +1,77 @@
+---
+// Vorka — Ticker/marquee de una sola línea, scroll horizontal infinito.
+// Mismo patrón CSS ya validado en la Capa 2 de restaurante (banda de scroll
+// automático de la Galería V1, ver skill vertical-web-builder) — aquí con
+// frases de propuesta de valor en vez de fotos. Se duplica la lista una vez
+// para lograr el loop continuo sin salto visible.
+const frases = [
+  'Webs profesionales',
+  'Automatización por WhatsApp',
+  'SEO local',
+  'Restaurantes',
+  'Consultorios médicos y dentales',
+  'Resultados en días, no en meses',
+];
+---
+
+<section class="ticker" aria-hidden="true">
+  <div class="ticker__track">
+    {[...frases, ...frases].map((frase) => (
+      <span class="ticker__item">
+        {frase}
+        <span class="ticker__separador">✦</span>
+      </span>
+    ))}
+  </div>
+</section>
+
+<style>
+  .ticker {
+    background: var(--color-fondo-alterno);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 24px 0;
+    overflow: hidden;
+  }
+
+  .ticker__track {
+    display: flex;
+    width: max-content;
+    animation: ticker-scroll 28s linear infinite;
+  }
+
+  .ticker:hover .ticker__track {
+    animation-play-state: paused;
+  }
+
+  .ticker__item {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    padding: 0 32px;
+    font-family: var(--font-titulos);
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--color-texto);
+    white-space: nowrap;
+  }
+
+  .ticker__separador {
+    color: var(--color-primario);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ticker__track {
+      animation: none;
+    }
+  }
+
+  @keyframes ticker-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+</style>

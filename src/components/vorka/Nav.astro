@@ -1,0 +1,118 @@
+---
+// Vorka — Nav (sitio propio de la agencia). No reutiliza Header.astro: ese
+// componente es del vertical restaurante (nav Menú/Galería/Ubicación,
+// transición transparente pensada para hero de foto a pantalla completa).
+// Aquí el fondo es oscuro en toda la página, así que el nav nace ya con
+// --color-fondo y solo gana sombra/blur extra al hacer scroll.
+import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
+import type { SiteConfig } from '@/data/types';
+
+interface Props {
+  site: SiteConfig;
+}
+
+const { site } = Astro.props;
+
+const navItems = [
+  { label: 'Servicios', href: '#servicios' },
+  { label: 'Portafolio', href: '#portafolio' },
+  { label: 'Nosotros', href: '#nosotros' },
+  { label: 'Contacto', href: '#contacto' },
+];
+---
+
+<header class="nav" data-nav>
+  <div class="container nav__inner">
+    <a class="nav__marca" href="#inicio">{site.nombre}</a>
+    <nav class="nav__links" aria-label="Navegación principal">
+      <ul>
+        {navItems.map((item) => (
+          <li><a href={item.href}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <div class="nav__cta">
+      <WhatsAppButton
+        phone={site.telefonoWhatsApp}
+        message="Hola Vorka, quiero información"
+        negocioSlug={site.negocioSlug}
+        label="Hablemos →"
+        variante="primario"
+      />
+    </div>
+  </div>
+</header>
+
+<script>
+  const navs = document.querySelectorAll('[data-nav]');
+  if (navs.length) {
+    const alActualizar = () => {
+      const conScroll = window.scrollY > 40;
+      navs.forEach((nav) => nav.classList.toggle('is-scrolled', conScroll));
+    };
+    alActualizar();
+    window.addEventListener('scroll', alActualizar, { passive: true });
+  }
+</script>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: var(--color-fondo);
+    transition: box-shadow 300ms ease, backdrop-filter 300ms ease;
+  }
+
+  .nav.is-scrolled {
+    background: rgba(26, 26, 26, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
+  }
+
+  .nav__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .nav__marca {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: 1.4rem;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    color: var(--color-texto);
+  }
+
+  .nav__links ul {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav__links a {
+    text-decoration: none;
+    color: var(--color-texto);
+    font-weight: 500;
+    font-size: 1rem;
+    opacity: 0.85;
+    transition: opacity 200ms ease;
+  }
+
+  .nav__links a:hover {
+    opacity: 1;
+  }
+
+  @media (max-width: 720px) {
+    .nav__links {
+      display: none;
+    }
+  }
+</style>

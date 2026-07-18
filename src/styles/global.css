@@ -1,0 +1,214 @@
+/* Capa 1 — reset y estilos base compartidos por todos los verticales.
+   Los colores y fuentes se inyectan como custom properties por sitio (ver
+   BaseLayout); el fallback tipográfico aquí es el par por defecto de Capa 1
+   (skill vertical-web-builder): Cormorant Garamond (titulares) + Inter
+   (texto) — nunca Poppins/Montserrat (identidad exclusiva de Vorka). Sin un
+   site.fuentes.googleFontsUrl explícito el navegador cae a Georgia/system-ui
+   (Cormorant/Inter no cargan solo por nombrarlas aquí), así que esto nunca
+   rompe un cliente que ya definió su propia tipografía en Capa 3. */
+
+:root {
+  --color-primario: #333333;
+  --color-acento: #999999;
+  --color-texto: #222222;
+  --color-fondo: #ffffff;
+  --color-fondo-alterno: #f7f7f7;
+  --font-titulos: 'Cormorant Garamond', Georgia, serif;
+  --font-texto: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --max-width: 1120px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-texto);
+  font-size: 1rem; /* mínimo 16px exigido en CLAUDE.md, explícito para no depender del default del navegador */
+  color: var(--color-texto);
+  background: var(--color-fondo);
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-titulos);
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 0.5em;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.section {
+  padding: 3.5rem 0;
+}
+
+.section--alterno {
+  background: var(--color-fondo-alterno);
+}
+
+/* Regla de profundidad visual #2 (CLAUDE.md): al menos una sección por
+   variante con bloque de color sólido, en vez de solo blanco/gris alternado.
+   Utilidad compartida — Testimonials.astro e Historia.astro la activan vía
+   prop (fondoSolido / bloqueSolido). */
+.section--solido {
+  background: var(--color-primario);
+  color: #fff;
+}
+
+.section--solido .section-title {
+  color: #fff;
+}
+
+/* Regla de profundidad visual #5 (CLAUDE.md): contraste tipográfico marcado
+   entre título de sección y texto de cuerpo — no solo una diferencia sutil. */
+.section-title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* Estándar de rendimiento (CLAUDE.md): mínimo 44x44px táctil, texto >=16px. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  font-family: var(--font-titulos);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  opacity: 0.92;
+}
+
+.btn--primario {
+  background: var(--color-primario);
+  color: #fff;
+}
+
+.btn--acento {
+  background: var(--color-acento);
+  color: #1a1a1a;
+}
+
+/* Utilidad genérica de "scroll reveal" (Capa 1, timing estándar del skill
+   vertical-web-builder: 650ms cubic-bezier(0.25,0.1,0.25,1), threshold 0.12,
+   cascada de 80ms entre hermanos — ver script en BaseLayout). Inerte en
+   cualquier sitio hasta que un elemento reciba la clase .reveal. El gate
+   .js-reveal (marcado por BaseLayout solo cuando JS corre) evita que el
+   contenido quede oculto para usuarios sin JavaScript o para buscadores. */
+.js-reveal .reveal,
+.js-reveal .reveal--scale {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 650ms cubic-bezier(0.25, 0.1, 0.25, 1),
+    transform 650ms cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* Variante para tarjetas y elementos visuales (regla de profundidad visual,
+   CLAUDE.md): añade scale(0.97) → 1 además del fade/translate. */
+.js-reveal .reveal--scale {
+  transform: translateY(24px) scale(0.97);
+}
+
+.js-reveal .reveal.is-visible,
+.js-reveal .reveal--scale.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Variante "iris": para fotos de historia/galería — en vez de fundido, la
+   imagen nace tapada por un círculo invisible al centro y ese círculo crece
+   hasta cubrirla por completo (como el obturador de una cámara abriéndose).
+   100% en circle() alcanza siempre la esquina más lejana de la caja, sin
+   importar su proporción. Requiere overflow visualmente contenido por el
+   propio recorte del circle() — no necesita overflow:hidden aparte. */
+.js-reveal .reveal--iris {
+  clip-path: circle(0% at 50% 50%);
+  transition: clip-path 900ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.js-reveal .reveal--iris.is-visible {
+  clip-path: circle(100% at 50% 50%);
+}
+
+/* Variante "cortina": marco angosto centrado que se expande hacia los 4
+   bordes — mismo principio del iris (clip-path, no fade) pero con una forma
+   de crecimiento distinta (rectangular, no circular) y algo más lenta, para
+   que Historia.astro no anime igual en las variantes que la comparten (V2,
+   V3, V5). Reservada para V3 ("la atmósfera y la experiencia") — un reveal
+   más pausado encaja con esa variante; V2 usa "escala" y V5 usa "iris". */
+.js-reveal .reveal--cortina {
+  clip-path: inset(38%);
+  transition: clip-path 1100ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.js-reveal .reveal--cortina.is-visible {
+  clip-path: inset(0%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal .reveal,
+  .js-reveal .reveal--scale {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .js-reveal .reveal--iris,
+  .js-reveal .reveal--cortina {
+    transition: none;
+    clip-path: none;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 720px) {
+  .section {
+    padding: 2.5rem 0;
+  }
+}

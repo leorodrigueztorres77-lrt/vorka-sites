@@ -1,0 +1,163 @@
+/* Capa 1 — reset y estilos base compartidos por todos los verticales.
+   Los colores y fuentes se inyectan como custom properties por sitio (ver
+   BaseLayout); el fallback aquí es una pila de fuentes de sistema neutra —
+   nunca Poppins/Montserrat (identidad exclusiva de Vorka) ni las de
+   Ordercash, para que ningún sitio de cliente las herede por accidente. */
+
+:root {
+  --color-primario: #333333;
+  --color-acento: #999999;
+  --color-texto: #222222;
+  --color-fondo: #ffffff;
+  --color-fondo-alterno: #f7f7f7;
+  --font-titulos: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-texto: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --max-width: 1120px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-texto);
+  font-size: 1rem; /* mínimo 16px exigido en CLAUDE.md, explícito para no depender del default del navegador */
+  color: var(--color-texto);
+  background: var(--color-fondo);
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-titulos);
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 0.5em;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.section {
+  padding: 3.5rem 0;
+}
+
+.section--alterno {
+  background: var(--color-fondo-alterno);
+}
+
+/* Regla de profundidad visual #2 (CLAUDE.md): al menos una sección por
+   variante con bloque de color sólido, en vez de solo blanco/gris alternado.
+   Utilidad compartida — Testimonials.astro e Historia.astro la activan vía
+   prop (fondoSolido / bloqueSolido). */
+.section--solido {
+  background: var(--color-primario);
+  color: #fff;
+}
+
+.section--solido .section-title {
+  color: #fff;
+}
+
+/* Regla de profundidad visual #5 (CLAUDE.md): contraste tipográfico marcado
+   entre título de sección y texto de cuerpo — no solo una diferencia sutil. */
+.section-title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* Estándar de rendimiento (CLAUDE.md): mínimo 44x44px táctil, texto >=16px. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  font-family: var(--font-titulos);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  opacity: 0.92;
+}
+
+.btn--primario {
+  background: var(--color-primario);
+  color: #fff;
+}
+
+.btn--acento {
+  background: var(--color-acento);
+  color: #1a1a1a;
+}
+
+/* Utilidad genérica de "scroll reveal" (Capa 1): inerte en cualquier sitio
+   hasta que un elemento reciba la clase .reveal. El gate .js-reveal (marcado
+   por BaseLayout solo cuando JS corre) evita que el contenido quede oculto
+   para usuarios sin JavaScript o para buscadores. */
+.js-reveal .reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.js-reveal .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal .reveal {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 720px) {
+  .section {
+    padding: 2.5rem 0;
+  }
+}

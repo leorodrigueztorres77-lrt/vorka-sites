@@ -1,0 +1,77 @@
+---
+// Vorka — Nosotros. Bloque de color sólido (regla de profundidad visual #2,
+// CLAUDE.md) usando --color-primario a pantalla completa — la única sección
+// de la página con este tratamiento, para que tenga peso propio. Los 5
+// pills usan la iconografía declarada en CLAUDE.md ("Identidad de marca —
+// VORKA": inteligencia, agilidad, innovación, confianza, resultados).
+const valores = [
+  { icono: '🧠', label: 'Inteligencia' },
+  { icono: '⚡', label: 'Agilidad' },
+  { icono: '💡', label: 'Innovación' },
+  { icono: '🤝', label: 'Confianza' },
+  { icono: '📈', label: 'Resultados' },
+];
+---
+
+<section class="nosotros section section--solido" id="nosotros">
+  <div class="container nosotros__inner">
+    <h2 class="section-title reveal">Nosotros</h2>
+    <p class="nosotros__mision reveal">
+      Somos la agencia que construye presencia digital real para restaurantes
+      y consultorios — y el motor detrás de Ordercash, la automatización de
+      ventas que los hace crecer. Pensamos rápido, ejecutamos más rápido.
+    </p>
+    <ul class="nosotros__pills reveal">
+      {valores.map((valor) => (
+        <li class="pill">
+          <span class="pill__icono" aria-hidden="true">{valor.icono}</span>
+          {valor.label}
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .nosotros__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 32px;
+  }
+
+  .nosotros__mision {
+    font-family: var(--font-texto);
+    font-size: 1.125rem;
+    line-height: 1.7;
+    max-width: 680px;
+    margin: 0;
+  }
+
+  .nosotros__pills {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 100px;
+    font-family: var(--font-texto);
+    font-weight: 600;
+    font-size: 0.9375rem;
+  }
+
+  .pill__icono {
+    font-size: 1.125rem;
+  }
+</style>

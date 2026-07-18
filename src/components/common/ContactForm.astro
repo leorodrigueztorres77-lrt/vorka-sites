@@ -1,0 +1,179 @@
+---
+// Capa 1 — formulario de contacto con datos estructurados, exportable por
+// webhook (no solo email). Incluye producto/servicio y cantidad para facilitar
+// la futura integración con Ordercash en el vertical restaurante, y el campo
+// RUC/cédula opcional exigido por las reglas de diseño de CLAUDE.md.
+//
+// Jerarquía de CTA (obligatoria, CLAUDE.md): este formulario es un canal de
+// RESPALDO, nunca el CTA principal. Va en footer/sección secundaria, con menos
+// peso visual que el botón de WhatsApp de Header/Hero — título chico, sin el
+// tratamiento de las secciones primarias (Menú, Galería, Testimonios).
+import type { SiteConfig } from '@/data/types';
+
+interface Props {
+  site: SiteConfig;
+  productoLabel?: string;
+}
+
+const { site, productoLabel = 'Producto o servicio de interés' } = Astro.props;
+const formId = 'form-contacto';
+---
+
+<section id="contacto" class="section section--contacto" aria-labelledby="contacto-titulo">
+  <div class="container">
+    <h3 id="contacto-titulo" class="contacto-titulo">
+      ¿Prefieres escribirnos un mensaje?
+    </h3>
+    <p class="contacto-subtitulo">
+      Para pedidos o citas, usa el botón de WhatsApp — este formulario es para
+      otras consultas.
+    </p>
+    <form id={formId} class="contacto-form" data-webhook-url={site.webhookContactoUrl ?? ''}>
+      <div class="campo">
+        <label for="nombre">Nombre completo</label>
+        <input id="nombre" name="nombre" type="text" required />
+      </div>
+
+      <div class="campo">
+        <label for="telefono">Teléfono</label>
+        <input id="telefono" name="telefono" type="tel" required />
+      </div>
+
+      <div class="campo">
+        <label for="rucCedula">RUC / Cédula (opcional)</label>
+        <input id="rucCedula" name="rucCedula" type="text" />
+      </div>
+
+      <div class="campo">
+        <label for="producto">{productoLabel}</label>
+        <input id="producto" name="producto" type="text" />
+      </div>
+
+      <div class="campo">
+        <label for="cantidad">Cantidad</label>
+        <input id="cantidad" name="cantidad" type="number" min="1" step="1" />
+      </div>
+
+      <div class="campo campo--full">
+        <label for="mensaje">Mensaje</label>
+        <textarea id="mensaje" name="mensaje" rows="4"></textarea>
+      </div>
+
+      <div class="campo campo--full">
+        <button type="submit" class="btn btn--primario">Enviar</button>
+        <p class="contacto-form__estado" role="status" aria-live="polite"></p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<style>
+  /* Sección secundaria: padding reducido y sin el tratamiento de las
+     secciones primarias (nada de section-title grande centrado). */
+  .section--contacto {
+    padding: 2rem 0;
+    background: var(--color-fondo-alterno);
+  }
+
+  .contacto-titulo {
+    font-size: 1.15rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .contacto-subtitulo {
+    margin: 0 0 1.5rem;
+    font-size: 1rem;
+    opacity: 0.75;
+    max-width: 560px;
+  }
+
+  .contacto-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    max-width: 640px;
+  }
+
+  .campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .campo--full {
+    grid-column: 1 / -1;
+  }
+
+  label {
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  input,
+  textarea {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid #d5d5d5;
+    border-radius: 8px;
+    font-family: var(--font-texto);
+    font-size: 1rem;
+    min-height: 44px;
+  }
+
+  textarea {
+    min-height: 88px;
+  }
+
+  .contacto-form__estado {
+    margin: 0.75rem 0 0;
+    font-size: 1rem;
+  }
+
+  @media (max-width: 720px) {
+    .contacto-form {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script define:vars={{ formId }}>
+  const form = document.getElementById(formId);
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const estado = form.querySelector('.contacto-form__estado');
+    const formData = new FormData(form);
+    const payload = {
+      nombre: formData.get('nombre'),
+      telefono: formData.get('telefono'),
+      rucCedula: formData.get('rucCedula') || null,
+      producto: formData.get('producto') || null,
+      cantidad: formData.get('cantidad') || null,
+      mensaje: formData.get('mensaje') || null,
+      enviadoEn: new Date().toISOString(),
+    };
+
+    const webhookUrl = form.dataset.webhookUrl;
+
+    if (!webhookUrl) {
+      if (estado) estado.textContent = 'Formulario listo. Configura el webhook de contacto para recibir envíos.';
+      return;
+    }
+
+    try {
+      if (estado) estado.textContent = 'Enviando...';
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) throw new Error('Respuesta no exitosa del webhook');
+
+      if (estado) estado.textContent = '¡Gracias! Te contactaremos pronto.';
+      form.reset();
+    } catch (error) {
+      if (estado) estado.textContent = 'No se pudo enviar. Intenta de nuevo o escríbenos por WhatsApp.';
+    }
+  });
+</script>
