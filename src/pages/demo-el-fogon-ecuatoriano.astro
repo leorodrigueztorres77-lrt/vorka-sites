@@ -163,7 +163,7 @@ const fotosMarquee = [...galeriaElFogon, ...galeriaElFogon];
   <section id="inicio" class="relative min-h-screen flex items-center justify-center overflow-hidden">
     <img
       src={heroFotoElFogon}
-      alt="Ambiente de El Fogón Ecuatoriano"
+      alt="Hornado con llapingachos, mote y curtido — plato estrella de El Fogón Ecuatoriano"
       width="1600"
       height="1000"
       class="absolute inset-0 w-full h-full object-cover"
@@ -275,6 +275,85 @@ const fotosMarquee = [...galeriaElFogon, ...galeriaElFogon];
       </div>
     </div>
   </section>
+
+  <!-- El plato, en movimiento — PLACEHOLDER IA: clips 100% generados por IA
+       (Seedance 2.0 vía Higgsfield, 2026-07-18, ver
+       public/images/el-fogon-ecuatoriano/README.md). Solo demo de venta, por
+       la regla de autenticidad del vertical no publicar como si fuera el
+       plato real del cliente. Cada video se reproduce UNA vez al entrar al
+       viewport (muted, sin audio, preload=none — no afecta la carga inicial). -->
+  <section id="en-movimiento" class="bg-[#FAF7F2] py-24">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mb-16 text-center">
+        <span class="fogon-reveal badge-eyebrow inline-block" style="transition-delay:0ms">El plato estrella</span>
+        <h2
+          class="fogon-reveal font-display font-bold text-[#1A1A1A] text-[clamp(2.5rem,6vw,4rem)] mt-4"
+          style="transition-delay:100ms"
+        >
+          El Hornado, Paso a Paso
+        </h2>
+      </div>
+      <div class="grid md:grid-cols-2 gap-8">
+        <figure class="fogon-reveal-scale bg-white rounded-2xl overflow-hidden border-[0.5px] border-[#E8E4DF]" style="transition-delay:0ms">
+          <video
+            data-autoplay-video
+            muted
+            playsinline
+            preload="none"
+            poster="/images/el-fogon-ecuatoriano/hornado-hero-800.webp"
+            width="1280"
+            height="720"
+            class="w-full h-auto"
+            aria-label="El hornado se emplata paso a paso: mote, llapingacho, cerdo horneado, curtido y aguacate"
+          >
+            <source src="/videos/el-fogon-ecuatoriano/hornado-emplatado.mp4" type="video/mp4" />
+          </video>
+          <figcaption class="p-6">
+            <p class="font-sans text-base font-bold text-[#1A1A1A]">Se arma frente a ti</p>
+            <p class="font-sans text-sm text-[#6B6B6B] mt-1">Mote, llapingacho, cerdo horneado ocho horas, curtido y aguacate.</p>
+          </figcaption>
+        </figure>
+        <figure class="fogon-reveal-scale bg-white rounded-2xl overflow-hidden border-[0.5px] border-[#E8E4DF]" style="transition-delay:100ms">
+          <video
+            data-autoplay-video
+            muted
+            playsinline
+            preload="none"
+            poster="/images/el-fogon-ecuatoriano/hornado-hero-800.webp"
+            width="1280"
+            height="720"
+            class="w-full h-auto"
+            aria-label="Un tenedor corta el hornado y revela el interior jugoso bajo la costra dorada"
+          >
+            <source src="/videos/el-fogon-ecuatoriano/hornado-corte.mp4" type="video/mp4" />
+          </video>
+          <figcaption class="p-6">
+            <p class="font-sans text-base font-bold text-[#1A1A1A]">Por dentro</p>
+            <p class="font-sans text-sm text-[#6B6B6B] mt-1">La costra crocante afuera, la carne que se deshace adentro.</p>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Reproduce cada video UNA vez cuando entra al viewport (≥50% visible).
+    // Con prefers-reduced-motion se queda en el poster, sin reproducir.
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              io.unobserve(e.target);
+              (e.target as HTMLVideoElement).play().catch(() => {});
+            }
+          }
+        },
+        { threshold: 0.5 },
+      );
+      document.querySelectorAll<HTMLVideoElement>('[data-autoplay-video]').forEach((v) => io.observe(v));
+    }
+  </script>
 
   <!-- Platos destacados -->
   <section id="destacados" class="bg-[#FAF7F2] py-24">

@@ -45,6 +45,11 @@ export const menuElFogon: CategoriaMenu[] = [
         descripcion: 'Cerdo horneado lentamente, llapingachos, mote y curtido',
         precio: 8.5,
         destacado: true,
+        // PLACEHOLDER IA — generada por IA (Nano Banana 2), es el plato correcto
+        // (hornado ecuatoriano). Solo demo de venta; reemplazar por foto real
+        // del cliente (Nivel 1) antes de publicar. Cierra parcialmente el GAP
+        // documentado arriba (fritada/seco de pollo siguen sin foto).
+        imagen: '/images/el-fogon-ecuatoriano/hornado-hero-800.webp',
       },
       {
         nombre: 'Fritada',
@@ -127,8 +132,14 @@ export const galeriaElFogon: FotoGaleria[] = [
   },
 ];
 
-export const heroFotoElFogon =
-  'https://images.pexels.com/photos/32921658/pexels-photo-32921658.jpeg?auto=compress&cs=tinysrgb&w=1600&fm=webp';
+// PLACEHOLDER IA — imagen 100% generada por IA (Nano Banana 2 vía Higgsfield,
+// 2026-07-18, ver public/images/el-fogon-ecuatoriano/README.md). Muestra el
+// plato estrella real del menú (hornado con llapingacho, mote y curtido) y es
+// local/optimizada (WebP, sin dependencia de Pexels). SOLO para el demo de
+// venta: por la regla de autenticidad del vertical (CLAUDE.md, "nunca mostrar
+// comida 100% generada por IA como si fuera real"), reemplazar por Nivel 1
+// (foto real del cliente mejorada) antes de la entrega final.
+export const heroFotoElFogon = '/images/el-fogon-ecuatoriano/hornado-hero-1600.webp';
 
 // PLACEHOLDER — el cliente no tiene todavía reseñas reales de Google para
 // citar. El brief de esta reconstrucción ("Umami") autoriza explícitamente
