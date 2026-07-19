@@ -25,9 +25,11 @@ export const siteConfigVorka: SiteConfig = {
       'https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Montserrat:wght@300;400;500;600;700&display=swap',
   },
   seo: {
-    tituloDefault: 'VORKA — Agencia digital en Ecuador · Webs con IA y automatización de ventas por WhatsApp',
+    // SEO local (corrección V2 de Leo 2026-07): título con precio de entrada
+    // y descripción orientada a beneficio + ciudad.
+    tituloDefault: 'Vorka — Agencia digital en Ecuador | Webs profesionales desde $350',
     descripcionDefault:
-      'Construimos tu presencia digital y automatizamos tus ventas. Webs profesionales con IA y automatización de ventas por WhatsApp — listos en días, no en meses.',
+      'Creamos webs profesionales para tu negocio en Quito y Ecuador. Entrega en días, desde $350. Automatización de ventas por WhatsApp con Ordercash.',
   },
   webhookContactoUrl: '',
 };

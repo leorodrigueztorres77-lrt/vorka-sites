@@ -1,0 +1,270 @@
+---
+// Vorka — Analizador de velocidad en vivo (capability IA/innovación pedida
+// por Leo 2026-07). El visitante pega la URL de su web y obtiene su nota
+// REAL de rendimiento móvil vía la API pública de Google PageSpeed Insights
+// (misma métrica del "Radar de Competencia", CLAUDE.md — el gatillo de
+// cierre más fuerte). 100% client-side: sin backend, sin API key, sin costo.
+// Si Google limita la cuota por IP, el widget degrada a un CTA de WhatsApp.
+import { buildWhatsAppLink } from '@/lib/whatsapp';
+import type { SiteConfig } from '@/data/types';
+
+interface Props {
+  site: SiteConfig;
+}
+
+const { site } = Astro.props;
+
+// Base del link de WhatsApp; el script le inyecta la nota obtenida.
+const waBase = buildWhatsAppLink({
+  phone: site.telefonoWhatsApp,
+  message: 'Hola Vorka, analicé mi web con su herramienta y quiero mejorarla',
+  negocioSlug: site.negocioSlug,
+});
+---
+
+<section class="analizador section" id="analizador">
+  <div class="container analizador__inner">
+    <h2 class="section-title reveal">¿Tu web actual pasa el examen de Google?</h2>
+    <p class="analizador__sub reveal">
+      Pon tu dirección y descubre gratis la nota que Google le da a tu sitio en
+      móvil — la misma que usa para decidir quién aparece primero.
+    </p>
+
+    <form class="analizador__form reveal" id="analizador-form" novalidate>
+      <input
+        class="analizador__input"
+        type="text"
+        id="analizador-url"
+        name="url"
+        inputmode="url"
+        placeholder="tunegocio.com"
+        aria-label="Dirección de tu sitio web"
+        required
+      />
+      <button class="btn btn--primario analizador__btn" type="submit" id="analizador-btn">
+        Analizar mi web →
+      </button>
+    </form>
+
+    <div class="analizador__estado" id="analizador-estado" role="status" aria-live="polite"></div>
+
+    <div class="analizador__resultado" id="analizador-resultado" hidden>
+      <div class="analizador__nota">
+        <span class="analizador__nota-num" id="analizador-nota">–</span>
+        <span class="analizador__nota-label">/ 100 en móvil</span>
+      </div>
+      <p class="analizador__veredicto" id="analizador-veredicto"></p>
+      <a
+        class="btn btn--primario"
+        id="analizador-cta"
+        href={waBase}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Quiero mejorar mi nota →
+      </a>
+      <p class="analizador__fuente">Fuente: Google PageSpeed Insights, en tiempo real.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Opcional: API key de PageSpeed (Google Cloud Console → PageSpeed Insights
+  // API, gratis, 25k/día). Sin key funciona con cuota anónima POR IP DEL
+  // VISITANTE — suficiente para tráfico normal; la key elimina el riesgo de
+  // 429 en redes compartidas (oficinas). Restringirla por referrer vorka.io
+  // antes de publicarla aquí.
+  const PSI_KEY = '';
+
+  const form = document.getElementById('analizador-form') as HTMLFormElement;
+  const input = document.getElementById('analizador-url') as HTMLInputElement;
+  const btn = document.getElementById('analizador-btn') as HTMLButtonElement;
+  const estado = document.getElementById('analizador-estado') as HTMLElement;
+  const resultado = document.getElementById('analizador-resultado') as HTMLElement;
+  const notaEl = document.getElementById('analizador-nota') as HTMLElement;
+  const veredictoEl = document.getElementById('analizador-veredicto') as HTMLElement;
+  const cta = document.getElementById('analizador-cta') as HTMLAnchorElement;
+  const waBase = cta.href;
+
+  const veredicto = (score: number): { texto: string; clase: string } => {
+    if (score >= 90)
+      return {
+        texto: 'Excelente — tu web vuela. Si aún no vende por WhatsApp, hablemos de automatización.',
+        clase: 'ok',
+      };
+    if (score >= 50)
+      return {
+        texto:
+          'Regular — tu web carga lento en móvil y eso te cuesta clientes: la mayoría abandona a los 3 segundos.',
+        clase: 'medio',
+      };
+    return {
+      texto:
+        'Crítica — Google está penalizando tu sitio y tus visitantes lo abandonan antes de verlo. Esto tiene arreglo.',
+      clase: 'mal',
+    };
+  };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    let url = input.value.trim();
+    if (!url) return;
+    if (!/^https?:\/\//i.test(url)) url = `https://${url}`;
+    try {
+      new URL(url);
+    } catch {
+      estado.textContent = 'Esa dirección no parece válida — revísala (ej. tunegocio.com).';
+      return;
+    }
+
+    btn.disabled = true;
+    resultado.hidden = true;
+    estado.textContent = 'Google está analizando tu web… esto toma unos 30 segundos.';
+
+    try {
+      const api = new URL('https://www.googleapis.com/pagespeedonline/v5/runPagespeed');
+      api.searchParams.set('url', url);
+      api.searchParams.set('strategy', 'mobile');
+      api.searchParams.set('category', 'performance');
+      if (PSI_KEY) api.searchParams.set('key', PSI_KEY);
+      const res = await fetch(api, { signal: AbortSignal.timeout(90000) });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      const score = Math.round(
+        (data.lighthouseResult?.categories?.performance?.score ?? 0) * 100,
+      );
+
+      const v = veredicto(score);
+      notaEl.textContent = String(score);
+      notaEl.dataset.nivel = v.clase;
+      veredictoEl.textContent = v.texto;
+      cta.href = `${waBase}${encodeURIComponent(` — mi nota fue ${score}/100`)}`;
+      estado.textContent = '';
+      resultado.hidden = false;
+      resultado.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } catch {
+      estado.textContent =
+        'No pudimos analizarla automáticamente (el sitio bloquea el análisis o Google está saturado). Escríbenos por WhatsApp y lo revisamos gratis por ti.';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>
+
+<style>
+  .analizador {
+    background: var(--color-fondo);
+  }
+
+  .analizador__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .analizador__sub {
+    font-family: var(--font-texto);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--color-gris);
+    max-width: 560px;
+    margin: -24px 0 40px;
+  }
+
+  .analizador__form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+    max-width: 640px;
+  }
+
+  .analizador__input {
+    flex: 1;
+    min-width: 240px;
+    min-height: 48px;
+    padding: 12px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 100px;
+    background: var(--color-fondo-alterno);
+    color: var(--color-texto);
+    font-family: var(--font-texto);
+    font-size: 1rem;
+  }
+
+  .analizador__input:focus {
+    outline: 2px solid var(--color-primario);
+    outline-offset: 2px;
+  }
+
+  .analizador__estado {
+    font-family: var(--font-texto);
+    font-size: 0.9375rem;
+    color: var(--color-gris);
+    min-height: 24px;
+    margin-top: 20px;
+    max-width: 520px;
+  }
+
+  .analizador__resultado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  /* El display:flex de arriba le ganaría al atributo hidden del HTML. */
+  .analizador__resultado[hidden] {
+    display: none;
+  }
+
+  .analizador__nota {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .analizador__nota-num {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: 5rem;
+    line-height: 1;
+  }
+
+  .analizador__nota-num[data-nivel='ok'] {
+    color: var(--color-primario);
+  }
+
+  .analizador__nota-num[data-nivel='medio'] {
+    color: #f5a623;
+  }
+
+  .analizador__nota-num[data-nivel='mal'] {
+    color: #ff5f56;
+  }
+
+  .analizador__nota-label {
+    font-family: var(--font-texto);
+    font-size: 1rem;
+    color: var(--color-gris);
+  }
+
+  .analizador__veredicto {
+    font-family: var(--font-texto);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: var(--color-texto);
+    max-width: 520px;
+    margin: 0;
+  }
+
+  .analizador__fuente {
+    font-family: var(--font-texto);
+    font-size: 0.75rem;
+    color: var(--color-gris);
+    margin: 0;
+  }
+</style>

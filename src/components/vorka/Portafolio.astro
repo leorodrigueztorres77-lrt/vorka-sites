@@ -26,7 +26,8 @@ const proyectos = [
 
 <section class="portafolio section section--alterno" id="portafolio">
   <div class="container">
-    <h2 class="section-title reveal">Proyectos</h2>
+    <h2 class="section-title reveal">Lo que construimos</h2>
+    <p class="portafolio__sub reveal">Webs reales para negocios reales en Ecuador.</p>
     <div class="portafolio__grid">
       {proyectos.map((proyecto) => (
         <a class="proyecto reveal--scale" href={proyecto.href} target="_blank" rel="noopener noreferrer">
@@ -34,6 +35,7 @@ const proyectos = [
             class="proyecto__portada"
             style={`background: linear-gradient(135deg, ${proyecto.colorInicio}, ${proyecto.colorFin});`}
           >
+            <span class="proyecto__demo-badge">Demo</span>
             <span class="proyecto__portada-nombre">{proyecto.nombre}</span>
           </div>
           <div class="proyecto__info">
@@ -49,6 +51,13 @@ const proyectos = [
 </section>
 
 <style>
+  .portafolio__sub {
+    font-family: var(--font-texto);
+    font-size: 1.0625rem;
+    color: var(--color-gris);
+    margin: -24px 0 40px;
+  }
+
   .portafolio__grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -71,10 +80,27 @@ const proyectos = [
   }
 
   .proyecto__portada {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     height: 220px;
+  }
+
+  .proyecto__demo-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 3px 12px;
+    border: 1px solid #666666;
+    border-radius: 100px;
+    background: transparent;
+    color: #666666;
+    font-family: var(--font-texto);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 
   .proyecto__portada-nombre {

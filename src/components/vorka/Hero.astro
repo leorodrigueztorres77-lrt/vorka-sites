@@ -16,25 +16,45 @@ const { site } = Astro.props;
 
 <section class="hero">
   <div class="container hero__inner">
-    <span class="hero__badge reveal">Agencia digital · Ecuador</span>
-    <h1 class="hero__titulo reveal">
-      Webs que venden.<br />
-      <span class="hero__acento">Ventas que se automatizan.</span>
-    </h1>
-    <p class="hero__sub reveal">
-      Creamos la presencia digital de tu restaurante o consultorio — lista en
-      días, no en meses — y la conectamos con automatización de ventas por
-      WhatsApp.
-    </p>
-    <div class="hero__cta reveal">
-      <WhatsAppButton
-        phone={site.telefonoWhatsApp}
-        message="Hola Vorka, quiero información"
-        negocioSlug={site.negocioSlug}
-        label="Hablemos por WhatsApp →"
-        variante="primario"
-      />
-      <a class="hero__cta-secundario" href="#portafolio">Ver portafolio</a>
+    <div class="hero__contenido">
+      <span class="hero__badge reveal">Agencia digital · Ecuador</span>
+      <h1 class="hero__titulo reveal">
+        Webs que venden.<br />
+        <span class="hero__acento">Ventas que se automatizan.</span>
+      </h1>
+      <p class="hero__sub reveal">
+        Creamos la presencia digital de tu negocio — lista en días, no en
+        meses — y la conectamos con automatización de ventas por WhatsApp.
+      </p>
+      <div class="hero__cta reveal">
+        <WhatsAppButton
+          phone={site.telefonoWhatsApp}
+          message="Hola Vorka, quiero información"
+          negocioSlug={site.negocioSlug}
+          label="Hablemos por WhatsApp →"
+          variante="primario"
+        />
+        <a class="hero__cta-secundario" href="#portafolio">Ver portafolio</a>
+      </div>
+    </div>
+
+    <!-- Mockup NEUTRO de web mobile-first (decisión de Leo 2026-07: sin
+         rubro específico para no encasillar a Vorka — reemplaza la captura
+         del demo El Fogón). Generado con IA (Nano Banana 2 vía fal.ai) con
+         la paleta de Vorka; regenerar con scripts/fal-mockup-vorka.mjs de
+         SiteWise+ si cambia la identidad. -->
+    <div class="hero__mockup reveal--scale" aria-hidden="false">
+      <div class="hero__telefono">
+        <span class="hero__telefono-notch" aria-hidden="true"></span>
+        <img
+          src="/images/vorka/mockup-negocio-movil.webp"
+          alt="Web profesional mobile-first para tu negocio — Vorka"
+          width="320"
+          height="574"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </div>
     </div>
   </div>
 </section>
@@ -51,9 +71,69 @@ const { site } = Astro.props;
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 48px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .hero__contenido {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 24px;
     max-width: 760px;
-    margin: 0 auto;
+  }
+
+  .hero__mockup {
+    display: flex;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .hero__telefono {
+    position: relative;
+    width: 264px;
+    padding: 12px;
+    border-radius: 40px;
+    background: #0d0d0d;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  }
+
+  .hero__telefono-notch {
+    position: absolute;
+    top: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 88px;
+    height: 8px;
+    border-radius: 100px;
+    background: rgba(255, 255, 255, 0.18);
+    z-index: 1;
+  }
+
+  .hero__telefono img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 28px;
+  }
+
+  @media (min-width: 961px) {
+    .hero__inner {
+      flex-direction: row;
+      justify-content: space-between;
+      text-align: left;
+    }
+
+    .hero__contenido {
+      align-items: flex-start;
+      max-width: 620px;
+    }
+
+    .hero__cta {
+      justify-content: flex-start;
+    }
   }
 
   .hero__badge {

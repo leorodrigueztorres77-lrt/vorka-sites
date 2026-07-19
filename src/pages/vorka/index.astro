@@ -12,28 +12,38 @@ import Nav from '@/components/vorka/Nav.astro';
 import Hero from '@/components/vorka/Hero.astro';
 import Ticker from '@/components/vorka/Ticker.astro';
 import Servicios from '@/components/vorka/Servicios.astro';
+import Precios from '@/components/vorka/Precios.astro';
 import Portafolio from '@/components/vorka/Portafolio.astro';
+import AnalizadorWeb from '@/components/vorka/AnalizadorWeb.astro';
 import Nosotros from '@/components/vorka/Nosotros.astro';
 import Stats from '@/components/vorka/Stats.astro';
 import Faq from '@/components/vorka/Faq.astro';
 import ContactoVorka from '@/components/vorka/ContactoVorka.astro';
 import FooterVorka from '@/components/vorka/FooterVorka.astro';
+import WhatsAppFlotante from '@/components/vorka/WhatsAppFlotante.astro';
 import { siteConfigVorka } from '@/data/site.vorka';
 
 const site = siteConfigVorka;
 ---
 
-<BaseLayout site={site}>
+<BaseLayout
+  site={site}
+  ogTitulo="Vorka — Agencia digital en Ecuador"
+  ogDescripcion="Webs profesionales para tu negocio, listas en días. Desde $350."
+>
   <Nav site={site} />
   <main id="inicio">
     <Hero site={site} />
     <Ticker />
     <Servicios site={site} />
+    <Precios site={site} />
     <Portafolio />
+    <AnalizadorWeb site={site} />
     <Nosotros />
     <Stats />
     <Faq />
     <ContactoVorka site={site} />
   </main>
   <FooterVorka site={site} />
+  <WhatsAppFlotante site={site} />
 </BaseLayout>
