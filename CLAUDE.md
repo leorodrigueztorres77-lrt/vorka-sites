@@ -472,6 +472,31 @@ Ecuatoriano, ver caso documentado):**
   moderno) — hay que verificar que el *mood* visual de la foto coincida con el
   tono textual antes de darla por buena, no solo que el tema (comida) coincida.
 
+### Nivel 2.5 — Generación IA de plato/escena específica (SOLO demo de venta)
+
+Validado en el caso El Fogón (2026-07): cuando el banco de fotos NO tiene el
+plato exacto (ej. no existe foto de hornado con licencia clara), se puede
+generar imagen y video del plato específico con IA — Nano Banana 2 para
+imagen (~$0.04) y Seedance 2.0 para video (~$1.80 por clip 720p/6s), vía
+fal.ai (pago por uso; script reutilizable en
+`SiteWise+/scripts/fal-generate-clips.mjs`). Reglas duras:
+
+- **Solo para el demo de venta, NUNCA en la entrega final publicada** — la
+  regla de autenticidad del vertical sigue intacta. Marcar siempre
+  `PLACEHOLDER IA` en comentario interno + README de origen en la carpeta.
+- **Fidelidad a cómo se sirve el plato de verdad, no solo a qué plato es.**
+  Hornado ecuatoriano = carne DESMENUZADA (hebras) con trozos de cuero, y
+  agrio TRANSLÚCIDO (vinagreta con cebolla) — nunca un bloque entero tipo
+  porchetta ni salsa roja en bol. Un local nota el error de servido igual de
+  rápido que una gastronomía equivocada. Verificar la forma de servir con el
+  dueño o con referencia local ANTES de generar.
+- **Assets separados por cliente**: `public/images/<slug>/` y
+  `public/videos/<slug>/`, nunca en carpetas compartidas ni reutilizados
+  entre clientes o verticales.
+- **Coherencia imagen↔video**: generar primero la imagen del plato y usarla
+  como start/end frame de los clips, para que todo el sitio muestre el mismo
+  plato.
+
 ### Nivel 3 — Add-on pagado: sesión de fotos profesional coordinada
 
 Ver pricing — Vorka coordina (no ejecuta) una sesión con fotógrafo freelance
@@ -528,6 +553,46 @@ ya existen. Si las 5 existen, el trabajo real es 100% Capa 3 — nombre, fotos,
 textos del cliente específico, y la selección de cuál de las 5 variantes usar.
 Reconstruir Capa 1 o Capa 2 sin necesidad es un error de producción que rompe
 la lógica de escala del modelo (de 20-40 horas por web a 1.5-2 horas).
+
+## Lecciones aprendidas — caso El Fogón Ecuatoriano (2026-07), aplican a Capa 1 y Capa 2
+
+Reglas detectadas en producción real. Los skills de construcción
+(`vertical-web-builder`, `demo-personalizer`) deben aplicarlas al construir o
+tocar cualquier variante:
+
+**Para la Capa 1 (sistema base):**
+
+1. **Cache-busting obligatorio al reemplazar assets.** Si un asset se corrige
+   conservando el nombre de archivo, hay que subir la versión (`?v=N`) en
+   TODAS sus referencias (hero, cards, posters de video, og:image). Los
+   navegadores de los prospectos cachean agresivo: un demo "corregido" que se
+   sigue viendo viejo en el celular del dueño mata la venta. Preferir
+   filenames versionados o query param — nunca confiar en que "recarguen".
+2. **Imágenes auto-hospedadas, nunca hotlink al banco (Pexels/Unsplash) en
+   páginas entregables.** Descargar, optimizar a WebP y servir desde
+   `public/` (manteniendo el marcado de placeholder). El hotlink es frágil:
+   proxies corporativos lo bloquean, el asset puede desaparecer, y viola el
+   estándar de rendimiento. (Detectado: las fotos remotas de El Fogón no
+   cargaban tras un proxy corporativo mientras las locales sí.)
+3. **Patrón validado de sección de video sin costo de rendimiento:**
+   `<video muted playsinline preload="none" poster="...">` + IntersectionObserver
+   (reproduce UNA vez al ser ≥50% visible) + `prefers-reduced-motion` → se
+   queda en el poster. Cero impacto en carga inicial (Lighthouse 100/97 se
+   mantuvo con 2 videos de ~5 MB c/u). Candidato a componente reutilizable de
+   Capa 1 para cualquier vertical.
+
+**Para la Capa 2 (las 5 variantes de cada vertical):**
+
+4. **Hero con foto protagonista = titular limpio.** Nunca intercalar
+   mini-fotos dentro del titular sobre la imagen grande del hero (patrón
+   "Umami" original). Regla directa de Leo tras verlo en producción: si el
+   fondo ya es una foto potente, el texto va solo. Las mini-fotos en titular
+   solo tienen sentido sobre fondos planos/sólidos.
+5. **Una sección "producto en movimiento" es un diferenciador de venta
+   fuerte** (el plato armándose / el interior revelándose). Al menos una de
+   las 5 variantes de restaurante debería incluirla de serie usando el patrón
+   del punto 3, con los clips generados según Nivel 2.5 de "Manejo de
+   imágenes".
 
 ## Roadmap de innovación — features investigados, no todos implementables aún
 
