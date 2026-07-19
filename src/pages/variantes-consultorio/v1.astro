@@ -1,0 +1,64 @@
+---
+// Consultorio médico/dental — Variante 1 "Dentava" (Capa 2).
+// Argumento de conversión: "El profesional es la estrella" — para
+// profesionales con postgrado, especialidad poco común, o años de
+// experiencia, donde la persona es la marca. Hero con foto grande del
+// profesional + credenciales visibles sin scroll, servicios destacados con
+// foto antes del catálogo completo.
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/common/Header.astro';
+import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
+import Testimonials from '@/components/common/Testimonials.astro';
+import LocationMap from '@/components/common/LocationMap.astro';
+import ContactForm from '@/components/common/ContactForm.astro';
+import Footer from '@/components/common/Footer.astro';
+import FloatingWhatsApp from '@/components/common/FloatingWhatsApp.astro';
+
+import HeroProfesional from '@/components/consultorio/HeroProfesional.astro';
+import ServiciosDestacados from '@/components/consultorio/ServiciosDestacados.astro';
+
+import { siteConfigConsultorio } from '@/data/site.config.consultorio';
+import { serviciosSample, horariosSample, testimoniosSample, perfilProfesionalSample } from '@/data/consultorio.sample';
+
+const navItems = [
+  { label: 'Servicios', href: '#servicios' },
+  { label: 'Ubicación', href: '#ubicacion' },
+  { label: 'Contacto', href: '#contacto' },
+];
+---
+
+<BaseLayout site={siteConfigConsultorio}>
+  <Header site={siteConfigConsultorio} navItems={navItems} transparente={false} />
+
+  <HeroProfesional site={siteConfigConsultorio} perfil={perfilProfesionalSample}>
+    <Fragment slot="cta">
+      <WhatsAppButton
+        phone={siteConfigConsultorio.telefonoWhatsApp}
+        message={`Hola, quiero agendar una cita en ${siteConfigConsultorio.nombre}`}
+        negocioSlug={siteConfigConsultorio.negocioSlug}
+        label="Agendar cita por WhatsApp"
+        variante="primario"
+      />
+    </Fragment>
+  </HeroProfesional>
+
+  <ServiciosDestacados
+    categorias={serviciosSample}
+    phone={siteConfigConsultorio.telefonoWhatsApp}
+    negocioSlug={siteConfigConsultorio.negocioSlug}
+  />
+
+  <Testimonials testimonios={testimoniosSample} carrusel fondoSolido />
+
+  <LocationMap site={siteConfigConsultorio} horarios={horariosSample} />
+
+  <ContactForm site={siteConfigConsultorio} productoLabel="Especialidad de interés" />
+
+  <Footer site={siteConfigConsultorio} />
+
+  <FloatingWhatsApp
+    phone={siteConfigConsultorio.telefonoWhatsApp}
+    message={`Hola, quiero agendar una cita en ${siteConfigConsultorio.nombre}`}
+    negocioSlug={siteConfigConsultorio.negocioSlug}
+  />
+</BaseLayout>

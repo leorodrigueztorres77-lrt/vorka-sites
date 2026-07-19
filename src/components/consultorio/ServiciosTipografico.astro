@@ -1,0 +1,166 @@
+---
+// Capa 2 (consultorio) — servicios de la Variante 3 ("La modernidad y el
+// equipamiento"). Análogo a MenuTipografico: sin fotos por ítem — el nombre
+// y una descripción técnica pero accesible bastan. Una sola foto grande de
+// equipo/tecnología destacada encima del listado completo, categorías
+// separadas por espacio generoso (no líneas).
+import type { CategoriaServicios } from '@/data/types';
+import AgendarBtn from './AgendarBtn.astro';
+
+interface Props {
+  categorias: CategoriaServicios[];
+  fotoEquipoDestacado?: string;
+  nombreEquipoDestacado?: string;
+  phone: string;
+  negocioSlug: string;
+}
+
+const { categorias, fotoEquipoDestacado, nombreEquipoDestacado, phone, negocioSlug } = Astro.props;
+---
+
+<section id="servicios" class="section" aria-labelledby="servicios-titulo">
+  <div class="container">
+    <h2 id="servicios-titulo" class="section-title servicios-tipografico__titulo">Nuestros Servicios</h2>
+
+    {fotoEquipoDestacado && (
+      <figure class="servicios-tipografico__estrella reveal--scale">
+        <img src={fotoEquipoDestacado} alt={nombreEquipoDestacado ?? 'Equipo destacado'} loading="lazy" width="900" height="500" />
+        {nombreEquipoDestacado && <figcaption>{nombreEquipoDestacado}</figcaption>}
+      </figure>
+    )}
+
+    <div class="servicios-tipografico">
+      {categorias.map((cat) => (
+        <div class="servicios-tipografico__categoria reveal">
+          <h3>{cat.categoria}</h3>
+          <ul class="servicios-tipografico__lista">
+            {cat.servicios.map((s) => (
+              <li class="servicios-tipografico__servicio">
+                <div class="servicios-tipografico__texto">
+                  <p class="servicios-tipografico__nombre">{s.nombre}</p>
+                  {s.duracionMin && <p class="servicios-tipografico__duracion">≈ {s.duracionMin} min</p>}
+                  {s.descripcion && <p class="servicios-tipografico__descripcion">{s.descripcion}</p>}
+                </div>
+                <div class="servicios-tipografico__accion">
+                  <span class="servicios-tipografico__precio">Desde ${s.precioDesde.toFixed(2)}</span>
+                  <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={s.nombre} />
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .servicios-tipografico__titulo {
+    text-align: center;
+  }
+
+  .servicios-tipografico__estrella {
+    margin: 0 0 4rem;
+  }
+
+  .servicios-tipografico__estrella img {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  }
+
+  .servicios-tipografico__estrella figcaption {
+    text-align: center;
+    font-family: var(--font-titulos);
+    font-size: 1.15rem;
+    margin-top: 1rem;
+    color: var(--color-primario);
+  }
+
+  .servicios-tipografico {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .servicios-tipografico__categoria {
+    margin-bottom: 4rem;
+  }
+
+  .servicios-tipografico__categoria:last-child {
+    margin-bottom: 0;
+  }
+
+  .servicios-tipografico__categoria h3 {
+    font-family: var(--font-titulos);
+    font-weight: 600;
+    font-size: 1.75rem;
+    text-align: center;
+    margin: 0 0 2rem;
+    color: var(--color-primario);
+  }
+
+  .servicios-tipografico__lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.75rem;
+  }
+
+  .servicios-tipografico__servicio {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .servicios-tipografico__texto {
+    flex: 1;
+  }
+
+  .servicios-tipografico__nombre {
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin: 0 0 0.35rem;
+  }
+
+  .servicios-tipografico__duracion {
+    margin: 0 0 0.35rem;
+    font-size: 1rem;
+    color: var(--color-primario);
+  }
+
+  .servicios-tipografico__descripcion {
+    margin: 0;
+    font-size: 1rem;
+    opacity: 0.75;
+  }
+
+  .servicios-tipografico__accion {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .servicios-tipografico__precio {
+    font-weight: 700;
+    color: var(--color-primario);
+  }
+
+  @media (max-width: 560px) {
+    .servicios-tipografico__servicio {
+      flex-direction: column;
+    }
+
+    .servicios-tipografico__accion {
+      flex-direction: row;
+      align-items: center;
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+</style>

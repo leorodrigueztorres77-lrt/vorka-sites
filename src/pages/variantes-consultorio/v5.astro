@@ -1,0 +1,102 @@
+---
+// Consultorio médico/dental — Variante 5 "Deentiva" (Capa 2, referencia
+// visual — nota: el preview en vivo de esa plantilla no estaba disponible al
+// construir esta variante; se usó como referencia complementaria "Dentiva"
+// (dentiva.framer.ai), de estructura y tono similares).
+// Argumento de conversión: "La accesibilidad y la facilidad de agendar" —
+// para consultorios que compiten en facilidad y precio accesible. Hero
+// centrado en el proceso (Escríbenos → Confirmamos → Te atendemos), seguros
+// aceptados y precio "Desde $X" visibles sin scroll, servicios filtrables.
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/common/Header.astro';
+import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
+import Testimonials from '@/components/common/Testimonials.astro';
+import LocationMap from '@/components/common/LocationMap.astro';
+import ContactForm from '@/components/common/ContactForm.astro';
+import Footer from '@/components/common/Footer.astro';
+import FloatingWhatsApp from '@/components/common/FloatingWhatsApp.astro';
+
+import HeroPasos from '@/components/consultorio/HeroPasos.astro';
+import ServiciosFiltrable from '@/components/consultorio/ServiciosFiltrable.astro';
+
+import { siteConfigConsultorio } from '@/data/site.config.consultorio';
+import { serviciosSample, horariosSample, testimoniosSample, statsSample, pasosSample } from '@/data/consultorio.sample';
+
+const navItems = [
+  { label: 'Servicios', href: '#servicios' },
+  { label: 'Ubicación', href: '#ubicacion' },
+  { label: 'Contacto', href: '#contacto' },
+];
+
+const precioDesde = Math.min(...serviciosSample.flatMap((cat) => cat.servicios.map((s) => s.precioDesde)));
+---
+
+<BaseLayout site={siteConfigConsultorio}>
+  <Header site={siteConfigConsultorio} navItems={navItems} transparente={false} />
+
+  <HeroPasos
+    site={siteConfigConsultorio}
+    titular="Agenda tu cita en 2 minutos por WhatsApp"
+    pasos={pasosSample}
+    seguros={statsSample.segurosAceptados}
+    precioDesde={precioDesde}
+  >
+    <Fragment slot="cta">
+      <WhatsAppButton
+        phone={siteConfigConsultorio.telefonoWhatsApp}
+        message={`Hola, quiero agendar una cita en ${siteConfigConsultorio.nombre}`}
+        negocioSlug={siteConfigConsultorio.negocioSlug}
+        label="Agendar cita por WhatsApp"
+        variante="primario"
+      />
+    </Fragment>
+  </HeroPasos>
+
+  <ServiciosFiltrable
+    categorias={serviciosSample}
+    phone={siteConfigConsultorio.telefonoWhatsApp}
+    negocioSlug={siteConfigConsultorio.negocioSlug}
+  />
+
+  <Testimonials testimonios={testimoniosSample} carrusel fondoSolido />
+
+  <LocationMap site={siteConfigConsultorio} horarios={horariosSample} />
+
+  <section class="cta-final" aria-labelledby="cta-final-titulo">
+    <div class="container cta-final__inner">
+      <h2 id="cta-final-titulo" class="cta-final__titulo">¿Listo para tu cita? Escríbenos ahora</h2>
+      <WhatsAppButton
+        phone={siteConfigConsultorio.telefonoWhatsApp}
+        message={`Hola, quiero agendar una cita en ${siteConfigConsultorio.nombre}`}
+        negocioSlug={siteConfigConsultorio.negocioSlug}
+        label="Agendar cita por WhatsApp"
+        variante="acento"
+      />
+    </div>
+  </section>
+
+  <ContactForm site={siteConfigConsultorio} productoLabel="Especialidad de interés" />
+
+  <Footer site={siteConfigConsultorio} />
+
+  <FloatingWhatsApp
+    phone={siteConfigConsultorio.telefonoWhatsApp}
+    message={`Hola, quiero agendar una cita en ${siteConfigConsultorio.nombre}`}
+    negocioSlug={siteConfigConsultorio.negocioSlug}
+  />
+</BaseLayout>
+
+<style>
+  .cta-final {
+    padding: 4rem 0;
+    background: var(--color-primario);
+    color: #fff;
+    text-align: center;
+  }
+
+  .cta-final__titulo {
+    color: #fff;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    margin-bottom: 1.5rem;
+  }
+</style>

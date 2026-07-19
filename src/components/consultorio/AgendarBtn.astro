@@ -1,0 +1,42 @@
+---
+// Capa 2 (consultorio) — botón de agendar por servicio individual. A
+// diferencia de MenuItemQuantity (restaurante, selector +/- para pedidos de
+// comida con cantidad), una cita no se "cantidad-ajusta" — un solo click
+// abre WhatsApp con el servicio ya escrito en el mensaje. Compartido por
+// todas las variantes de servicios (Tabs, Destacados, Portadas, Filtrable).
+import { buildWhatsAppLink } from '@/lib/whatsapp';
+
+interface Props {
+  phone: string;
+  negocioSlug: string;
+  nombreServicio: string;
+}
+
+const { phone, negocioSlug, nombreServicio } = Astro.props;
+const href = buildWhatsAppLink({
+  phone,
+  message: `Hola, quiero agendar una cita para ${nombreServicio}`,
+  negocioSlug,
+});
+---
+
+<a class="agendar-btn" href={href} target="_blank" rel="noopener noreferrer">
+  Agendar
+</a>
+
+<style>
+  .agendar-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.5rem 1.25rem;
+    border-radius: 999px;
+    background: var(--color-acento);
+    color: #1a1a1a;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+</style>

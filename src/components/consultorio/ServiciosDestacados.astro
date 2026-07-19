@@ -1,0 +1,211 @@
+---
+// Capa 2 (consultorio) — servicios de la Variante 1 ("El profesional es la
+// estrella"). Análogo a MenuDestacado (restaurante): los servicios marcados
+// `destacado` (con foto) se muestran como tarjetas grandes con badge; el
+// resto del catálogo va debajo en formato lista compacta.
+import type { CategoriaServicios } from '@/data/types';
+import AgendarBtn from './AgendarBtn.astro';
+
+interface Props {
+  categorias: CategoriaServicios[];
+  phone: string;
+  negocioSlug: string;
+}
+
+const { categorias, phone, negocioSlug } = Astro.props;
+
+const destacados = categorias.flatMap((cat) =>
+  cat.servicios.filter((s) => s.destacado && s.imagen).map((s) => ({ ...s, categoria: cat.categoria })),
+);
+---
+
+<section id="servicios" class="section" aria-labelledby="servicios-titulo">
+  <div class="container">
+    <h2 id="servicios-titulo" class="section-title">Nuestros Servicios</h2>
+
+    {destacados.length > 0 && (
+      <div class="servicios-destacados-grid">
+        {destacados.map((s) => (
+          <article class="servicios-destacados-card reveal--scale">
+            <div class="servicios-destacados-card__foto">
+              <img src={s.imagen} alt={s.nombre} loading="lazy" width="400" height="240" />
+              {s.tipo && <span class="servicios-destacados-card__badge">{s.tipo}</span>}
+            </div>
+            <div class="servicios-destacados-card__cuerpo">
+              <p class="servicios-destacados-card__nombre">{s.nombre}</p>
+              {s.descripcion && <p class="servicios-destacados-card__descripcion">{s.descripcion}</p>}
+              <div class="servicios-destacados-card__fila">
+                <span class="servicios-destacados-card__precio">Desde ${s.precioDesde.toFixed(2)}</span>
+                <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={s.nombre} />
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    )}
+
+    <div class="servicios-completo">
+      {categorias.map((cat) => (
+        <div class="servicios-completo__categoria">
+          <h3>{cat.categoria}</h3>
+          <ul class="servicios-completo__lista">
+            {cat.servicios.map((s) => (
+              <li class="servicios-completo__servicio reveal">
+                <div class="servicios-completo__info">
+                  <p class="servicios-completo__nombre">{s.nombre}</p>
+                  {s.descripcion && <p class="servicios-completo__descripcion">{s.descripcion}</p>}
+                </div>
+                <div class="servicios-completo__accion">
+                  <span class="servicios-completo__precio">Desde ${s.precioDesde.toFixed(2)}</span>
+                  <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={s.nombre} />
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .servicios-destacados-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  @media (min-width: 700px) {
+    .servicios-destacados-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .servicios-destacados-card {
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--color-fondo, #fff);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 300ms ease, box-shadow 300ms ease;
+  }
+
+  .servicios-destacados-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .servicios-destacados-card__foto {
+    position: relative;
+    height: 240px;
+  }
+
+  .servicios-destacados-card__foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .servicios-destacados-card__badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: var(--color-primario);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.3rem 0.85rem;
+    border-radius: 100px;
+  }
+
+  .servicios-destacados-card__cuerpo {
+    padding: 1.25rem;
+  }
+
+  .servicios-destacados-card__nombre {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin: 0 0 0.35rem;
+  }
+
+  .servicios-destacados-card__descripcion {
+    margin: 0 0 0.85rem;
+    font-size: 1rem;
+    opacity: 0.75;
+  }
+
+  .servicios-destacados-card__fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .servicios-destacados-card__precio {
+    font-weight: 700;
+    color: var(--color-primario);
+  }
+
+  .servicios-completo__categoria {
+    margin-bottom: 2rem;
+  }
+
+  .servicios-completo__categoria h3 {
+    color: var(--color-primario);
+    border-bottom: 2px solid var(--color-acento);
+    padding-bottom: 0.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .servicios-completo__lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .servicios-completo__servicio {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--color-fondo-alterno);
+  }
+
+  .servicios-completo__nombre {
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .servicios-completo__descripcion {
+    margin: 0.2rem 0 0;
+    font-size: 1rem;
+    opacity: 0.7;
+  }
+
+  .servicios-completo__accion {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .servicios-completo__precio {
+    font-weight: 700;
+    color: var(--color-primario);
+  }
+
+  @media (max-width: 560px) {
+    .servicios-completo__servicio {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .servicios-completo__accion {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+</style>

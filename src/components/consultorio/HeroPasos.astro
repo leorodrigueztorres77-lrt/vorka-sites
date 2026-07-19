@@ -1,0 +1,148 @@
+---
+// Capa 2 (consultorio) — Hero de la Variante 5 ("La accesibilidad y la
+// facilidad de agendar", referencia visual: Deentiva — nota: el preview en
+// vivo de esa plantilla no estaba disponible al construir esta variante; se
+// usó como referencia complementaria "Dentiva" (dentiva.framer.ai), de
+// estructura y tono similares). Sin equivalente directo en restaurante —
+// aquí el argumento no es el producto ni la prueba social sino el proceso:
+// tres pasos visuales (Escríbenos → Confirmamos → Te atendemos), seguros
+// aceptados visibles y precio "Desde $X" prominente, siguiendo la regla de
+// CLAUDE.md de mostrar el rango de precio para eliminar la fricción de
+// "¿y cuánto cobran?".
+import type { PasoProceso, SiteConfig } from '@/data/types';
+import SegurosAceptados from './SegurosAceptados.astro';
+
+interface Props {
+  site: SiteConfig;
+  titular: string;
+  pasos: PasoProceso[];
+  seguros?: string[];
+  precioDesde?: number;
+}
+
+const { site, titular, pasos, seguros = [], precioDesde } = Astro.props;
+---
+
+<section id="inicio" class="hero-pasos">
+  <div class="container">
+    <div class="hero-pasos__texto">
+      <h1 class="hero-pasos__titular reveal">{titular}</h1>
+      <p class="hero-pasos__subtitulo reveal">{site.tagline}</p>
+
+      {precioDesde !== undefined && (
+        <p class="hero-pasos__precio reveal">Consulta desde ${precioDesde.toFixed(2)}</p>
+      )}
+
+      <div class="hero-pasos__cta reveal">
+        <slot name="cta" />
+      </div>
+
+      {seguros.length > 0 && (
+        <div class="hero-pasos__seguros reveal">
+          <SegurosAceptados seguros={seguros} titulo="Aceptamos" />
+        </div>
+      )}
+    </div>
+
+    <ol class="hero-pasos__lista">
+      {pasos.map((paso) => (
+        <li class="hero-pasos__paso reveal--scale">
+          <span class="hero-pasos__numero">{String(paso.numero).padStart(2, '0')}</span>
+          <p class="hero-pasos__paso-titulo">{paso.titulo}</p>
+          {paso.descripcion && <p class="hero-pasos__paso-descripcion">{paso.descripcion}</p>}
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .hero-pasos {
+    padding: 8rem 0 4rem;
+    background: var(--color-fondo-alterno);
+    text-align: center;
+  }
+
+  .hero-pasos__texto {
+    max-width: 640px;
+    margin: 0 auto 3.5rem;
+  }
+
+  .hero-pasos__titular {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: clamp(2.25rem, 5.5vw, 4.5rem);
+    line-height: 1.1;
+    margin: 0 0 1.25rem;
+    color: var(--color-primario);
+  }
+
+  .hero-pasos__subtitulo {
+    font-size: 1.15rem;
+    opacity: 0.85;
+    margin: 0 0 1rem;
+  }
+
+  .hero-pasos__precio {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-primario);
+    margin: 0 0 1.75rem;
+  }
+
+  .hero-pasos__cta {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-pasos__seguros {
+    display: flex;
+    justify-content: center;
+  }
+
+  .hero-pasos__lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  @media (min-width: 700px) {
+    .hero-pasos__lista {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .hero-pasos__paso {
+    background: var(--color-fondo, #fff);
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  .hero-pasos__numero {
+    display: block;
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: 2.5rem;
+    color: var(--color-acento);
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-pasos__paso-titulo {
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin: 0 0 0.4rem;
+  }
+
+  .hero-pasos__paso-descripcion {
+    margin: 0;
+    font-size: 1rem;
+    opacity: 0.75;
+  }
+</style>

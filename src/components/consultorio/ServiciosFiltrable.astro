@@ -1,0 +1,211 @@
+---
+// Capa 2 (consultorio) — servicios de la Variante 5 ("La accesibilidad y la
+// facilidad de agendar"). Análoga a MenuFiltrable: filtro por categoría con
+// animación suave de fade + "Ver más" en vez de mostrar todo el catálogo de
+// golpe (para consultorios con oferta amplia). Cada tarjeta lleva foto
+// cuadrada + badge de tipo (si el servicio lo tiene) + duración.
+import type { CategoriaServicios } from '@/data/types';
+import AgendarBtn from './AgendarBtn.astro';
+
+interface Props {
+  categorias: CategoriaServicios[];
+  phone: string;
+  negocioSlug: string;
+  /** Cuántas tarjetas mostrar antes de "Ver más". */
+  porPagina?: number;
+}
+
+const { categorias, phone, negocioSlug, porPagina = 9 } = Astro.props;
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+const todosServicios = categorias.flatMap((cat) =>
+  cat.servicios.map((s) => ({ ...s, categoria: cat.categoria })),
+);
+---
+
+<section id="servicios" class="section" aria-labelledby="servicios-titulo">
+  <div class="container">
+    <h2 id="servicios-titulo" class="section-title">Nuestros Servicios</h2>
+
+    <div class="servicios-filtrable" data-menu-filtrable data-por-pagina={porPagina}>
+      <div class="servicios-filtrable__filtros" role="tablist">
+        <button type="button" class="servicios-filtrable__filtro is-activo" data-filtro="todos">Todos</button>
+        {categorias.map((cat) => (
+          <button type="button" class="servicios-filtrable__filtro" data-filtro={slug(cat.categoria)}>
+            {cat.categoria}
+          </button>
+        ))}
+      </div>
+
+      <div class="servicios-filtrable__grid">
+        {todosServicios.map((s) => (
+          <article class="servicios-filtrable__card reveal--scale" data-plato data-categoria={slug(s.categoria)}>
+            {s.imagen && <img src={s.imagen} alt={s.nombre} loading="lazy" width="280" height="200" />}
+            <div class="servicios-filtrable__cuerpo">
+              {s.tipo && <span class="servicios-filtrable__badge">{s.tipo}</span>}
+              <p class="servicios-filtrable__nombre">{s.nombre}</p>
+              {s.duracionMin && <p class="servicios-filtrable__duracion">≈ {s.duracionMin} min</p>}
+              {s.descripcion && <p class="servicios-filtrable__descripcion">{s.descripcion}</p>}
+              <div class="servicios-filtrable__fila">
+                <span class="servicios-filtrable__precio">Desde ${s.precioDesde.toFixed(2)}</span>
+                <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={s.nombre} />
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div class="servicios-filtrable__mas">
+        <button type="button" class="servicios-filtrable__boton-mas" data-ver-mas>Ver más</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { revelarEscalonado, ocultarReveal } from '@/lib/motion';
+
+  document.querySelectorAll<HTMLElement>('[data-menu-filtrable]').forEach((contenedor) => {
+    const porPagina = parseInt(contenedor.dataset.porPagina ?? '9', 10);
+    const filtros = contenedor.querySelectorAll<HTMLButtonElement>('[data-filtro]');
+    const tarjetas = Array.from(contenedor.querySelectorAll<HTMLElement>('[data-plato]'));
+    const botonMas = contenedor.querySelector<HTMLButtonElement>('[data-ver-mas]');
+
+    let filtroActivo = 'todos';
+    let visibles = porPagina;
+
+    const aplicar = () => {
+      const coinciden = tarjetas.filter((t) => filtroActivo === 'todos' || t.dataset.categoria === filtroActivo);
+      ocultarReveal(tarjetas);
+      tarjetas.forEach((t) => { t.style.display = 'none'; });
+      const mostradas = coinciden.slice(0, visibles);
+      mostradas.forEach((t) => { t.style.display = ''; });
+      revelarEscalonado(mostradas, 60);
+      if (botonMas) botonMas.style.display = coinciden.length > visibles ? '' : 'none';
+    };
+
+    filtros.forEach((boton) => {
+      boton.addEventListener('click', () => {
+        filtroActivo = boton.dataset.filtro ?? 'todos';
+        visibles = porPagina;
+        filtros.forEach((b) => b.classList.toggle('is-activo', b === boton));
+        aplicar();
+      });
+    });
+
+    botonMas?.addEventListener('click', () => {
+      visibles += porPagina;
+      aplicar();
+    });
+
+    aplicar();
+  });
+</script>
+
+<style>
+  .servicios-filtrable__filtros {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .servicios-filtrable__filtro {
+    min-height: 44px;
+    padding: 0.6rem 1.4rem;
+    border-radius: 100px;
+    border: 1px solid var(--color-fondo-alterno);
+    background: var(--color-fondo, #fff);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 200ms ease, color 200ms ease;
+  }
+
+  .servicios-filtrable__filtro.is-activo {
+    background: var(--color-primario);
+    color: #fff;
+    border-color: var(--color-primario);
+  }
+
+  .servicios-filtrable__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .servicios-filtrable__card {
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--color-fondo, #fff);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .servicios-filtrable__card img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+  }
+
+  .servicios-filtrable__cuerpo {
+    padding: 1rem;
+    position: relative;
+  }
+
+  .servicios-filtrable__badge {
+    display: inline-block;
+    background: var(--color-acento);
+    color: var(--color-texto);
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.2rem 0.7rem;
+    border-radius: 100px;
+    margin-bottom: 0.5rem;
+  }
+
+  .servicios-filtrable__nombre {
+    font-weight: 700;
+    margin: 0 0 0.3rem;
+  }
+
+  .servicios-filtrable__duracion {
+    margin: 0 0 0.3rem;
+    font-size: 1rem;
+    color: var(--color-primario);
+  }
+
+  .servicios-filtrable__descripcion {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+    opacity: 0.75;
+  }
+
+  .servicios-filtrable__fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .servicios-filtrable__precio {
+    font-weight: 700;
+    color: var(--color-primario);
+  }
+
+  .servicios-filtrable__mas {
+    display: flex;
+    justify-content: center;
+    margin-top: 2.5rem;
+  }
+
+  .servicios-filtrable__boton-mas {
+    min-height: 44px;
+    padding: 0.75rem 2rem;
+    border-radius: 100px;
+    border: 2px solid var(--color-primario);
+    background: transparent;
+    color: var(--color-primario);
+    font-weight: 600;
+    cursor: pointer;
+  }
+</style>

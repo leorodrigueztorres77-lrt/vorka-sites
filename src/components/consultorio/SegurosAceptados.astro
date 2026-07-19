@@ -1,0 +1,51 @@
+---
+// Capa 2 (consultorio) — fila de seguros aceptados en badges. Regla del
+// vertical (skill vertical-web-builder / CLAUDE.md): los seguros aceptados
+// siempre deben ser visibles ANTES de mostrar cualquier precio — el paciente
+// necesita esa señal para decidir si vale la pena seguir leyendo. Compartida
+// por V4 (junto a StatsFila) y V5 (junto al hero de agendamiento).
+interface Props {
+  seguros: string[];
+  /** V5: título más orientado a "empieza aquí" en vez del genérico de V4. */
+  titulo?: string;
+}
+
+const { seguros, titulo = 'Seguros que aceptamos' } = Astro.props;
+---
+
+{seguros.length > 0 && (
+  <div class="seguros">
+    <p class="seguros__titulo">{titulo}</p>
+    <ul class="seguros__lista">
+      {seguros.map((s) => (
+        <li class="seguros__badge">{s}</li>
+      ))}
+    </ul>
+  </div>
+)}
+
+<style>
+  .seguros__titulo {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 0.6rem;
+    opacity: 0.85;
+  }
+
+  .seguros__lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .seguros__badge {
+    border: 1px solid currentColor;
+    border-radius: 100px;
+    padding: 0.3rem 0.9rem;
+    font-size: 1rem;
+    opacity: 0.9;
+  }
+</style>

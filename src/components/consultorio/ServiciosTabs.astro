@@ -1,0 +1,302 @@
+---
+// Capa 2 (consultorio) — servicios de la Variante 2 ("Los servicios completos
+// son el argumento", referencia visual: Reddent). Análogo a MenuTabs
+// (restaurante): tabs filtrables por especialidad con portada dramática de
+// bloque de color sólido; sin JS, con:visible cae a mostrar todas las
+// categorías seguidas (degradación segura). Cada servicio muestra duración
+// estimada además de precio "desde $X" — dato que el paciente necesita para
+// comparar, ausente en el equivalente de restaurante.
+import type { CategoriaServicios } from '@/data/types';
+import AgendarBtn from './AgendarBtn.astro';
+
+interface Props {
+  categorias: CategoriaServicios[];
+  phone: string;
+  negocioSlug: string;
+}
+
+const { categorias, phone, negocioSlug } = Astro.props;
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+---
+
+<section id="servicios" class="section" aria-labelledby="servicios-titulo">
+  <div class="container">
+    <h2 id="servicios-titulo" class="section-title">Nuestros Servicios</h2>
+
+    <div class="servicios-tabs" data-menu-tabs>
+      <div class="servicios-tabs__botones" role="tablist">
+        {categorias.map((cat, i) => (
+          <button
+            type="button"
+            class="servicios-tabs__boton"
+            class:list={{ 'is-activo': i === 0 }}
+            data-tab-target={slug(cat.categoria)}
+            role="tab"
+            aria-selected={i === 0}
+          >
+            {cat.categoria}
+          </button>
+        ))}
+      </div>
+
+      {categorias.map((cat, i) => {
+        const destacados = cat.servicios.filter((s) => s.imagen).slice(0, 4);
+        return (
+          <div
+            class="servicios-tabs__panel"
+            class:list={{ 'is-activo': i === 0 }}
+            data-tab-panel={slug(cat.categoria)}
+            role="tabpanel"
+          >
+            <div class="servicios-tabs__portada">
+              <div class="container servicios-tabs__portada-inner">
+                <h3 class="servicios-tabs__nombre-categoria reveal--scale">{cat.categoria}</h3>
+                {destacados.length > 0 && (
+                  <div class="servicios-tabs__destacados">
+                    {destacados.map((s) => (
+                      <div class="servicios-tabs__destacado-item reveal--scale">
+                        <img src={s.imagen} alt={s.nombre} loading="lazy" width="280" height="280" />
+                        <span class="servicios-tabs__precio-burbuja">Desde ${s.precioDesde.toFixed(2)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <ul class="servicios-tabs__lista">
+              {cat.servicios.map((s) => (
+                <li class:list={['servicios-tabs__servicio', 'reveal--scale', { 'servicios-tabs__servicio--destacado': s.destacado }]}>
+                  {s.imagen && (
+                    <img class="servicios-tabs__imagen" src={s.imagen} alt={s.nombre} loading="lazy" width="120" height="120" />
+                  )}
+                  <div class="servicios-tabs__info">
+                    <p class="servicios-tabs__nombre">{s.nombre}</p>
+                    {s.duracionMin && (
+                      <p class="servicios-tabs__duracion">≈ {s.duracionMin} min</p>
+                    )}
+                    {s.descripcion && <p class="servicios-tabs__descripcion">{s.descripcion}</p>}
+                  </div>
+                  <div class="servicios-tabs__accion">
+                    <span class="servicios-tabs__precio">Desde ${s.precioDesde.toFixed(2)}</span>
+                    <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={s.nombre} />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<script>
+  import { revelarEscalonado, ocultarReveal } from '@/lib/motion';
+
+  document.querySelectorAll<HTMLElement>('[data-menu-tabs]').forEach((contenedor) => {
+    const botones = contenedor.querySelectorAll<HTMLButtonElement>('[data-tab-target]');
+    const paneles = contenedor.querySelectorAll<HTMLElement>('[data-tab-panel]');
+
+    botones.forEach((boton) => {
+      boton.addEventListener('click', () => {
+        const destino = boton.dataset.tabTarget;
+        botones.forEach((b) => {
+          b.classList.toggle('is-activo', b === boton);
+          b.setAttribute('aria-selected', String(b === boton));
+        });
+        paneles.forEach((p) => {
+          const activo = p.dataset.tabPanel === destino;
+          p.classList.toggle('is-activo', activo);
+          if (activo) {
+            const elementos = Array.from(p.querySelectorAll<HTMLElement>('.reveal--scale'));
+            ocultarReveal(elementos);
+            requestAnimationFrame(() => revelarEscalonado(elementos, 50));
+          }
+        });
+      });
+    });
+  });
+</script>
+
+<style>
+  .servicios-tabs__botones {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .servicios-tabs__boton {
+    min-height: 44px;
+    padding: 0.6rem 1.4rem;
+    border-radius: 100px;
+    border: 1px solid var(--color-fondo-alterno);
+    background: var(--color-fondo, #fff);
+    font-family: var(--font-titulos);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 200ms ease, color 200ms ease;
+  }
+
+  .servicios-tabs__boton.is-activo {
+    background: var(--color-primario);
+    color: #fff;
+    border-color: var(--color-primario);
+  }
+
+  .servicios-tabs__panel {
+    display: none;
+  }
+
+  .servicios-tabs__panel.is-activo {
+    display: block;
+  }
+
+  html:not(.js-reveal) .servicios-tabs__panel {
+    display: block;
+  }
+
+  .servicios-tabs__portada {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    background: var(--color-primario);
+    color: #fff;
+    padding: 3rem 0;
+    margin-bottom: 2.5rem;
+  }
+
+  .servicios-tabs__portada-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .servicios-tabs__nombre-categoria {
+    font-size: clamp(2.5rem, 9vw, 5rem);
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  .servicios-tabs__destacados {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(120px, 200px));
+    gap: 1rem;
+    width: 100%;
+    max-width: 460px;
+  }
+
+  .servicios-tabs__destacado-item {
+    position: relative;
+    aspect-ratio: 1 / 1;
+  }
+
+  .servicios-tabs__destacado-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
+  }
+
+  .servicios-tabs__precio-burbuja {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #fff;
+    color: var(--color-texto);
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 100px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  }
+
+  .servicios-tabs__lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .servicios-tabs__servicio {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    background: var(--color-fondo, #fff);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  .servicios-tabs__servicio--destacado {
+    outline: 2px solid var(--color-acento);
+  }
+
+  .servicios-tabs__imagen {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+
+  .servicios-tabs__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .servicios-tabs__nombre {
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .servicios-tabs__duracion {
+    color: var(--color-primario);
+    margin: 0.2rem 0 0;
+    font-size: 1rem;
+  }
+
+  .servicios-tabs__descripcion {
+    margin: 0.3rem 0 0;
+    font-size: 1rem;
+    opacity: 0.75;
+  }
+
+  .servicios-tabs__accion {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .servicios-tabs__precio {
+    font-weight: 700;
+    color: var(--color-primario);
+  }
+
+  @media (max-width: 560px) {
+    .servicios-tabs__servicio {
+      flex-wrap: wrap;
+    }
+
+    .servicios-tabs__accion {
+      width: 100%;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .servicios-tabs__destacados {
+      grid-template-columns: repeat(2, 1fr);
+      max-width: 320px;
+    }
+  }
+</style>

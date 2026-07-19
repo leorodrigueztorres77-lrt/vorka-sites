@@ -1,0 +1,68 @@
+---
+// Capa 3 — Odontocrea (consultorio odontológico, Quito).
+// Variante Capa 2: V2 "Reddent" — ver razonamiento en src/data/site.odontocrea.ts.
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/common/Header.astro';
+import HeroSplit from '@/components/common/HeroSplit.astro';
+import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
+import Testimonials from '@/components/common/Testimonials.astro';
+import LocationMap from '@/components/common/LocationMap.astro';
+import ContactForm from '@/components/common/ContactForm.astro';
+import Footer from '@/components/common/Footer.astro';
+import FloatingWhatsApp from '@/components/common/FloatingWhatsApp.astro';
+
+import Historia from '@/components/restaurant/Historia.astro';
+import ServiciosTabs from '@/components/consultorio/ServiciosTabs.astro';
+
+import { siteConfigOdontocrea } from '@/data/site.odontocrea';
+import {
+  serviciosOdontocrea,
+  heroFotoOdontocrea,
+  historiaOdontocrea,
+  horariosOdontocrea,
+  testimoniosOdontocrea,
+} from '@/data/consultorio.odontocrea';
+
+const site = siteConfigOdontocrea;
+
+const navItems = [
+  { label: 'Servicios', href: '#servicios' },
+  { label: 'Ubicación', href: '#ubicacion' },
+  { label: 'Contacto', href: '#contacto' },
+];
+---
+
+<BaseLayout site={site}>
+  <Header site={site} navItems={navItems} />
+
+  <HeroSplit site={site} imagen={heroFotoOdontocrea} imagenAlt="Clínica dental Odontocrea (foto de banco, placeholder temporal)" estilo="superpuesto">
+    <Fragment slot="cta">
+      <a class="btn btn--primario" href="#servicios">Ver todos los servicios</a>
+      <WhatsAppButton
+        phone={site.telefonoWhatsApp}
+        message={`Hola, quiero agendar una cita en ${site.nombre}`}
+        negocioSlug={site.negocioSlug}
+        label="Agendar cita por WhatsApp"
+        variante="acento"
+      />
+    </Fragment>
+  </HeroSplit>
+
+  <Historia historia={historiaOdontocrea} nombreNegocio={site.nombre} fondoAlterno revealFoto="escala" />
+
+  <ServiciosTabs categorias={serviciosOdontocrea} phone={site.telefonoWhatsApp} negocioSlug={site.negocioSlug} />
+
+  <Testimonials testimonios={testimoniosOdontocrea} carrusel fondoSolido />
+
+  <LocationMap site={site} horarios={horariosOdontocrea} />
+
+  <ContactForm site={site} productoLabel="Especialidad de interés" />
+
+  <Footer site={site} />
+
+  <FloatingWhatsApp
+    phone={site.telefonoWhatsApp}
+    message={`Hola, quiero agendar una cita en ${site.nombre}`}
+    negocioSlug={site.negocioSlug}
+  />
+</BaseLayout>

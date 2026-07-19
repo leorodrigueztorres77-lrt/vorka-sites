@@ -1,0 +1,111 @@
+---
+// Capa 2 (consultorio) — Hero de la Variante 4 ("La confianza y los
+// testimonios primero", referencia visual: Dentart). Análogo a HeroStats
+// (restaurante): titular orientado a confianza + contador de rating/reseñas
+// grande visible sin scroll. El corazón de esta variante es la credibilidad,
+// no el profesional ni el equipamiento — para consultorios nuevos o en zonas
+// de mucha competencia.
+import type { EstadisticasNegocio, SiteConfig } from '@/data/types';
+
+interface Props {
+  site: SiteConfig;
+  imagenFondo: string;
+  /** Titular orientado a confianza, ej. "El consultorio que ya eligieron 1.200 pacientes en Cumbayá". */
+  titular: string;
+  stats?: EstadisticasNegocio;
+}
+
+const { site, imagenFondo, titular, stats } = Astro.props;
+---
+
+<section id="inicio" class="hero-confianza">
+  <div class="container hero-confianza__grid">
+    <div class="hero-confianza__texto">
+      {stats?.aniosTrayectoria && (
+        <p class="hero-confianza__badge reveal">{stats.aniosTrayectoria} años en {site.ciudad}</p>
+      )}
+      <h1 class="hero-confianza__titular reveal">{titular}</h1>
+      <p class="hero-confianza__subtitulo reveal">{site.tagline}</p>
+
+      {stats && (stats.ratingGoogle || stats.totalResenas) && (
+        <p class="hero-confianza__contador reveal" aria-label="Calificación y reseñas en Google">
+          {stats.ratingGoogle && <span class="hero-confianza__estrella">⭐ {stats.ratingGoogle}</span>}
+          {stats.totalResenas && <span> · {stats.totalResenas} reseñas en Google</span>}
+        </p>
+      )}
+
+      <div class="hero-confianza__cta reveal">
+        <slot name="cta" />
+      </div>
+    </div>
+
+    <div class="hero-confianza__foto reveal--scale">
+      <img src={imagenFondo} alt={site.nombre} loading="eager" width="600" height="600" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-confianza {
+    background: var(--color-fondo-alterno);
+    padding: 8rem 0 4rem;
+  }
+
+  .hero-confianza__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  @media (min-width: 800px) {
+    .hero-confianza__grid {
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+  }
+
+  .hero-confianza__badge {
+    display: inline-block;
+    background: var(--color-acento);
+    color: var(--color-texto);
+    border-radius: 100px;
+    padding: 0.35rem 1.1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-confianza__titular {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: clamp(2.25rem, 5.5vw, 5.5rem);
+    line-height: 1.1;
+    margin: 0 0 1.25rem;
+    color: var(--color-primario);
+  }
+
+  .hero-confianza__subtitulo {
+    font-size: 1.15rem;
+    opacity: 0.85;
+    max-width: 480px;
+    margin: 0 0 1.5rem;
+  }
+
+  .hero-confianza__contador {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin: 0 0 2rem;
+  }
+
+  .hero-confianza__estrella {
+    color: var(--color-primario);
+  }
+
+  .hero-confianza__foto img {
+    width: 100%;
+    max-height: 480px;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  }
+</style>

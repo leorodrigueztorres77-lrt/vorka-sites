@@ -1,0 +1,74 @@
+---
+// Capa 3 — Estetic Dent (consultorio odontológico, Quito).
+// Variante Capa 2: V3 "Vervedent" — ver razonamiento en src/data/site.esteticdent.ts.
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/common/Header.astro';
+import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
+import Testimonials from '@/components/common/Testimonials.astro';
+import LocationMap from '@/components/common/LocationMap.astro';
+import ContactForm from '@/components/common/ContactForm.astro';
+import Footer from '@/components/common/Footer.astro';
+import FloatingWhatsApp from '@/components/common/FloatingWhatsApp.astro';
+
+import HeroEquipamiento from '@/components/consultorio/HeroEquipamiento.astro';
+import ServiciosTipografico from '@/components/consultorio/ServiciosTipografico.astro';
+import Equipamiento from '@/components/consultorio/Equipamiento.astro';
+
+import { siteConfigEsteticdent } from '@/data/site.esteticdent';
+import {
+  serviciosEsteticdent,
+  galeriaEsteticdent,
+  horariosEsteticdent,
+  testimoniosEsteticdent,
+} from '@/data/consultorio.esteticdent';
+
+const site = siteConfigEsteticdent;
+const equipoDestacado = galeriaEsteticdent[1];
+---
+
+<BaseLayout site={site}>
+  <Header
+    site={site}
+    navItems={[
+      { label: 'Servicios', href: '#servicios' },
+      { label: 'Nuestra tecnología', href: '#tecnologia' },
+      { label: 'Contacto', href: '#contacto' },
+    ]}
+  />
+
+  <HeroEquipamiento imagenFondo={galeriaEsteticdent[0].src} titular="Odontología de precisión">
+    <Fragment slot="cta">
+      <WhatsAppButton
+        phone={site.telefonoWhatsApp}
+        message={`Hola, quiero agendar una cita en ${site.nombre}`}
+        negocioSlug={site.negocioSlug}
+        label="Agendar cita por WhatsApp"
+        variante="acento"
+      />
+    </Fragment>
+  </HeroEquipamiento>
+
+  <ServiciosTipografico
+    categorias={serviciosEsteticdent}
+    fotoEquipoDestacado={equipoDestacado.src}
+    nombreEquipoDestacado={equipoDestacado.alt}
+    phone={site.telefonoWhatsApp}
+    negocioSlug={site.negocioSlug}
+  />
+
+  <Equipamiento fotos={galeriaEsteticdent} />
+
+  <Testimonials testimonios={testimoniosEsteticdent} />
+
+  <LocationMap site={site} horarios={horariosEsteticdent} />
+
+  <ContactForm site={site} productoLabel="Servicio de interés" />
+
+  <Footer site={site} />
+
+  <FloatingWhatsApp
+    phone={site.telefonoWhatsApp}
+    message={`Hola, quiero agendar una cita en ${site.nombre}`}
+    negocioSlug={site.negocioSlug}
+  />
+</BaseLayout>

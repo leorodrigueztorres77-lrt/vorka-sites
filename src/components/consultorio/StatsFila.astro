@@ -1,0 +1,86 @@
+---
+// Capa 2 (consultorio) — fila de estadísticas con contador animado, análoga
+// a la de restaurante pero con campos propios del vertical (pacientes
+// atendidos, seguros aceptados) en vez de pedidos/platos en carta.
+// Compartida por V4 ("La confianza primero") y V5 ("Accesibilidad y
+// facilidad de agendar"). Solo renderiza los datos que el negocio realmente
+// tiene — CLAUDE.md prohíbe mostrar cifras de reputación inventadas.
+import type { EstadisticasNegocio } from '@/data/types';
+
+interface Props {
+  stats: EstadisticasNegocio;
+  /** Regla de profundidad visual #2 (CLAUDE.md): bloque de color sólido. */
+  fondoSolido?: boolean;
+}
+
+const { stats, fondoSolido = false } = Astro.props;
+
+const items = [
+  stats.pacientesAtendidos ? { valor: stats.pacientesAtendidos, sufijo: '+', label: 'Pacientes atendidos' } : null,
+  stats.ratingGoogle ? { valor: stats.ratingGoogle, sufijo: '', label: 'Rating en Google', decimales: 1 } : null,
+  stats.aniosTrayectoria ? { valor: stats.aniosTrayectoria, sufijo: '', label: 'Años de trayectoria' } : null,
+  stats.segurosAceptados?.length ? { valor: stats.segurosAceptados.length, sufijo: '', label: 'Seguros aceptados' } : null,
+  stats.totalResenas ? { valor: stats.totalResenas, sufijo: '+', label: 'Reseñas' } : null,
+].filter((x): x is { valor: number; sufijo: string; label: string; decimales?: number } => x !== null);
+---
+
+{items.length > 0 && (
+  <div class:list={['stats-fila', { 'stats-fila--solido': fondoSolido }]}>
+    <div class="container stats-fila__grid">
+      {items.map((item) => (
+        <div class="stats-fila__item reveal--scale">
+          <p class="stats-fila__numero" data-countup data-valor={item.valor} data-decimales={item.decimales ?? 0} data-sufijo={item.sufijo}>
+            0{item.sufijo}
+          </p>
+          <p class="stats-fila__label">{item.label}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
+<script>
+  import { observarCountUp } from '@/lib/motion';
+
+  observarCountUp(document.querySelectorAll<HTMLElement>('[data-countup]'));
+</script>
+
+<style>
+  .stats-fila {
+    padding: 3rem 0;
+    background: var(--color-fondo-alterno);
+  }
+
+  .stats-fila--solido {
+    background: var(--color-primario);
+    color: #fff;
+  }
+
+  .stats-fila__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    text-align: center;
+  }
+
+  @media (min-width: 700px) {
+    .stats-fila__grid {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+  }
+
+  .stats-fila__numero {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 0;
+  }
+
+  .stats-fila__label {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    opacity: 0.75;
+    margin: 0.4rem 0 0;
+  }
+</style>

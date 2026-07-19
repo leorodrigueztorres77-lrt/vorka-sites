@@ -1,0 +1,72 @@
+---
+// Consultorio médico/dental — Variante 3 "Vervedent" (Capa 2).
+// Argumento de conversión: "La modernidad y el equipamiento" — para
+// consultorios que han invertido en tecnología reciente y quieren
+// diferenciarse de los tradicionales. Hero de video/foto minimalista (sin
+// señal social visible ahí, mismo criterio que su análogo de restaurante),
+// servicios tipográficos sin fotos por ítem, sección de tecnología integrada.
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/common/Header.astro';
+import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
+import Testimonials from '@/components/common/Testimonials.astro';
+import LocationMap from '@/components/common/LocationMap.astro';
+import ContactForm from '@/components/common/ContactForm.astro';
+import Footer from '@/components/common/Footer.astro';
+import FloatingWhatsApp from '@/components/common/FloatingWhatsApp.astro';
+
+import HeroEquipamiento from '@/components/consultorio/HeroEquipamiento.astro';
+import ServiciosTipografico from '@/components/consultorio/ServiciosTipografico.astro';
+import Equipamiento from '@/components/consultorio/Equipamiento.astro';
+
+import { siteConfigConsultorio } from '@/data/site.config.consultorio';
+import { serviciosSample, galeriaSample, horariosSample, testimoniosSample } from '@/data/consultorio.sample';
+
+const equipoDestacado = galeriaSample[1];
+---
+
+<BaseLayout site={siteConfigConsultorio}>
+  <Header
+    site={siteConfigConsultorio}
+    navItems={[
+      { label: 'Servicios', href: '#servicios' },
+      { label: 'Nuestra tecnología', href: '#tecnologia' },
+      { label: 'Contacto', href: '#contacto' },
+    ]}
+  />
+
+  <HeroEquipamiento imagenFondo={galeriaSample[0].src} titular="Odontología de precisión">
+    <Fragment slot="cta">
+      <WhatsAppButton
+        phone={siteConfigConsultorio.telefonoWhatsApp}
+        message={`Hola, quiero agendar una cita en ${siteConfigConsultorio.nombre}`}
+        negocioSlug={siteConfigConsultorio.negocioSlug}
+        label="Agendar cita por WhatsApp"
+        variante="acento"
+      />
+    </Fragment>
+  </HeroEquipamiento>
+
+  <ServiciosTipografico
+    categorias={serviciosSample}
+    fotoEquipoDestacado={equipoDestacado.src}
+    nombreEquipoDestacado={equipoDestacado.alt}
+    phone={siteConfigConsultorio.telefonoWhatsApp}
+    negocioSlug={siteConfigConsultorio.negocioSlug}
+  />
+
+  <Equipamiento fotos={galeriaSample} />
+
+  <Testimonials testimonios={testimoniosSample.slice(0, 1)} />
+
+  <LocationMap site={siteConfigConsultorio} horarios={horariosSample} />
+
+  <ContactForm site={siteConfigConsultorio} productoLabel="Especialidad de interés" />
+
+  <Footer site={siteConfigConsultorio} />
+
+  <FloatingWhatsApp
+    phone={siteConfigConsultorio.telefonoWhatsApp}
+    message={`Hola, quiero agendar una cita en ${siteConfigConsultorio.nombre}`}
+    negocioSlug={siteConfigConsultorio.negocioSlug}
+  />
+</BaseLayout>

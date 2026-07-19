@@ -1,0 +1,71 @@
+---
+// Consultorio médico/dental — Variante 4 "Dentart" (Capa 2).
+// Argumento de conversión: "La confianza y los testimonios primero" — para
+// consultorios nuevos o en zonas con mucha competencia donde la credibilidad
+// es el primer obstáculo. Contador de rating/reseñas visible sin scroll,
+// testimonios completos ANTES de los servicios, categorías como portadas
+// clickeables.
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/common/Header.astro';
+import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
+import Testimonials from '@/components/common/Testimonials.astro';
+import LocationMap from '@/components/common/LocationMap.astro';
+import ContactForm from '@/components/common/ContactForm.astro';
+import Footer from '@/components/common/Footer.astro';
+import FloatingWhatsApp from '@/components/common/FloatingWhatsApp.astro';
+
+import HeroConfianza from '@/components/consultorio/HeroConfianza.astro';
+import StatsFila from '@/components/consultorio/StatsFila.astro';
+import ServiciosPortadas from '@/components/consultorio/ServiciosPortadas.astro';
+
+import { siteConfigConsultorio } from '@/data/site.config.consultorio';
+import { serviciosSample, galeriaSample, horariosSample, testimoniosSample, statsSample } from '@/data/consultorio.sample';
+
+const navItems = [
+  { label: 'Servicios', href: '#servicios' },
+  { label: 'Ubicación', href: '#ubicacion' },
+  { label: 'Contacto', href: '#contacto' },
+];
+
+// Placeholder — demo-personalizer reemplaza con un titular de confianza real
+// del cliente (ver skill vertical-web-builder, V4).
+const titularHero = `El consultorio que ya eligieron los pacientes de ${siteConfigConsultorio.ciudad}`;
+---
+
+<BaseLayout site={siteConfigConsultorio}>
+  <Header site={siteConfigConsultorio} navItems={navItems} transparente={false} />
+
+  <HeroConfianza site={siteConfigConsultorio} imagenFondo={galeriaSample[0].src} titular={titularHero} stats={statsSample}>
+    <Fragment slot="cta">
+      <WhatsAppButton
+        phone={siteConfigConsultorio.telefonoWhatsApp}
+        message={`Hola, quiero agendar una cita en ${siteConfigConsultorio.nombre}`}
+        negocioSlug={siteConfigConsultorio.negocioSlug}
+        label="Agendar cita por WhatsApp"
+        variante="primario"
+      />
+    </Fragment>
+  </HeroConfianza>
+
+  <Testimonials testimonios={testimoniosSample} fondoSolido />
+
+  <StatsFila stats={statsSample} />
+
+  <ServiciosPortadas
+    categorias={serviciosSample}
+    phone={siteConfigConsultorio.telefonoWhatsApp}
+    negocioSlug={siteConfigConsultorio.negocioSlug}
+  />
+
+  <LocationMap site={siteConfigConsultorio} horarios={horariosSample} />
+
+  <ContactForm site={siteConfigConsultorio} productoLabel="Especialidad de interés" />
+
+  <Footer site={siteConfigConsultorio} />
+
+  <FloatingWhatsApp
+    phone={siteConfigConsultorio.telefonoWhatsApp}
+    message={`Hola, quiero agendar una cita en ${siteConfigConsultorio.nombre}`}
+    negocioSlug={siteConfigConsultorio.negocioSlug}
+  />
+</BaseLayout>
