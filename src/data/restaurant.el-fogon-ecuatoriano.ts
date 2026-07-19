@@ -49,7 +49,7 @@ export const menuElFogon: CategoriaMenu[] = [
         // (hornado ecuatoriano). Solo demo de venta; reemplazar por foto real
         // del cliente (Nivel 1) antes de publicar. Cierra parcialmente el GAP
         // documentado arriba (fritada/seco de pollo siguen sin foto).
-        imagen: '/images/el-fogon-ecuatoriano/hornado-hero-800.webp',
+        imagen: '/images/el-fogon-ecuatoriano/hornado-hero-800.webp?v=2',
       },
       {
         nombre: 'Fritada',
@@ -139,7 +139,7 @@ export const galeriaElFogon: FotoGaleria[] = [
 // venta: por la regla de autenticidad del vertical (CLAUDE.md, "nunca mostrar
 // comida 100% generada por IA como si fuera real"), reemplazar por Nivel 1
 // (foto real del cliente mejorada) antes de la entrega final.
-export const heroFotoElFogon = '/images/el-fogon-ecuatoriano/hornado-hero-1600.webp';
+export const heroFotoElFogon = '/images/el-fogon-ecuatoriano/hornado-hero-1600.webp?v=2';
 
 // PLACEHOLDER — el cliente no tiene todavía reseñas reales de Google para
 // citar. El brief de esta reconstrucción ("Umami") autoriza explícitamente
