@@ -1,6 +1,28 @@
 ---
 // Capa 3 — Estetic Dent (consultorio odontológico, Quito).
 // Variante Capa 2: V3 "Vervedent" — ver razonamiento en src/data/site.esteticdent.ts.
+//
+// REVERTIDO 2026-07-19 (feedback directo de Leo): la excepción puntual del
+// 2026-07-19 que mostraba la foto real de la Od. Mishel Chamorro en el hero
+// (vía HeroSplit) se deshace — Leo pidió quitar su foto del hero por completo
+// ("no hay armonía, no se ve como un sitio top profesional"). Vuelve el hero
+// default de V3: HeroEquipamiento con foto de fondo a pantalla completa (sin
+// personas), coherente además con que Estetic Dent es un equipo de varios
+// especialistas, no una marca de un solo profesional-estrella (ver
+// site.esteticdent.ts). La foto de Mishel (mishel-chamorro-hero-ia.webp)
+// queda en disco sin usarse en ninguna página — ver README.md de
+// public/images/esteticdent/ para su estado.
+//
+// Mismo feedback también señaló falta de armonía en el orden de secciones:
+// Testimonials se sube de posición (ahora justo después del Hero, antes de
+// Servicios) en vez de quedar hasta el final de la página. CLAUDE.md
+// documenta que Carbon Health/One Medical usan la secuencia "propuesta →
+// prueba social → servicios", y Odontocrea (V2, misma vertical) ya sigue ese
+// patrón con su sección Historia justo después del hero — V3 no tenía ningún
+// beat de confianza temprano, solo dos secciones de equipamiento seguidas
+// (Servicios con foto destacada + Equipamiento) antes de llegar a los
+// testimonios. Este reorden no es un cambio de Capa 2 (Testimonials ya es
+// Capa 1, position-agnostic) — es composición de página, propia de Capa 3.
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/common/Header.astro';
 import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
@@ -24,6 +46,9 @@ import {
 
 const site = siteConfigEsteticdent;
 const equipoDestacado = galeriaEsteticdent[1];
+// La foto destacada de arriba ya se muestra en grande en ServiciosTipografico —
+// se excluye aquí para que Equipamiento no la repita en la grilla masonry.
+const fotosEquipamiento = galeriaEsteticdent.filter((_, i) => i !== 1);
 ---
 
 <BaseLayout site={site}>
@@ -36,7 +61,7 @@ const equipoDestacado = galeriaEsteticdent[1];
     ]}
   />
 
-  <HeroEquipamiento imagenFondo={galeriaEsteticdent[0].src} titular="Odontología de precisión">
+  <HeroEquipamiento imagenFondo={galeriaEsteticdent[0].src} titular="Precisión dental, sin esperas">
     <Fragment slot="cta">
       <WhatsAppButton
         phone={site.telefonoWhatsApp}
@@ -48,6 +73,8 @@ const equipoDestacado = galeriaEsteticdent[1];
     </Fragment>
   </HeroEquipamiento>
 
+  <Testimonials testimonios={testimoniosEsteticdent} fondoSolido patron />
+
   <ServiciosTipografico
     categorias={serviciosEsteticdent}
     fotoEquipoDestacado={equipoDestacado.src}
@@ -56,9 +83,7 @@ const equipoDestacado = galeriaEsteticdent[1];
     negocioSlug={site.negocioSlug}
   />
 
-  <Equipamiento fotos={galeriaEsteticdent} />
-
-  <Testimonials testimonios={testimoniosEsteticdent} />
+  <Equipamiento fotos={fotosEquipamiento} />
 
   <LocationMap site={site} horarios={horariosEsteticdent} />
 

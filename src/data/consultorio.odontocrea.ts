@@ -1,11 +1,19 @@
 import type { CategoriaServicios, HistoriaNegocio, HorarioDia, Testimonio } from './types';
 
-// Capa 3 — Odontocrea. El cliente no entregó todavía un catálogo de
-// servicios ni precios por escrito, así que las categorías/servicios de abajo
-// son contenido de relleno razonable para una clínica de "todas las
-// especialidades" (marcado como placeholder) — Leo debe confirmar servicios y
-// precios reales con el cliente antes de publicar. Ver demo-personalizer paso 6.
+// Capa 3 — Odontocrea. El cliente no entregó todavía un catálogo de precios
+// por escrito, así que los precios/duraciones de abajo siguen siendo relleno
+// placeholder — Leo debe confirmarlos antes de publicar (ver demo-personalizer
+// paso 6). Las CATEGORÍAS en cambio ya están alineadas con contenido real:
+// capturas de instagram.com/odontocrea.uio (compartidas por Leo, 2026-07-19)
+// muestran "Urgencias odontológicas" como tema recurrente de publicaciones,
+// por lo que se añade como categoría propia en vez de dejarla implícita.
 export const serviciosOdontocrea: CategoriaServicios[] = [
+  {
+    categoria: 'Urgencias odontológicas',
+    servicios: [
+      { nombre: 'Atención de urgencia', descripcion: 'Dolor agudo, trauma dental o infección — atención prioritaria.', precioDesde: 25, duracionMin: 30, destacado: true, tipo: 'Urgencias' },
+    ],
+  },
   {
     categoria: 'Odontología general y preventiva',
     servicios: [
@@ -45,15 +53,24 @@ export const serviciosOdontocrea: CategoriaServicios[] = [
 // (ver README.md de esa carpeta con el origen exacto de cada archivo).
 // Reemplazar por fotos reales de la clínica en cuanto el cliente las
 // proporcione.
-export const heroFotoOdontocrea = '/images/odontocrea/hero-1600.webp';
+// ?v=2 (2026-07-19): mismo nombre de archivo, contenido reemplazado (fotos con
+// personas posando retiradas por problema de autenticidad) — cache-busting
+// obligatorio (lección de El Fogón Ecuatoriano, CLAUDE.md) para forzar
+// refresco en navegadores que ya cachearon la v1.
+export const heroFotoOdontocrea = '/images/odontocrea/hero-1600.webp?v=2';
 
+// Texto actualizado 2026-07-19 para reflejar datos reales de Instagram: la
+// bio del negocio usa textualmente "Tu Sonrisa y salud Oral es nuestra
+// prioridad", y el negocio opera dos sedes (MATRIZ Libertad de Chillogallo +
+// SUCURSAL La Magdalena) — antes el texto no mencionaba ninguna sede real.
 export const historiaOdontocrea: HistoriaNegocio = {
   texto:
-    'Odontocrea nació para que ir al dentista deje de sentirse como un trámite ' +
-    'frío. Aquí encuentras todas las especialidades — desde una limpieza ' +
-    'de rutina hasta ortodoncia o cirugía — en un solo lugar, con un equipo ' +
-    'que te conoce por tu nombre y te explica cada paso antes de hacerlo.',
-  foto: '/images/odontocrea/historia.webp',
+    'Tu sonrisa y tu salud oral son nuestra prioridad. En Odontocrea encuentras ' +
+    'todas las especialidades — desde una limpieza de rutina hasta ortodoncia, ' +
+    'cirugía o una urgencia dental — en un solo lugar, con un equipo que te ' +
+    'conoce por tu nombre y te explica cada paso antes de hacerlo. Atendemos en ' +
+    'dos sedes en Quito: Chillogallo y La Magdalena.',
+  foto: '/images/odontocrea/historia.webp?v=2',
 };
 
 export const horariosOdontocrea: HorarioDia[] = [

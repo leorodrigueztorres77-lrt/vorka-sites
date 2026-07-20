@@ -69,6 +69,10 @@ const { categorias, fotoEquipoDestacado, nombreEquipoDestacado, phone, negocioSl
     object-fit: cover;
     border-radius: 16px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    /* Regla de profundidad visual #1 (CLAUDE.md): mismo filtro que
+       Equipamiento.astro, para que esta foto destacada no desentone del
+       resto de la galería del mismo sitio. */
+    filter: saturate(1.05) brightness(1.02) contrast(1.03);
   }
 
   .servicios-tipografico__estrella figcaption {

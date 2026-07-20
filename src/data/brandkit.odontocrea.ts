@@ -1,19 +1,21 @@
-// brand-kit-starter — Odontocrea (consultorio odontológico, Quito). Igual que
-// Estetic Dent, sin paleta/tipografía propia verificable vía redes. Tono
-// inferido de su propio posicionamiento público: ofrece "todas las
-// especialidades... con calidez y calidad" y se presenta también como
-// "OdontoCrea Spa Clínica Dental" — esto apunta directo a la fila
-// "bienestar/cercanía" de la tabla de CLAUDE.md (verde salvia, blanco cálido,
-// beige), no a la fila premium/clínica usada en Estetic Dent — deliberadamente
-// distinta para que ambos consultorios (competidores directos en la misma
-// ciudad) no se lean como el mismo kit reciclado.
-// CONFIRMAR CON EL CLIENTE antes de publicar: si Odontocrea ya tiene una
-// paleta o logo real, reemplazar este kit por su identidad real.
+// brand-kit-starter — Odontocrea (consultorio odontológico, Quito).
+// ACTUALIZADO 2026-07-19 con identidad real: Leo compartió capturas de
+// instagram.com/odontocrea.uio y el negocio SÍ tiene marca propia — el kit
+// verde salvia/terracota anterior era un placeholder inventado y queda
+// reemplazado por brand-kit-starter paso 3 ("si SÍ tiene identidad, usa esos
+// elementos reales"). El logo real es una insignia circular turquesa/teal con
+// ícono de persona + diente; las piezas gráficas promocionales usan un
+// morado/magenta como color secundario de énfasis — no verde salvia ni
+// terracota, así que sigue siendo naturalmente distinto del kit de Estetic
+// Dent (grafito/teal-esmeralda), sin que haya sido necesario forzarlo.
+// Los valores hex exactos son una lectura aproximada de las capturas (no un
+// archivo de marca oficial) — confirmar con el cliente antes de producción
+// final si se dispone del logo en vectorial/con paleta exacta.
 export const brandKitOdontocrea = {
   paleta: {
-    primario: '#5C8D72', // verde salvia — bienestar, cercanía
-    acento: '#C98A4B', // beige cálido/terracota suave — contraste cálido para CTA
-    texto: '#2B2A25', // marrón oscuro cálido, no negro puro
+    primario: '#0EA5B5', // turquesa/teal del logo circular real de Instagram
+    acento: '#7C3AED', // morado/magenta usado en piezas gráficas promocionales reales
+    texto: '#1B2B2E', // gris-verde muy oscuro, casi negro, coherente con el teal primario
   },
   tipografia: {
     titulos: "'Quicksand', sans-serif",
@@ -23,6 +25,6 @@ export const brandKitOdontocrea = {
   },
   wordmark: {
     tipo: 'tipografico' as const,
-    nota: 'Nombre del negocio en Quicksand 700, color primario (verde salvia) — sin ícono/símbolo.',
+    nota: 'Nombre del negocio en Quicksand 700, color primario (teal real de marca) — el cliente ya tiene un ícono propio (insignia circular persona+diente) que se puede incorporar como logo real cuando entregue el archivo original, en vez de quedarse solo con wordmark.',
   },
 };

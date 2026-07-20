@@ -13,6 +13,11 @@ interface Props {
   /** Regla de profundidad visual #2 (CLAUDE.md): fondo de color primario sólido
    * + texto claro, en vez de blanco/gris alternado. Se activa por variante. */
   fondoSolido?: boolean;
+  /** Regla de profundidad visual #4 (CLAUDE.md): patrón de puntos sutil (8%)
+   * sobre el fondo sólido — elemento textural que evita que el bloque de color
+   * se sienta como un panel plano. Solo tiene efecto visual si `fondoSolido`
+   * también está activo (ver .section--solido.section--patron en global.css). */
+  patron?: boolean;
   fotos?: FotoGaleria[];
   /** V1/V5: carrusel horizontal con scroll-snap en vez de grid — un testimonio
    * (o pocos) más creíble que una pared de tarjetas, según el argumento de
@@ -21,11 +26,11 @@ interface Props {
   carrusel?: boolean;
 }
 
-const { testimonios, fondoSolido = false, fotos, carrusel = false } = Astro.props;
+const { testimonios, fondoSolido = false, patron = false, fotos, carrusel = false } = Astro.props;
 ---
 
 <section
-  class:list={['section', fondoSolido ? 'section--solido' : 'section--alterno']}
+  class:list={['section', fondoSolido ? 'section--solido' : 'section--alterno', { 'section--patron': patron }]}
   aria-labelledby="testimonios-titulo"
 >
   <div class="container">

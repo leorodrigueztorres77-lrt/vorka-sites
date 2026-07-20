@@ -82,6 +82,20 @@ a {
   color: #fff;
 }
 
+/* Regla de profundidad visual #4 (CLAUDE.md): elemento textural/decorativo
+   sutil (5-8% opacidad), coherente con el rubro. Genérico (Capa 1) a
+   diferencia del mantel a cuadros de Menu.astro (restaurante): un patrón de
+   puntos, geométrico y neutro, que sirve tanto para consultorio ("patrón
+   geométrico suave" — CLAUDE.md) como para cualquier vertical futuro.
+   Se activa vía prop (ej. Testimonials.astro, prop `patron`) combinado con
+   `section--solido`, nunca solo — necesita el fondo sólido para no competir
+   con contenido sobre blanco. */
+.section--solido.section--patron {
+  background-color: var(--color-primario);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
+}
+
 /* Regla de profundidad visual #5 (CLAUDE.md): contraste tipográfico marcado
    entre título de sección y texto de cuerpo — no solo una diferencia sutil. */
 .section-title {

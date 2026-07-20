@@ -3,27 +3,34 @@ import { brandKitOdontocrea } from './brandkit.odontocrea';
 
 // Capa 3 — Odontocrea (consultorio odontológico, Quito).
 // Variante Capa 2 elegida: V2 "Reddent" — los servicios completos son el
-// argumento. Encaja con lo único verificable sobre el negocio (búsqueda web):
-// se presenta como clínica que ofrece "todas las especialidades... con
-// calidez y calidad", además de tener presencia como "OdontoCrea Spa Clínica
-// Dental" — el argumento de venta es la amplitud de servicios en un ambiente
-// cercano, no un profesional-estrella ni un ángulo tecnológico puntual.
+// argumento. Confirmado ahora con capturas reales de instagram.com/odontocrea.uio
+// (compartidas por Leo, 2026-07-19): bio "Tu Sonrisa y salud Oral es nuestra
+// prioridad", dos sedes (MATRIZ Libertad de Chillogallo + SUCURSAL La
+// Magdalena), highlights "Piezas incluidas / Ortodoncia / Cirugía Apical",
+// contenido de urgencias odontológicas y odontopediatría — amplitud de
+// servicios + cercanía siguen siendo el argumento correcto, no un ángulo
+// tecnológico puntual ni un profesional-estrella único.
 //
-// DATO CRÍTICO PENDIENTE: no se pudo extraer un número de WhatsApp real desde
-// Instagram/Facebook (ambos bloquean scraping no autenticado). Placeholder
-// obviamente falso — NO PUBLICAR sin reemplazarlo.
-const TELEFONO_PLACEHOLDER_PENDIENTE = '593000000002';
+// Número de WhatsApp real (de la bio de Instagram): 0983591828 — también
+// aparece como contacto directo de "Dr. Cristian Egas" en una publicación.
+// Segundo número visible en bio: 0987057462 (no usado como principal, pero
+// dejarlo anotado por si Leo prefiere ese). Verificar con el cliente que siga
+// activo antes de publicar — dato leído de una captura de pantalla, no
+// confirmado directamente por el negocio a Vorka.
+const TELEFONO_WHATSAPP_IG = '593983591828';
 
-// DIRECCIÓN SIN VERIFICAR: no se encontró una dirección exacta en las
-// fuentes consultadas — solo se confirmó "Quito, Ecuador" como ciudad.
-// Confirmar con el cliente antes de publicar.
+// DIRECCIÓN — leída de una publicación de Instagram (captura de pantalla),
+// sede "MATRIZ Libertad de Chillogallo": "Carlos Freile y pasaje Mercedes
+// Cadena Lt. 301, La Libertad de Chillogallo, Quito". Existe una segunda sede
+// ("SUCURSAL La Magdalena") sin dirección exacta visible en las capturas.
+// Confirmar ambas direcciones con el cliente antes de publicar.
 export const siteConfigOdontocrea: SiteConfig = {
   negocioSlug: 'odontocrea',
   nombre: 'Odontocrea',
-  tagline: 'Todas las especialidades odontológicas, con la calidez de una clínica que te conoce',
+  tagline: 'Tu sonrisa y salud oral, nuestra prioridad — con sedes en Chillogallo y La Magdalena',
   ciudad: 'Quito, Ecuador',
-  direccion: 'Dirección por confirmar con el cliente',
-  telefonoWhatsApp: TELEFONO_PLACEHOLDER_PENDIENTE,
+  direccion: 'Carlos Freile y pasaje Mercedes Cadena Lt. 301, La Libertad de Chillogallo, Quito (sede matriz)',
+  telefonoWhatsApp: TELEFONO_WHATSAPP_IG,
   colores: brandKitOdontocrea.paleta,
   fuentes: brandKitOdontocrea.tipografia,
   mapaEmbedUrl: '',

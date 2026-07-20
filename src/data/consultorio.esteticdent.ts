@@ -1,11 +1,20 @@
 import type { CategoriaServicios, FotoGaleria, HorarioDia, Testimonio } from './types';
 
-// Capa 3 — Estetic Dent. El cliente no entregó todavía un catálogo de
-// servicios ni precios por escrito, así que las categorías/servicios de abajo
-// son contenido de relleno razonable para una clínica de estética dental
-// (marcado como placeholder) — Leo debe confirmar servicios y precios reales
-// con el cliente antes de publicar. Ver demo-personalizer paso 6.
+// Capa 3 — Estetic Dent. Los precios/duraciones de abajo siguen siendo
+// relleno placeholder (el cliente no entregó un catálogo por escrito) — Leo
+// debe confirmarlos antes de publicar (ver demo-personalizer paso 6). Las
+// CATEGORÍAS y varios servicios ya están alineados con contenido real:
+// capturas de instagram.com/esteticdent.uio (compartidas por Leo, 2026-07-19)
+// confirman "urgencias dentales las 24H" como diferenciador publicado varias
+// veces, rayos X digital gratis en cada consulta, implantes "de alta gama", y
+// periodoncia (encías) como servicio propio — se añaden/ajustan esas líneas.
 export const serviciosEsteticdent: CategoriaServicios[] = [
+  {
+    categoria: 'Urgencias odontológicas',
+    servicios: [
+      { nombre: 'Atención de urgencia 24h', descripcion: 'Dolor agudo, trauma o infección dental — atención prioritaria, publicado como servicio propio del negocio.', precioDesde: 25, duracionMin: 30, destacado: true, tipo: 'Urgencias' },
+    ],
+  },
   {
     categoria: 'Estética dental',
     servicios: [
@@ -30,13 +39,17 @@ export const serviciosEsteticdent: CategoriaServicios[] = [
   {
     categoria: 'Implantes y rehabilitación',
     servicios: [
-      { nombre: 'Implante dental unitario', descripcion: 'Incluye planificación con imagen digital.', precioDesde: 900, duracionMin: 90 },
+      { nombre: 'Implante dental unitario', descripcion: 'Implantes de alta gama, incluye planificación con rayos X digital gratis en cada consulta.', precioDesde: 900, duracionMin: 90 },
       { nombre: 'Corona sobre implante', precioDesde: 450, duracionMin: 60 },
+      { nombre: 'Reemplazo de prótesis dental', descripcion: 'Para prótesis viejas o mal adaptadas.', precioDesde: 350, duracionMin: 60 },
     ],
   },
   {
-    categoria: 'Limpieza y prevención',
-    servicios: [{ nombre: 'Limpieza dental', descripcion: 'Profilaxis y revisión general.', precioDesde: 30, duracionMin: 30 }],
+    categoria: 'Limpieza, prevención y periodoncia',
+    servicios: [
+      { nombre: 'Limpieza dental', descripcion: 'Profilaxis y revisión general, con rayos X digital gratis en cada consulta.', precioDesde: 30, duracionMin: 30 },
+      { nombre: 'Tratamiento de encías (periodoncia)', descripcion: 'Para sangrado, dolor o movilidad dental.', precioDesde: 60, duracionMin: 45 },
+    ],
   },
 ];
 
@@ -49,7 +62,7 @@ export const serviciosEsteticdent: CategoriaServicios[] = [
 // profesional específico. Reemplazar por fotos reales del consultorio en
 // cuanto el cliente las proporcione.
 export const galeriaEsteticdent: FotoGaleria[] = [
-  { src: '/images/esteticdent/hero-1600.webp', alt: 'Consultorio dental moderno y luminoso (foto de banco, placeholder temporal)' },
+  { src: '/images/esteticdent/clinica-ia.webp', alt: 'Consultorio dental moderno y luminoso (imagen generada con IA, placeholder de demo)' },
   { src: '/images/esteticdent/equipo-destacado.webp', alt: 'Sillón y equipo dental de última generación (foto de banco, placeholder temporal)' },
   { src: '/images/esteticdent/equipamiento-1.webp', alt: 'Equipo de diagnóstico dental minimalista (foto de banco, placeholder temporal)' },
   { src: '/images/esteticdent/equipamiento-2.webp', alt: 'Instrumental dental sobre bandeja en sala clara (foto de banco, placeholder temporal)' },

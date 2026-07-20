@@ -98,6 +98,12 @@ const claseReveal = revealFoto === 'escala' ? 'reveal--scale' : `reveal--${revea
     max-height: 320px;
     object-fit: cover;
     border-radius: 16px;
+    /* Regla de profundidad visual #3 (CLAUDE.md): sombra sutil — esta variante
+       de foto única no la tenía, a diferencia de .historia-fotos (grid). */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    /* Regla de profundidad visual #1 (CLAUDE.md): mismo filtro que
+       .historia-fotos y el resto de fotos de banco del sitio. */
+    filter: saturate(1.08) contrast(1.05);
   }
 
   .historia-fotos {

@@ -25,6 +25,11 @@ interface Props {
   /** 'dividido' (default, texto + foto lado a lado) o 'superpuesto' (foto a
    * pantalla completa con titular grande superpuesto encima). */
   estilo?: 'dividido' | 'superpuesto';
+  /** Nombre de un profesional real mostrado en la foto (ej. "Od. Mishel
+   * Chamorro") — credencial visible como pide el checklist de consultorio en
+   * CLAUDE.md. Opcional: solo aplica cuando la foto es de una persona real
+   * identificada, no de equipo/ambiente. Solo se renderiza en estilo="dividido". */
+  fotoCredito?: string;
 }
 
 // .webp por defecto: estándar de rendimiento (CLAUDE.md) exige WebP/AVIF.
@@ -35,6 +40,7 @@ const {
   invertido = false,
   fondoCrema = false,
   estilo = 'dividido',
+  fotoCredito,
 } = Astro.props;
 ---
 
@@ -67,6 +73,7 @@ const {
       </div>
       <div class="hero-split__foto reveal--scale">
         <img src={imagen} alt={imagenAlt} loading="eager" />
+        {fotoCredito && <span class="hero-split__foto-credito">{fotoCredito}</span>}
       </div>
     </div>
   </section>
@@ -122,12 +129,40 @@ const {
     flex-wrap: wrap;
   }
 
+  .hero-split__foto {
+    position: relative;
+  }
+
   .hero-split__foto img {
     width: 100%;
     height: 100%;
     max-height: 420px;
     object-fit: cover;
     border-radius: 16px;
+    /* Regla de profundidad visual #3 (CLAUDE.md): sombra sutil — sin esto la
+       foto se lee como un rectángulo pegado sobre el fondo, no como un
+       elemento con peso propio (estilo="dividido" únicamente; "superpuesto"
+       ya es foto a pantalla completa y no la necesita). */
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+    /* Regla de profundidad visual #1 (CLAUDE.md): mismo filtro aplicado en
+       Equipamiento.astro/ServiciosTipografico.astro — el hero es la primera
+       foto que ve el usuario, así que es la que más rompe la coherencia de
+       color si queda sin el mismo tratamiento que el resto del sitio. */
+    filter: saturate(1.05) brightness(1.02) contrast(1.03);
+  }
+
+  .hero-split__foto-credito {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-family: var(--font-texto);
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 100px;
+    backdrop-filter: blur(4px);
   }
 
   /* Modo superpuesto — foto a pantalla completa, titular grande encima. */
@@ -155,6 +190,11 @@ const {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    /* Regla de profundidad visual #1 (CLAUDE.md): mismo filtro que el resto
+       del sitio (ver .hero-split__foto img más abajo) — el degradado oscuro
+       ya suaviza el contraste, pero la foto en sí también debe quedar
+       unificada con el resto de fotos de banco del mismo cliente. */
+    filter: saturate(1.05) brightness(1.02) contrast(1.03);
   }
 
   .hero-split__degradado {
