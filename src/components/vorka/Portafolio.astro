@@ -1,13 +1,25 @@
 ---
-// Vorka — Portafolio (2 proyectos reales de Capa 3, ver demo-el-fogon-ecuatoriano
-// y demo-shangrila). Sin capturas de pantalla todavía — Leo debe proporcionarlas;
-// mientras tanto cada tarjeta usa un bloque de color con el degradado real de la
-// marca del cliente (ver brandkit.*.ts) en vez de una imagen genérica, para que
-// no se vea como un placeholder vacío. PENDIENTE: reemplazar por captura real.
+// Vorka — Portafolio (spec GTM de Leo 2026-07, Fase 7). 2 proyectos reales de
+// Capa 3 con badge de tipo y ciudad. Sin capturas de pantalla todavía (cada
+// tarjeta usa el degradado real de la marca del cliente, ver brandkit.*.ts).
+// NOTA GTM PENDIENTE: añadir demos de al menos 2 tipos de negocio distintos a
+// restaurante (consultorio, tienda, servicio) antes de escalar GTM — la
+// variedad de demos es la prueba visual de que Vorka sirve a cualquier
+// negocio. Crear con datos ficticios pero realistas si no existen clientes.
+import { buildWhatsAppLink } from '@/lib/whatsapp';
+import { siteConfigVorka } from '@/data/site.vorka';
+
+const waHref = buildWhatsAppLink({
+  phone: siteConfigVorka.telefonoWhatsApp,
+  message: 'Hola Vorka, no vi mi tipo de negocio en los ejemplos y quiero información',
+  negocioSlug: siteConfigVorka.negocioSlug,
+});
+
 const proyectos = [
   {
     nombre: 'El Fogón Ecuatoriano',
     vertical: 'Restaurante',
+    ciudad: 'Conocoto, Quito',
     descripcion: 'Comida ecuatoriana tradicional en Conocoto, Quito.',
     href: '/demo-el-fogon-ecuatoriano/',
     colorInicio: '#C1440E',
@@ -16,6 +28,8 @@ const proyectos = [
   {
     nombre: 'Shangrila',
     vertical: 'Restaurante',
+    // TODO CONFIRMAR con Leo la ciudad real del demo Shangrila.
+    ciudad: 'Quito',
     descripcion: 'Parrilla casual y enérgica.',
     href: '/demo-shangrila/',
     colorInicio: '#E85D2C',
@@ -26,8 +40,8 @@ const proyectos = [
 
 <section class="portafolio section section--alterno" id="portafolio">
   <div class="container">
-    <h2 class="section-title reveal">Lo que construimos</h2>
-    <p class="portafolio__sub reveal">Webs reales para negocios reales en Ecuador.</p>
+    <p class="portafolio__eyebrow reveal">Ejemplos reales</p>
+    <h2 class="section-title reveal">Así se ve un negocio como el tuyo con Vorka</h2>
     <div class="portafolio__grid">
       {proyectos.map((proyecto) => (
         <a class="proyecto reveal--scale" href={proyecto.href} target="_blank" rel="noopener noreferrer">
@@ -39,7 +53,7 @@ const proyectos = [
             <span class="proyecto__portada-nombre">{proyecto.nombre}</span>
           </div>
           <div class="proyecto__info">
-            <span class="proyecto__vertical">{proyecto.vertical}</span>
+            <span class="proyecto__vertical">{proyecto.vertical} · {proyecto.ciudad}</span>
             <h3 class="proyecto__titulo">{proyecto.nombre}</h3>
             <p class="proyecto__desc">{proyecto.descripcion}</p>
             <span class="proyecto__cta">Ver demo →</span>
@@ -47,15 +61,39 @@ const proyectos = [
         </a>
       ))}
     </div>
+    <p class="portafolio__cta-pie reveal">
+      <a href={waHref} target="_blank" rel="noopener noreferrer">
+        ¿No ves tu tipo de negocio? Hablemos →
+      </a>
+    </p>
   </div>
 </section>
 
 <style>
-  .portafolio__sub {
+  .portafolio__eyebrow {
     font-family: var(--font-texto);
-    font-size: 1.0625rem;
-    color: var(--color-gris);
-    margin: -24px 0 40px;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-primario);
+    margin: 0 0 12px;
+  }
+
+  .portafolio__cta-pie {
+    margin: 40px 0 0;
+    text-align: center;
+  }
+
+  .portafolio__cta-pie a {
+    font-family: var(--font-texto);
+    font-weight: 600;
+    color: var(--color-primario);
+    text-decoration: none;
+  }
+
+  .portafolio__cta-pie a:hover {
+    text-decoration: underline;
   }
 
   .portafolio__grid {

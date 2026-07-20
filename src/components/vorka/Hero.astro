@@ -19,12 +19,12 @@ const { site } = Astro.props;
     <div class="hero__contenido">
       <span class="hero__badge reveal">Agencia digital · Ecuador</span>
       <h1 class="hero__titulo reveal">
-        Webs que venden.<br />
-        <span class="hero__acento">Ventas que se automatizan.</span>
+        Tu negocio merece<br />
+        <span class="hero__acento">una web que venda.</span>
       </h1>
       <p class="hero__sub reveal">
-        Creamos la presencia digital de tu negocio — lista en días, no en
-        meses — y la conectamos con automatización de ventas por WhatsApp.
+        La construimos en días, no en meses, y la conectamos con
+        automatización de ventas por WhatsApp.
       </p>
       <div class="hero__cta reveal">
         <WhatsAppButton
@@ -34,8 +34,13 @@ const { site } = Astro.props;
           label="Hablemos por WhatsApp →"
           variante="primario"
         />
-        <a class="hero__cta-secundario" href="#portafolio">Ver portafolio</a>
+        <a class="hero__cta-secundario" href="#portafolio">Ver ejemplos →</a>
       </div>
+      <ul class="hero__proof reveal" aria-label="Garantías de servicio">
+        <li><span class="hero__proof-check" aria-hidden="true">✓</span> Respuesta en menos de 2 horas</li>
+        <li><span class="hero__proof-check" aria-hidden="true">✓</span> Web lista en 5–7 días</li>
+        <li><span class="hero__proof-check" aria-hidden="true">✓</span> Sin contratos largos</li>
+      </ul>
     </div>
 
     <!-- Mockup NEUTRO de web mobile-first (decisión de Leo 2026-07: sin
@@ -134,6 +139,10 @@ const { site } = Astro.props;
     .hero__cta {
       justify-content: flex-start;
     }
+
+    .hero__proof {
+      justify-content: flex-start;
+    }
   }
 
   .hero__badge {
@@ -192,6 +201,30 @@ const { site } = Astro.props;
 
   .hero__cta-secundario:hover {
     opacity: 1;
+  }
+
+  .hero__proof {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 24px;
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+  }
+
+  .hero__proof li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-texto);
+    font-size: 0.875rem;
+    color: var(--color-gris);
+  }
+
+  .hero__proof-check {
+    color: var(--color-primario);
+    font-weight: 700;
   }
 
   @media (max-width: 720px) {

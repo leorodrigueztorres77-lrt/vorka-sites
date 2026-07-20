@@ -1,12 +1,11 @@
 ---
-// Vorka — Servicios (3 tarjetas). La agencia de webs y Ordercash son los dos
-// productos reales (ver CLAUDE.md); la tercera tarjeta es el roadmap de
-// "Agentes de IA para ventas y atención" (texto/chat, no voz — corrección de
-// Leo 2026-07) — no accionable todavía, así que se muestra visualmente
-// apagada (65% opacidad, badge de borde gris) y sin CTA para no prometer
-// algo que no existe. Íconos: Tabler Icons outline inline (sin emojis, por
-// tono de marca "Think Smart, Move Fast").
-import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
+// Vorka — "Cómo funciona" (spec GTM de Leo 2026-07, Fase 4). Reestructura de
+// las 3 cards paralelas a un FLUJO de 3 pasos con Ordercash como núcleo del
+// sistema. El paso 2 es genérico (pedido, cita o consulta) para cualquier
+// negocio. La antigua card "Agentes de IA" baja a badge al pie SIN CTA;
+// se mantiene el concepto corregido por Leo (texto/chat, nunca "voz" ni
+// "contesta llamadas") y sin la palabra IA en el flujo de Ordercash (regla
+// de oro de copy, CLAUDE.md). Íconos: Tabler outline inline, sin emojis.
 import type { SiteConfig } from '@/data/types';
 import { ORDERCASH_URL } from '@/data/site.vorka';
 
@@ -19,60 +18,59 @@ const { site } = Astro.props;
 
 <section class="servicios section" id="servicios">
   <div class="container">
-    <h2 class="section-title reveal">Lo que hacemos</h2>
-    <div class="servicios__grid">
-      <article class="tarjeta reveal--scale">
-        <span class="tarjeta__icono" aria-hidden="true">
+    <p class="servicios__eyebrow reveal">Cómo funciona</p>
+    <h2 class="section-title reveal">La web es la puerta. Ordercash es el motor.</h2>
+
+    <ol class="pasos">
+      <li class="paso reveal--scale" style="transition-delay:0ms">
+        <span class="paso__numero" aria-hidden="true">1</span>
+        <span class="paso__icono" aria-hidden="true">
           <!-- Tabler: world -->
           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" /><path d="M3.6 9h16.8" /><path d="M3.6 15h16.8" /><path d="M11.5 3a17 17 0 0 0 0 18" /><path d="M12.5 3a17 17 0 0 1 0 18" /></svg>
         </span>
-        <h3 class="tarjeta__titulo">Webs que venden</h3>
-        <p class="tarjeta__desc">
-          Sitios profesionales para cualquier negocio — mobile-first, rápidos
-          y con el botón de WhatsApp como acción principal. Listos en días,
-          no en meses.
+        <h3 class="paso__titulo">Tu web profesional</h3>
+        <p class="paso__desc">
+          Mobile first, con tu información, servicios o productos, y WhatsApp
+          como acción principal. Lista en días, no en meses.
         </p>
-        <a class="tarjeta__cta" href="#portafolio">Ver portafolio →</a>
-      </article>
+        <a class="paso__link" href="#portafolio">Ver ejemplos →</a>
+      </li>
 
-      <article class="tarjeta reveal--scale">
-        <span class="tarjeta__icono" aria-hidden="true">
+      <li class="paso reveal--scale" style="transition-delay:100ms">
+        <span class="paso__numero" aria-hidden="true">2</span>
+        <span class="paso__icono" aria-hidden="true">
           <!-- Tabler: brand-whatsapp -->
           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65 -3.8a9 9 0 1 1 3.4 2.9l-5.05 .9" /><path d="M9 10a.5 .5 0 0 0 1 0v-1a.5 .5 0 0 0 -1 0v1a5 5 0 0 0 5 5h1a.5 .5 0 0 0 0 -1h-1a.5 .5 0 0 0 0 1" /></svg>
         </span>
-        <h3 class="tarjeta__titulo">Ordercash</h3>
-        <p class="tarjeta__desc">
-          Pedidos, cobro y facturación electrónica SRI, todo por WhatsApp. Tú
-          vendes — Ordercash factura, cobra y registra.
+        <h3 class="paso__titulo">Tu cliente contacta por WhatsApp</h3>
+        <p class="paso__desc">
+          Hace su pedido, reserva su cita o solicita información,
+          directamente desde tu web, sin apps adicionales ni fricción.
         </p>
-        <a class="tarjeta__cta" href={ORDERCASH_URL} target="_blank" rel="noopener noreferrer">
+      </li>
+
+      <li class="paso reveal--scale" style="transition-delay:200ms">
+        <span class="paso__numero" aria-hidden="true">3</span>
+        <span class="paso__icono" aria-hidden="true">
+          <!-- Tabler: receipt -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16l-3 -2l-2 2l-2 -2l-2 2l-2 -2l-3 2" /><path d="M9 7h6" /><path d="M9 11h6" /><path d="M9 15h4" /></svg>
+        </span>
+        <h3 class="paso__titulo">Ordercash cobra y factura</h3>
+        <p class="paso__desc">
+          Factura electrónica SRI automática. Cobro integrado. Tú vendes,
+          Ordercash hace el resto. Tu web queda lista para conectarse desde
+          el día uno.
+        </p>
+        <a class="paso__link" href={ORDERCASH_URL} target="_blank" rel="noopener noreferrer">
           Conoce Ordercash →
         </a>
-      </article>
+      </li>
+    </ol>
 
-      <article class="tarjeta tarjeta--proximamente reveal--scale">
-        <span class="tarjeta__badge">Próximamente</span>
-        <span class="tarjeta__icono" aria-hidden="true">
-          <!-- Tabler: cpu -->
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5m0 1a1 1 0 0 1 1 -1h12a1 1 0 0 1 1 1v12a1 1 0 0 1 -1 1h-12a1 1 0 0 1 -1 -1z" /><path d="M9 9h6v6h-6z" /><path d="M3 10h2" /><path d="M3 14h2" /><path d="M10 3v2" /><path d="M14 3v2" /><path d="M21 10h-2" /><path d="M21 14h-2" /><path d="M10 21v-2" /><path d="M14 21v-2" /></svg>
-        </span>
-        <h3 class="tarjeta__titulo">Agentes de IA para ventas y atención</h3>
-        <p class="tarjeta__desc">
-          Automatiza tu atención al cliente y proceso de ventas con agentes
-          inteligentes. En desarrollo — todavía no disponible para clientes.
-        </p>
-      </article>
-    </div>
-
-    <div class="servicios__cta-final reveal">
-      <WhatsAppButton
-        phone={site.telefonoWhatsApp}
-        message="Hola Vorka, quiero información sobre sus servicios"
-        negocioSlug={site.negocioSlug}
-        label="Cuéntanos qué necesitas →"
-        variante="primario"
-      />
-    </div>
+    <p class="servicios__badge-futuro reveal">
+      <span class="servicios__badge-pill">Próximamente</span>
+      Agentes inteligentes para ventas y atención al cliente, disponibles 24/7.
+    </p>
   </div>
 </section>
 
@@ -81,84 +79,134 @@ const { site } = Astro.props;
     background: var(--color-fondo);
   }
 
-  .servicios__grid {
+  .servicios__eyebrow {
+    font-family: var(--font-texto);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-primario);
+    text-align: center;
+    margin: 0 0 12px;
+  }
+
+  .pasos {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 32px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: paso;
   }
 
-  .tarjeta {
+  .paso {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
     padding: 32px;
     border-radius: 16px;
     background: var(--color-fondo-alterno);
     box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25);
   }
 
-  .tarjeta--proximamente {
-    opacity: 0.65;
-    border: 1px solid rgba(255, 255, 255, 0.25);
+  /* Conector visual entre pasos (solo desktop). */
+  .paso:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -26px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-primario);
+    font-size: 1.5rem;
+    font-weight: 700;
   }
 
-  .tarjeta__badge {
-    align-self: flex-start;
-    padding: 4px 12px;
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    border-radius: 100px;
-    font-family: var(--font-texto);
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--color-gris);
-  }
-
-  .tarjeta__icono {
-    display: inline-flex;
+  .paso__numero {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: 2rem;
+    color: rgba(255, 255, 255, 0.12);
     line-height: 1;
+  }
+
+  .paso__icono {
+    display: inline-flex;
     color: var(--color-primario);
   }
 
-  .tarjeta__titulo {
+  .paso__titulo {
     font-family: var(--font-titulos);
     font-weight: 700;
-    font-size: 1.375rem;
+    font-size: 1.25rem;
     color: var(--color-texto);
     margin: 0;
   }
 
-  .tarjeta__desc {
+  .paso__desc {
     font-family: var(--font-texto);
-    font-size: 1rem;
+    font-size: 0.9375rem;
     line-height: 1.7;
     color: var(--color-gris);
     margin: 0;
   }
 
-  .tarjeta__cta {
-    margin-top: auto;
+  .paso__link {
     font-family: var(--font-texto);
     font-weight: 600;
+    font-size: 0.9375rem;
     color: var(--color-primario);
     text-decoration: none;
+    margin-top: auto;
   }
 
-  .tarjeta__cta:hover {
+  .paso__link:hover {
     text-decoration: underline;
   }
 
-  .servicios__cta-final {
+  .servicios__badge-futuro {
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     justify-content: center;
-    margin-top: 48px;
+    gap: 12px;
+    margin: 40px auto 0;
+    font-family: var(--font-texto);
+    font-size: 0.9375rem;
+    color: var(--color-gris);
+    text-align: center;
+  }
+
+  .servicios__badge-pill {
+    padding: 4px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-gris);
+    white-space: nowrap;
   }
 
   @media (max-width: 960px) {
-    .servicios__grid {
+    .pasos {
       grid-template-columns: 1fr;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .paso:not(:last-child)::after {
+      content: '↓';
+      right: auto;
+      left: 50%;
+      top: auto;
+      bottom: -28px;
+      transform: translateX(-50%);
     }
   }
 </style>

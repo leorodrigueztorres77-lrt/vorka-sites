@@ -1,28 +1,41 @@
 ---
-// Vorka — FAQ (acordeón nativo <details>/<summary>, sin JS extra). Respuestas
-// alineadas a los datos reales de CLAUDE.md (pricing vigente, proceso de
-// manejo de imágenes, y el mensaje seguro de Ordercash — nunca prometer una
-// integración que no existe todavía).
+// Vorka — FAQ (spec GTM de Leo 2026-07, Fase 5): 6 preguntas orientadas a
+// cerrar objeciones reales de compra, copy genérico para cualquier negocio.
+// Acordeón nativo <details>/<summary>, sin JS extra. Cifras alineadas al
+// pricing vigente de CLAUDE.md y a la sección de Precios de esta misma
+// página. Ordercash respeta el mensaje seguro ("queda preparada para
+// conectar... apenas esté disponible") — nunca prometer una integración que
+// no existe todavía. Las respuestas admiten HTML (links a demos en Q5).
 const preguntas = [
   {
-    pregunta: '¿Cuánto cuesta una web con Vorka?',
+    pregunta: '¿Cuánto cuesta y qué incluye?',
     respuesta:
-      'Desde $350 (plan Básico) hasta $750+ (Premium), según el alcance. El mantenimiento mensual ($40–80) incluye cambios de contenido, reportes y soporte — no es solo hosting.',
+      'Desde $350: web lista en días, mobile first, WhatsApp como acción principal y SEO local. El plan Profesional ($500) suma galería optimizada, reseñas y Google Maps; el Premium (desde $750) suma formulario de pedidos, sección de producto en movimiento y sesión fotográfica. El mantenimiento mensual ($40 a $80) cubre cambios de contenido, reportes y soporte real, no es solo hosting.',
+  },
+  {
+    pregunta: 'Ya tengo Instagram. ¿Para qué necesito una web?',
+    respuesta:
+      'Instagram no te pertenece: mañana puede cambiar el algoritmo o suspender tu cuenta. Una web propia aparece en Google cuando alguien busca tu tipo de negocio en tu ciudad. Y con Ordercash, tu web conecta directo con pedidos, cobro y factura SRI, algo que Instagram nunca hará.',
   },
   {
     pregunta: '¿Cuánto tiempo toma tener mi web lista?',
     respuesta:
-      'Días, no meses — construimos sobre una base ya lista y solo personalizamos tu marca, fotos y contenido.',
+      'Entre 2 y 7 días hábiles según el plan, desde que nos entregas tu logo, fotos y contenido. Si no tienes fotos o logo, te ayudamos: mejoramos tus fotos y te creamos una identidad básica de marca antes de empezar.',
   },
   {
     pregunta: '¿Qué es Ordercash y aplica a mi negocio?',
     respuesta:
-      'Es nuestro producto hermano: pedidos, cobro y facturación electrónica SRI por WhatsApp. Hoy aplica solo al vertical restaurante — tu web ya queda lista para el salto a Ordercash cuando esté disponible para tu negocio.',
+      'Ordercash es nuestro producto de automatización de ventas: pedidos o reservas por WhatsApp, cobro integrado y factura electrónica SRI automática. Está diseñado para cualquier negocio que vende productos o servicios. Tu web Vorka queda preparada para conectarse con Ordercash desde el día uno, y te avisamos apenas esté disponible para tu tipo de negocio.',
   },
   {
-    pregunta: '¿Qué pasa si mi negocio no tiene fotos o logo?',
+    pregunta: '¿Puedo ver cómo quedaría mi negocio antes de pagar?',
     respuesta:
-      'No es un problema — mejoramos tus fotos reales con IA o usamos banco de fotos apropiado como paso temporal, y si no tienes identidad de marca, te ayudamos a crear una básica (colores y tipografía) antes de personalizar tu sitio.',
+      'Sí, nuestros demos te muestran exactamente la experiencia que tendría tu cliente: <a href="/demo-el-fogon-ecuatoriano/" target="_blank" rel="noopener noreferrer">El Fogón Ecuatoriano →</a> y <a href="/demo-shangrila/" target="_blank" rel="noopener noreferrer">Shangrila →</a>. Si quieres ver cómo quedaría tu negocio específico, escríbenos por WhatsApp y te armamos una vista previa.',
+  },
+  {
+    pregunta: '¿Qué pasa si quiero cambios después de lanzar?',
+    respuesta:
+      'El plan de mantenimiento mensual ($40 a $80) incluye cambios de contenido, reportes mensuales de tráfico y soporte por WhatsApp. No cobramos por cada cambio pequeño.',
   },
 ];
 ---
@@ -34,7 +47,7 @@ const preguntas = [
       {preguntas.map((item) => (
         <details class="faq__item reveal">
           <summary class="faq__pregunta">{item.pregunta}</summary>
-          <p class="faq__respuesta">{item.respuesta}</p>
+          <p class="faq__respuesta" set:html={item.respuesta} />
         </details>
       ))}
     </div>
@@ -87,5 +100,15 @@ const preguntas = [
     font-size: 1rem;
     line-height: 1.7;
     color: var(--color-gris);
+  }
+
+  /* Links dentro de respuestas insertadas con set:html. */
+  .faq__respuesta :global(a) {
+    color: var(--color-primario);
+    text-decoration: none;
+  }
+
+  .faq__respuesta :global(a:hover) {
+    text-decoration: underline;
   }
 </style>

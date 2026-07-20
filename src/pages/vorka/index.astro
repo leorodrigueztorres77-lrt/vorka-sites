@@ -18,31 +18,53 @@ import AnalizadorWeb from '@/components/vorka/AnalizadorWeb.astro';
 import Nosotros from '@/components/vorka/Nosotros.astro';
 import Stats from '@/components/vorka/Stats.astro';
 import Faq from '@/components/vorka/Faq.astro';
-import ContactoVorka from '@/components/vorka/ContactoVorka.astro';
+import CtaFinal from '@/components/vorka/CtaFinal.astro';
+import PruebaSocial from '@/components/vorka/PruebaSocial.astro';
+import ComparativaValor from '@/components/vorka/ComparativaValor.astro';
 import FooterVorka from '@/components/vorka/FooterVorka.astro';
 import WhatsAppFlotante from '@/components/vorka/WhatsAppFlotante.astro';
 import { siteConfigVorka } from '@/data/site.vorka';
 
 const site = siteConfigVorka;
+
+// Schema LocalBusiness (spec GTM, SEO técnico).
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: 'Vorka',
+  description:
+    'Agencia digital en Ecuador. Webs profesionales para negocios locales con automatización de ventas por WhatsApp y facturación SRI con Ordercash.',
+  areaServed: 'Ecuador',
+  url: 'https://vorka-sites.vercel.app/vorka/',
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'sales',
+    contactOption: 'WhatsApp',
+    telephone: '+593997109978',
+  },
+};
 ---
 
 <BaseLayout
   site={site}
-  ogTitulo="Vorka — Agencia digital en Ecuador"
-  ogDescripcion="Webs profesionales para tu negocio, listas en días. Desde $350."
+  ogTitulo="Vorka — Webs que venden en Ecuador"
+  ogDescripcion="Web lista en días. Ventas por WhatsApp. Factura SRI automática. Para cualquier negocio local."
 >
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(schema)} />
   <Nav site={site} />
   <main id="inicio">
     <Hero site={site} />
     <Ticker />
+    <PruebaSocial />
     <Servicios site={site} />
     <Precios site={site} />
+    <ComparativaValor site={site} />
     <Portafolio />
     <AnalizadorWeb site={site} />
     <Nosotros />
     <Stats />
     <Faq />
-    <ContactoVorka site={site} />
+    <CtaFinal site={site} />
   </main>
   <FooterVorka site={site} />
   <WhatsAppFlotante site={site} />

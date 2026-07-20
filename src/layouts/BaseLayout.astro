@@ -40,6 +40,9 @@ const ogDescripcionPagina = ogDescripcion ?? descripcionPagina;
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
+    <!-- Extras de <head> por página (ej. schema JSON-LD). Opcional. -->
+    <slot name="head" />
+
     {site.fuentes?.googleFontsUrl && (
       <>
         <link rel="preconnect" href="https://fonts.googleapis.com" />

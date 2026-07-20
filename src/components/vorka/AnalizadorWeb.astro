@@ -27,7 +27,7 @@ const waBase = buildWhatsAppLink({
     <h2 class="section-title reveal">¿Tu web actual pasa el examen de Google?</h2>
     <p class="analizador__sub reveal">
       Pon tu dirección y descubre gratis la nota que Google le da a tu sitio en
-      móvil — la misma que usa para decidir quién aparece primero.
+      móvil, la misma que usa para decidir quién aparece primero.
     </p>
 
     <form class="analizador__form reveal" id="analizador-form" novalidate>
@@ -89,18 +89,18 @@ const waBase = buildWhatsAppLink({
   const veredicto = (score: number): { texto: string; clase: string } => {
     if (score >= 90)
       return {
-        texto: 'Excelente — tu web vuela. Si aún no vende por WhatsApp, hablemos de automatización.',
+        texto: 'Excelente: tu web vuela. Si aún no vende por WhatsApp, hablemos de automatización.',
         clase: 'ok',
       };
     if (score >= 50)
       return {
         texto:
-          'Regular — tu web carga lento en móvil y eso te cuesta clientes: la mayoría abandona a los 3 segundos.',
+          'Regular: tu web carga lento en móvil y eso te cuesta clientes. La mayoría abandona a los 3 segundos.',
         clase: 'medio',
       };
     return {
       texto:
-        'Crítica — Google está penalizando tu sitio y tus visitantes lo abandonan antes de verlo. Esto tiene arreglo.',
+        'Crítica: Google está penalizando tu sitio y tus visitantes lo abandonan antes de verlo. Esto tiene arreglo.',
       clase: 'mal',
     };
   };

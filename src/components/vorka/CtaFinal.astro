@@ -1,0 +1,112 @@
+---
+// Vorka — CTA final de alta conversión (spec GTM de Leo 2026-07, Fase 1).
+// Reemplaza al formulario de contacto: un solo camino de conversión
+// (WhatsApp) con mensaje preformateado para reducir fricción de escritura.
+// Conserva id="contacto" para que la navegación existente siga funcionando.
+import { buildWhatsAppLink } from '@/lib/whatsapp';
+import type { SiteConfig } from '@/data/types';
+import { ORDERCASH_URL } from '@/data/site.vorka';
+
+interface Props {
+  site: SiteConfig;
+}
+
+const { site } = Astro.props;
+
+const href = buildWhatsAppLink({
+  phone: site.telefonoWhatsApp,
+  message: 'Hola Vorka, quiero información para mi negocio. Se llama [nombre] y estoy en [ciudad].',
+  negocioSlug: site.negocioSlug,
+});
+
+const INSTAGRAM_URL = 'https://instagram.com/vorka.ecu';
+---
+
+<section id="contacto" class="cta-final section section--alterno">
+  <div class="container cta-final__inner">
+    <h2 class="section-title reveal">¿Listo para tener tu web esta semana?</h2>
+    <p class="cta-final__sub reveal">
+      Escríbenos ahora: respondemos en menos de 2 horas en horario laboral.
+    </p>
+
+    <a
+      class="btn btn--primario cta-final__boton reveal"
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Hablemos por WhatsApp →
+    </a>
+
+    <p class="cta-final__confianza reveal">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z" /><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" /><path d="M8 11v-4a4 4 0 1 1 8 0v4" /></svg>
+      Sin contratos. Sin permanencia mínima. Pagas solo si quedas satisfecho.
+    </p>
+
+    <div class="cta-final__redes reveal">
+      <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">Instagram</a>
+      <span aria-hidden="true">·</span>
+      <a href={href} target="_blank" rel="noopener noreferrer">WhatsApp</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-final__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+  }
+
+  .cta-final__sub {
+    font-family: var(--font-texto);
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: var(--color-gris);
+    max-width: 520px;
+    margin: -16px 0 24px;
+  }
+
+  .cta-final__boton {
+    font-size: 1.125rem;
+    padding: 18px 40px;
+  }
+
+  .cta-final__confianza {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-texto);
+    font-size: 0.9375rem;
+    color: var(--color-gris);
+    margin: 16px 0 0;
+  }
+
+  .cta-final__confianza svg {
+    color: var(--color-primario);
+    flex-shrink: 0;
+  }
+
+  .cta-final__redes {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    font-family: var(--font-texto);
+    font-size: 0.875rem;
+    color: var(--color-gris);
+  }
+
+  .cta-final__redes a {
+    color: var(--color-gris);
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 1px;
+    transition: color 200ms ease;
+  }
+
+  .cta-final__redes a:hover {
+    color: var(--color-texto);
+  }
+</style>

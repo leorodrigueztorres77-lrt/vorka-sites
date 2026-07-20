@@ -25,11 +25,10 @@ export const siteConfigVorka: SiteConfig = {
       'https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Montserrat:wght@300;400;500;600;700&display=swap',
   },
   seo: {
-    // SEO local (corrección V2 de Leo 2026-07): título con precio de entrada
-    // y descripción orientada a beneficio + ciudad.
-    tituloDefault: 'Vorka — Agencia digital en Ecuador | Webs profesionales desde $350',
+    // SEO GTM (spec de Leo 2026-07): mensaje amplio para negocios locales.
+    tituloDefault: 'Vorka — Webs profesionales para negocios locales en Ecuador',
     descripcionDefault:
-      'Creamos webs profesionales para tu negocio en Quito y Ecuador. Entrega en días, desde $350. Automatización de ventas por WhatsApp con Ordercash.',
+      'Creamos la web de tu negocio en 5 a 7 días y la conectamos con ventas por WhatsApp y facturación electrónica SRI automática con Ordercash. Para cualquier negocio local en Ecuador.',
   },
   webhookContactoUrl: '',
 };
