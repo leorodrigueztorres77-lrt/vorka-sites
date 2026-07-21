@@ -12,6 +12,8 @@ interface Props {
 const { site } = Astro.props;
 
 const INSTAGRAM_URL = 'https://instagram.com/vorka.ecu';
+// TODO CONFIRMAR con Leo: email real de contacto de Vorka (placeholder).
+const EMAIL_CONTACTO = 'hola@vorka.ec';
 
 const anioActual = new Date().getFullYear();
 ---
@@ -40,6 +42,9 @@ const anioActual = new Date().getFullYear();
         label="WhatsApp →"
         variante="primario"
       />
+      <a class="footer-vorka__email" href={`mailto:${EMAIL_CONTACTO}`}>
+        {EMAIL_CONTACTO}
+      </a>
       <a class="footer-vorka__instagram" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
         Instagram
       </a>

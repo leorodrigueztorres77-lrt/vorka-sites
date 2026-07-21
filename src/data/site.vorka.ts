@@ -28,7 +28,7 @@ export const siteConfigVorka: SiteConfig = {
     // SEO GTM (spec de Leo 2026-07): mensaje amplio para negocios locales.
     tituloDefault: 'Vorka — Webs profesionales para negocios locales en Ecuador',
     descripcionDefault:
-      'Creamos la web de tu negocio en 5 a 7 días y la conectamos con ventas por WhatsApp y facturación electrónica SRI automática con Ordercash. Para cualquier negocio local en Ecuador.',
+      'Creamos la web de tu negocio en 5–7 días y la conectamos con ventas por WhatsApp y facturación electrónica SRI automática con Ordercash. Para cualquier negocio local en Ecuador.',
   },
   webhookContactoUrl: '',
 };

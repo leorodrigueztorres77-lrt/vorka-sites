@@ -6,7 +6,8 @@
 // Ticker ✅, Servicios ✅, Portafolio ✅, Nosotros ✅, Stats ✅, FAQ ✅,
 // Contacto ✅, Footer ✅ — sitio completo, pendiente solo reemplazar
 // placeholders: webhook de contacto (Zapier, esperando URL de Leo) y capturas
-// reales de portafolio.
+// reales de portafolio. Sin sección de testimonios: regla dura de CLAUDE.md
+// es nunca inventarlos — se añadirá cuando existan reales.
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Nav from '@/components/vorka/Nav.astro';
 import Hero from '@/components/vorka/Hero.astro';
@@ -19,7 +20,6 @@ import Nosotros from '@/components/vorka/Nosotros.astro';
 import Stats from '@/components/vorka/Stats.astro';
 import Faq from '@/components/vorka/Faq.astro';
 import CtaFinal from '@/components/vorka/CtaFinal.astro';
-import PruebaSocial from '@/components/vorka/PruebaSocial.astro';
 import ComparativaValor from '@/components/vorka/ComparativaValor.astro';
 import FooterVorka from '@/components/vorka/FooterVorka.astro';
 import WhatsAppFlotante from '@/components/vorka/WhatsAppFlotante.astro';
@@ -55,7 +55,6 @@ const schema = {
   <main id="inicio">
     <Hero site={site} />
     <Ticker />
-    <PruebaSocial />
     <Servicios site={site} />
     <Precios site={site} />
     <ComparativaValor site={site} />
@@ -69,3 +68,16 @@ const schema = {
   <FooterVorka site={site} />
   <WhatsAppFlotante site={site} />
 </BaseLayout>
+
+<style>
+  /* Fase 0.3 (spec Leo 2026-07): contraste del CTA verde de Vorka. Scopeado
+     SOLO a esta página — global.css es Capa 1 compartida por todos los
+     clientes y su --color-primario varía por sitio, así que la corrección no
+     puede tocar .btn--primario ahí sin afectar otros verticales. Astro
+     empaqueta el CSS por página, así que este :global no se filtra a las
+     demás rutas. */
+  :global(.btn--primario) {
+    color: #0b2b13;
+    font-weight: 700;
+  }
+</style>

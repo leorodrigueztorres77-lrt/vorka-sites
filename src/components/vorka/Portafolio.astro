@@ -1,11 +1,10 @@
 ---
-// Vorka — Portafolio (spec GTM de Leo 2026-07, Fase 7). 2 proyectos reales de
+// Vorka — Portafolio (spec GTM de Leo 2026-07, Fase 7). 3 proyectos reales de
 // Capa 3 con badge de tipo y ciudad. Sin capturas de pantalla todavía (cada
-// tarjeta usa el degradado real de la marca del cliente, ver brandkit.*.ts).
-// NOTA GTM PENDIENTE: añadir demos de al menos 2 tipos de negocio distintos a
-// restaurante (consultorio, tienda, servicio) antes de escalar GTM — la
-// variedad de demos es la prueba visual de que Vorka sirve a cualquier
-// negocio. Crear con datos ficticios pero realistas si no existen clientes.
+// tarjeta usa el degradado real de la marca del cliente, ver brandkit.*.ts) —
+// las capturas reales de pantalla completa quedan para Fase 2. Incluye ya un
+// vertical no-restaurante (Estetic Dent, salud) para romper la percepción de
+// "solo restaurantes" (resuelve la NOTA GTM PENDIENTE anterior).
 import { buildWhatsAppLink } from '@/lib/whatsapp';
 import { siteConfigVorka } from '@/data/site.vorka';
 
@@ -34,6 +33,15 @@ const proyectos = [
     href: '/demo-shangrila/',
     colorInicio: '#E85D2C',
     colorFin: '#C2410C',
+  },
+  {
+    nombre: 'Estetic Dent',
+    vertical: 'Salud',
+    ciudad: 'Quitumbe, Quito',
+    descripcion: 'Consultorio odontológico moderno en el sur de Quito.',
+    href: '/demo-esteticdent/',
+    colorInicio: '#122B54',
+    colorFin: '#0B1A38',
   },
 ];
 ---
@@ -98,7 +106,7 @@ const proyectos = [
 
   .portafolio__grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 32px;
   }
 
@@ -188,6 +196,12 @@ const proyectos = [
     font-family: var(--font-texto);
     font-weight: 600;
     color: var(--color-texto);
+  }
+
+  @media (max-width: 960px) {
+    .portafolio__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 
   @media (max-width: 720px) {
