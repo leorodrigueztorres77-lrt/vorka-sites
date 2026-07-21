@@ -109,12 +109,23 @@ export const horariosEsteticdent: HorarioDia[] = [
   { dia: 'Domingo', horario: 'Cerrado' },
 ];
 
-// Vacío a propósito (spec SALUD 2026-07-20, "Nunca fabricar testimonios"): el
-// cliente no ha confirmado reseñas reales de Google todavía. Testimonials.astro
-// omite la sección entera cuando este array está vacío en la entrega final;
-// para la demo de venta la página pasa `modoDemo` en su lugar, que muestra un
-// bloque explícitamente rotulado como ilustrativo — nunca nombres inventados.
-export const testimoniosEsteticdent: Testimonio[] = [];
+// AJUSTE 2026-07-21: reseñas reales de Google Business (captura compartida por
+// Leo, perfil "Clínica Dental Estetic Dent" — 5.0/5, 2 opiniones totales).
+// Solo se integra UNA de las dos: la segunda reseña visible en la captura
+// ("Mishell Alejandra Chamorro") coincide con el nombre de la propia Dra.
+// Chamorro del equipo (ver profesionalesEsteticdent) — Leo confirmó que es
+// ella misma, así que se descarta como testimonio de paciente (mostrar la
+// reseña de la propia doctora sería engañoso). Solo queda la de Ana Lucía
+// Flores. Con únicamente 1 reseña real y total de 2 en el perfil, evitar
+// cualquier copy que implique "muchos pacientes opinan" en esta sección u
+// otras — el dato real es escaso todavía.
+export const testimoniosEsteticdent: Testimonio[] = [
+  {
+    nombre: 'Ana Lucía Flores',
+    texto: 'Excelente centro de atención dental que entiende la necesidad de cada paciente.',
+    calificacion: 5,
+  },
+];
 
 // Equipo (spec SALUD 2026-07-20, "TeamSection obligatorio"). Único nombre
 // confirmado hoy vía capturas reales de instagram.com/esteticdent.uio

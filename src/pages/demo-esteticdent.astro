@@ -90,6 +90,16 @@
 //   por ser la instrucción más reciente y específica sobre esta sección;
 //   Leo debe confirmar si esto es aceptable o si prefiere volver a un único
 //   CTA de cierre en servicios.
+//
+// AJUSTE 2026-07-21 (feedback directo de Leo): se quita la foto del sillón
+// dental de diseño moderno (y su caption) de arriba del listado de
+// servicios — deja de pasarse `fotoEquipoDestacado`/`nombreEquipoDestacado`
+// a ServiciosTipografico. El componente sigue soportando ese prop opcional
+// (lo sigue usando v3.astro) — este cambio es solo de Capa 3, no toca Capa 2.
+//
+// AJUSTE 2026-07-21: testimoniosEsteticdent ya trae una reseña real de
+// Google Business (ver consultorio.esteticdent.ts) — se quita `modoDemo` de
+// Testimonials, ya no hace falta el bloque ilustrativo.
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/common/Header.astro';
 import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
@@ -118,7 +128,6 @@ import { validarConfigCliente } from '@/lib/validarConfigCliente';
 import { schemaConsultorio } from '@/lib/schemaOrg';
 
 const site = siteConfigEsteticdent;
-const equipoDestacado = galeriaEsteticdent[1];
 
 // FASE 4.1 (spec de diseño de Leo): servicios ancla extraídos por nombre —
 // ver comentario de arriba. El orden de este array define el orden visual
@@ -134,13 +143,12 @@ const serviciosAnclaEsteticdent = NOMBRES_ANCLA.map((nombre) =>
 const categoriasRestantesEsteticdent = serviciosEsteticdent
   .map((cat) => ({ ...cat, servicios: cat.servicios.filter((s) => !NOMBRES_ANCLA.includes(s.nombre)) }))
   .filter((cat) => cat.servicios.length > 0);
-// La foto destacada de arriba ya se muestra en grande en ServiciosTipografico —
-// se excluye aquí para que Equipamiento no la repita en la grilla masonry.
+// AJUSTE 2026-07-21 (feedback directo de Leo): se quita la foto del sillón
+// dental ("equipo-destacado-ia.webp", índice 1) de ServiciosTipografico por
+// completo — ya no se muestra ni la imagen ni su caption. Se mantiene fuera
+// también de esta galería (Testimonials) para no reintroducirla en la página
+// por otra vía; queda sin usarse hasta que Leo indique qué hacer con ella.
 const fotosEquipamiento = galeriaEsteticdent.filter((_, i) => i !== 1);
-
-// Demo de venta a prospecto (todavía no cliente confirmado) — muestra el
-// bloque ilustrativo de Testimonials en vez de ocultar la sección entera.
-const modoDemo = true;
 
 validarConfigCliente({
   site,
@@ -175,11 +183,19 @@ const schema = schemaConsultorio({
     mostrarTelefono
   />
 
+  {/*
+    AJUSTE 2026-07-21: pruebaSocial usa 5.0 (no 4.9) — es el valor real
+    confirmado en consultorio.esteticdent.ts (captura de Google Business,
+    "Clínica Dental Estetic Dent"), con solo 2 reseñas totales en el perfil
+    (1 excluida por ser autorreseña). Nunca inventar una calificación
+    (CLAUDE.md) aunque difiera de un valor pedido de referencia.
+  */}
   <HeroEquipamiento
     imagenFondo={galeriaEsteticdent[0].src}
     eyebrow="Odontología de especialidades · Quitumbe, Quito"
     titular="Precisión dental, sin esperas"
     subheadline="Especialistas en ortodoncia, endodoncia y cirugía oral. Rayos X digital gratis en cada consulta."
+    pruebaSocial="★ 5.0 en Google · Pacientes en Quitumbe"
   >
     <Fragment slot="cta">
       <WhatsAppButton
@@ -195,8 +211,6 @@ const schema = schemaConsultorio({
   <ServiciosTipografico
     categorias={categoriasRestantesEsteticdent}
     serviciosAncla={serviciosAnclaEsteticdent}
-    fotoEquipoDestacado={equipoDestacado.src}
-    nombreEquipoDestacado={equipoDestacado.alt}
     phone={site.telefonoWhatsApp}
     negocioSlug={site.negocioSlug}
   />
@@ -215,7 +229,6 @@ const schema = schemaConsultorio({
     testimonios={testimoniosEsteticdent}
     fondoSolido
     patron
-    modoDemo={modoDemo}
     fotos={fotosEquipamiento}
   />
 

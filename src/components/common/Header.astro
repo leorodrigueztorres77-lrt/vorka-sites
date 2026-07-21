@@ -12,6 +12,7 @@
 // HeroSplit estilo="superpuesto" (foto a pantalla completa), así que mantiene
 // `transparente` en su valor por defecto.
 import WhatsAppButton from './WhatsAppButton.astro';
+import { formatearTelefonoEC } from '@/lib/whatsapp';
 import type { SiteConfig } from '@/data/types';
 
 interface Props {
@@ -57,7 +58,7 @@ const {
     </nav>
     <div class="header__cta">
       {mostrarTelefono && (
-        <a class="header__tel" href={`tel:+${site.telefonoWhatsApp}`}>{site.telefonoWhatsApp}</a>
+        <a class="header__tel" href={`tel:+${site.telefonoWhatsApp}`}>{formatearTelefonoEC(site.telefonoWhatsApp)}</a>
       )}
       <WhatsAppButton
         phone={site.telefonoWhatsApp}
@@ -95,6 +96,9 @@ const {
   }
 
   .header--transparente {
+    position: fixed;
+    left: 0;
+    right: 0;
     background: transparent;
     box-shadow: none;
   }
@@ -115,7 +119,7 @@ const {
   .header--transparente.is-scrolled .header__marca,
   .header--transparente.is-scrolled .header__nav a,
   .header--transparente.is-scrolled .header__tel {
-    color: var(--color-primario);
+    color: var(--color-texto, var(--color-primario));
   }
 
   .header__inner {
