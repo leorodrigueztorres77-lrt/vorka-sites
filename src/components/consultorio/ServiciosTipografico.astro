@@ -4,32 +4,37 @@
 // y una descripción técnica pero accesible bastan. Una sola foto grande de
 // equipo/tecnología destacada encima del listado completo, categorías
 // separadas por espacio generoso (no líneas).
-import type { CategoriaServicios } from '@/data/types';
-import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
+import type { CategoriaServicios, ServicioMedico } from '@/data/types';
+import AgendarBtn from './AgendarBtn.astro';
+
+interface ServicioAncla {
+  servicio: ServicioMedico;
+  /** Badge corto sobre la card, ej. "Más solicitado" — omitir si no aplica. */
+  etiqueta?: string;
+}
 
 interface Props {
   categorias: CategoriaServicios[];
+  /**
+   * Servicios ancla (spec Leo Fase 4.1): hasta 3 servicios en cards grandes
+   * arriba del listado tipográfico — el/los que el negocio quiere usar como
+   * gancho (precio de entrada, aspiracional, diferenciador). Opcional: sin
+   * esto el componente se comporta igual que antes de Fase 4.
+   */
+  serviciosAncla?: ServicioAncla[];
   fotoEquipoDestacado?: string;
   nombreEquipoDestacado?: string;
   phone: string;
   negocioSlug: string;
-  /**
-   * Mensaje pre-cargado del único CTA de WhatsApp al final del listado (spec
-   * Leo Fase 3.2: un botón por sección en vez de uno por ítem, con texto
-   * propio para poder distinguir el origen frente a los otros 4 enlaces de la
-   * página). Fase 4 reintroduce un botón por categoría — este mensaje se
-   * revisará de nuevo en ese momento.
-   */
-  mensajeAgendar?: string;
 }
 
 const {
   categorias,
+  serviciosAncla = [],
   fotoEquipoDestacado,
   nombreEquipoDestacado,
   phone,
   negocioSlug,
-  mensajeAgendar = 'Hola, quiero agendar una cita',
 } = Astro.props;
 ---
 
@@ -42,6 +47,22 @@ const {
         <img src={fotoEquipoDestacado} alt={nombreEquipoDestacado ?? 'Equipo destacado'} loading="lazy" width="900" height="500" />
         {nombreEquipoDestacado && <figcaption>{nombreEquipoDestacado}</figcaption>}
       </figure>
+    )}
+
+    {serviciosAncla.length > 0 && (
+      <div class="servicios-tipografico__anclas">
+        {serviciosAncla.map(({ servicio, etiqueta }) => (
+          <article class="servicios-tipografico__ancla reveal--scale">
+            {etiqueta && <span class="servicios-tipografico__ancla-badge">{etiqueta}</span>}
+            <p class="servicios-tipografico__ancla-nombre">{servicio.nombre}</p>
+            {servicio.descripcion && <p class="servicios-tipografico__ancla-descripcion">{servicio.descripcion}</p>}
+            <p class="servicios-tipografico__ancla-precio">
+              {servicio.precioDesde != null ? `Desde $${servicio.precioDesde.toFixed(2)}` : 'Consultar'}
+            </p>
+            <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={servicio.nombre} />
+          </article>
+        ))}
+      </div>
     )}
 
     <div class="servicios-tipografico">
@@ -64,18 +85,11 @@ const {
               </li>
             ))}
           </ul>
+          <div class="servicios-tipografico__categoria-cta">
+            <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={cat.categoria} />
+          </div>
         </div>
       ))}
-    </div>
-
-    <div class="servicios-tipografico__cta">
-      <WhatsAppButton
-        phone={phone}
-        message={mensajeAgendar}
-        negocioSlug={negocioSlug}
-        label="Agendar por WhatsApp"
-        variante="acento"
-      />
     </div>
   </div>
 </section>
@@ -107,6 +121,64 @@ const {
     font-size: 1.15rem;
     margin-top: 1rem;
     color: var(--color-primario);
+  }
+
+  /* Spec Leo Fase 4.1 — cards ancla, grid de 8pt (padding 32/28, gap 24). */
+  .servicios-tipografico__anclas {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    max-width: 960px;
+    margin: 0 auto 4rem;
+  }
+
+  @media (min-width: 760px) {
+    .servicios-tipografico__anclas {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .servicios-tipografico__ancla {
+    position: relative;
+    background: var(--color-fondo, #fff);
+    border-radius: 16px;
+    padding: 2rem 1.75rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .servicios-tipografico__ancla-badge {
+    position: absolute;
+    top: -0.75rem;
+    background: var(--color-acento);
+    color: #1a1a1a;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.35rem 1rem;
+    border-radius: 999px;
+  }
+
+  .servicios-tipografico__ancla-nombre {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: 1.35rem;
+    margin: 0.5rem 0 0;
+  }
+
+  .servicios-tipografico__ancla-descripcion {
+    margin: 0;
+    font-size: 0.95rem;
+    opacity: 0.75;
+  }
+
+  .servicios-tipografico__ancla-precio {
+    font-weight: 700;
+    color: var(--color-primario);
+    margin: 0;
   }
 
   .servicios-tipografico {
@@ -181,9 +253,9 @@ const {
     color: var(--color-primario);
   }
 
-  .servicios-tipografico__cta {
+  .servicios-tipografico__categoria-cta {
     text-align: center;
-    margin-top: 3.5rem;
+    margin-top: 1.75rem;
   }
 
   @media (max-width: 560px) {

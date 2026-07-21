@@ -5,26 +5,37 @@ import type { CategoriaServicios, FotoGaleria, HorarioDia, ItemTecnologia, Perfi
 // debe confirmarlos antes de publicar (ver demo-personalizer paso 6). Las
 // CATEGORÍAS y varios servicios ya están alineados con contenido real:
 // capturas de instagram.com/esteticdent.uio (compartidas por Leo, 2026-07-19)
-// confirman "urgencias dentales las 24H" como diferenciador publicado varias
-// veces, rayos X digital gratis en cada consulta, implantes "de alta gama", y
-// periodoncia (encías) como servicio propio — se añaden/ajustan esas líneas.
+// confirman rayos X digital gratis en cada consulta, implantes "de alta
+// gama", y periodoncia (encías) como servicio propio — se añaden/ajustan
+// esas líneas.
+//
+// FASE 4.3 (spec de diseño de Leo): las capturas de Instagram publicitan
+// "urgencias dentales las 24H", pero horariosEsteticdent (abajo) confirma
+// L-V 9-18 / Sáb 9-13 — sin cobertura nocturna real. Copy corregido a
+// "Urgencias con atención prioritaria" (sin la promesa de 24h) hasta que Leo
+// confirme con el cliente si de verdad hay un canal de urgencias fuera de
+// horario (ej. un número aparte) o si la publicación original solo se
+// refería a "sin cita previa dentro del horario normal".
 export const serviciosEsteticdent: CategoriaServicios[] = [
   {
     categoria: 'Urgencias odontológicas',
     servicios: [
-      { nombre: 'Atención de urgencia 24h', descripcion: 'Dolor agudo, trauma o infección dental — atención prioritaria, publicado como servicio propio del negocio.', precioDesde: 25, duracionMin: 30, destacado: true, tipo: 'Urgencias' },
+      { nombre: 'Urgencias con atención prioritaria', descripcion: 'Dolor agudo, trauma o infección dental — te atendemos con prioridad dentro de nuestro horario de atención.', precioDesde: 25, duracionMin: 30, destacado: true, tipo: 'Urgencias' },
     ],
   },
   {
     categoria: 'Estética dental',
     servicios: [
       {
+        // FASE 4.1/4.3 (spec de diseño de Leo): el badge "Más solicitado" se
+        // mueve a Limpieza dental (ver categoría de abajo) — Diseño de
+        // sonrisa sigue siendo servicio ancla, pero por ser el aspiracional,
+        // no el de mayor demanda.
         nombre: 'Diseño de sonrisa',
         descripcion: 'Planificación digital del resultado antes de iniciar el tratamiento.',
         precioDesde: 350,
         duracionMin: 60,
         destacado: true,
-        tipo: 'Más solicitado',
       },
       { nombre: 'Blanqueamiento dental', descripcion: 'Sesión en consultorio con resultado inmediato.', precioDesde: 120, duracionMin: 60 },
       { nombre: 'Carillas de porcelana', descripcion: 'Por pieza, incluye prueba estética previa.', precioDesde: 180, duracionMin: 90 },
@@ -47,7 +58,7 @@ export const serviciosEsteticdent: CategoriaServicios[] = [
   {
     categoria: 'Limpieza, prevención y periodoncia',
     servicios: [
-      { nombre: 'Limpieza dental', descripcion: 'Profilaxis y revisión general, con rayos X digital gratis en cada consulta.', precioDesde: 30, duracionMin: 30 },
+      { nombre: 'Limpieza dental', descripcion: 'Profilaxis y revisión general, con rayos X digital gratis en cada consulta.', precioDesde: 30, duracionMin: 30, destacado: true, tipo: 'Más solicitado' },
       { nombre: 'Tratamiento de encías (periodoncia)', descripcion: 'Para sangrado, dolor o movilidad dental.', precioDesde: 60, duracionMin: 45 },
     ],
   },

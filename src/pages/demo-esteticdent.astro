@@ -73,6 +73,23 @@
 //   comentario en site.esteticdent.ts) en vez de quedar vacío.
 // - Footer pasa a 3 columnas (marca+claim / navegación+servicios / contacto+
 //   horarios+Instagram) vía los nuevos props opcionales de Footer.astro.
+//
+// FASE 4 (spec de diseño de Leo — jerarquía de servicios):
+// - 3 servicios ancla (Limpieza dental, Diseño de sonrisa, Urgencias con
+//   atención prioritaria) se extraen a cards grandes arriba del listado
+//   tipográfico; se excluyen de sus categorías originales para no repetirse.
+//   La categoría "Urgencias odontológicas" queda vacía tras la extracción
+//   (era su único servicio) y se filtra por completo del listado de abajo.
+// - El resto de categorías pasa de un único CTA al final de toda la sección
+//   (spec Fase 3.2) a un botón "Agendar" por categoría — spec explícito de
+//   Fase 4.2. OJO: esto sube el conteo de enlaces de WhatsApp de la página
+//   por encima de los 5 fijados en Fase 3.2 (quedan ~11: header, hero,
+//   3 anclas, 4 categorías restantes, banner de tecnología, CTA final) — es
+//   una contradicción directa entre ambas fases del mismo spec de Leo.
+//   Se prioriza el texto explícito de Fase 4.2 ("un botón por categoría")
+//   por ser la instrucción más reciente y específica sobre esta sección;
+//   Leo debe confirmar si esto es aceptable o si prefiere volver a un único
+//   CTA de cierre en servicios.
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/common/Header.astro';
 import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
@@ -102,6 +119,21 @@ import { schemaConsultorio } from '@/lib/schemaOrg';
 
 const site = siteConfigEsteticdent;
 const equipoDestacado = galeriaEsteticdent[1];
+
+// FASE 4.1 (spec de diseño de Leo): servicios ancla extraídos por nombre —
+// ver comentario de arriba. El orden de este array define el orden visual
+// de las 3 cards (Limpieza dental primero: precio de entrada más bajo).
+const NOMBRES_ANCLA = ['Limpieza dental', 'Diseño de sonrisa', 'Urgencias con atención prioritaria'];
+const todosLosServiciosEsteticdent = serviciosEsteticdent.flatMap((cat) => cat.servicios);
+const serviciosAnclaEsteticdent = NOMBRES_ANCLA.map((nombre) =>
+  todosLosServiciosEsteticdent.find((s) => s.nombre === nombre),
+)
+  .filter((s): s is (typeof todosLosServiciosEsteticdent)[number] => Boolean(s))
+  .map((servicio) => ({ servicio, etiqueta: servicio.tipo }));
+
+const categoriasRestantesEsteticdent = serviciosEsteticdent
+  .map((cat) => ({ ...cat, servicios: cat.servicios.filter((s) => !NOMBRES_ANCLA.includes(s.nombre)) }))
+  .filter((cat) => cat.servicios.length > 0);
 // La foto destacada de arriba ya se muestra en grande en ServiciosTipografico —
 // se excluye aquí para que Equipamiento no la repita en la grilla masonry.
 const fotosEquipamiento = galeriaEsteticdent.filter((_, i) => i !== 1);
@@ -161,12 +193,12 @@ const schema = schemaConsultorio({
   </HeroEquipamiento>
 
   <ServiciosTipografico
-    categorias={serviciosEsteticdent}
+    categorias={categoriasRestantesEsteticdent}
+    serviciosAncla={serviciosAnclaEsteticdent}
     fotoEquipoDestacado={equipoDestacado.src}
     nombreEquipoDestacado={equipoDestacado.alt}
     phone={site.telefonoWhatsApp}
     negocioSlug={site.negocioSlug}
-    mensajeAgendar={`Hola, quiero agendar una cita para uno de sus servicios odontológicos en ${site.nombre}`}
   />
 
   <Equipamiento
