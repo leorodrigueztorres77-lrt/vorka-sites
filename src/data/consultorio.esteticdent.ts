@@ -127,16 +127,27 @@ export const testimoniosEsteticdent: Testimonio[] = [];
 // único dato confirmable a partir de la foto (realizando una limpieza dental
 // con equipo completo) — sin `especialidad` porque el cliente no ha
 // confirmado un área específica todavía (nunca inventar esa credencial).
+//
+// FASE 3.7 (spec de diseño de Leo): se añade `lineaExperiencia` a cada
+// perfil — texto acotado a lo ya confirmado (especialidad de Mishell;
+// ninguna afirmación de años/credenciales sin confirmar). `registroProfesional`
+// se deja SIN definir a propósito: el spec original sugería un valor
+// placeholder ("Reg. ACESS #____"), pero TeamSection.astro lo muestra tal
+// cual en el sitio público — eso sería una fuga de placeholder visible al
+// paciente (CLAUDE.md, regla explícita). El componente ya soporta el campo;
+// Leo solo necesita confirmar los números reales de registro para activarlo.
 export const profesionalesEsteticdent: PerfilProfesional[] = [
   {
     nombre: 'Dra. Mishell A. Chamorro',
     tituloProfesional: 'Odontóloga',
     especialidad: 'Endodoncia',
     foto: '/images/esteticdent/mishel-chamorro-hero-ia.webp',
+    lineaExperiencia: 'Especialista en endodoncia, atención cercana y sin dolor.',
   },
   {
     nombre: 'Dra. Rosa Reascos',
     tituloProfesional: 'Odontóloga',
     foto: '/images/esteticdent/rosa-reascos.webp',
+    lineaExperiencia: 'Atención odontológica integral, cercana a cada paciente.',
   },
 ];

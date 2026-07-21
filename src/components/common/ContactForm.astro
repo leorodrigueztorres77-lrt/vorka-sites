@@ -13,9 +13,36 @@ import type { SiteConfig } from '@/data/types';
 interface Props {
   site: SiteConfig;
   productoLabel?: string;
+  /**
+   * "Cantidad" solo tiene sentido para pedidos de restaurante (unidades de un
+   * plato) — en el vertical salud una cita no tiene "cantidad", así que las
+   * páginas de consultorio pasan `false` para ocultar el campo (spec SALUD
+   * 2026-07-20, "Adaptar ContactForm al vertical salud").
+   */
+  mostrarCantidad?: boolean;
+  /**
+   * Oculta el campo RUC/Cédula — spec Leo Fase 3.4, solo para clientes donde
+   * este dato no aporta nada al flujo de agendamiento. Por defecto sigue
+   * visible: CLAUDE.md exige el campo RUC/cédula opcional en toda web
+   * entregada, así que ocultarlo requiere un opt-out explícito por página.
+   */
+  mostrarRuc?: boolean;
+  /**
+   * Cuando se provee, "{productoLabel}" se renderiza como `<select>` con
+   * estas opciones reales en vez del `<input type="text">` libre de siempre
+   * (spec Leo Fase 3.4) — útil cuando el negocio tiene categorías de
+   * servicio/producto ya definidas y conviene evitar texto libre ambiguo.
+   */
+  opcionesProducto?: string[];
 }
 
-const { site, productoLabel = 'Producto o servicio de interés' } = Astro.props;
+const {
+  site,
+  productoLabel = 'Producto o servicio de interés',
+  mostrarCantidad = true,
+  mostrarRuc = true,
+  opcionesProducto,
+} = Astro.props;
 const formId = 'form-contacto';
 ---
 
@@ -39,24 +66,46 @@ const formId = 'form-contacto';
         <input id="telefono" name="telefono" type="tel" required />
       </div>
 
-      <div class="campo">
-        <label for="rucCedula">RUC / Cédula (opcional)</label>
-        <input id="rucCedula" name="rucCedula" type="text" />
-      </div>
+      {mostrarRuc && (
+        <div class="campo">
+          <label for="rucCedula">RUC / Cédula (opcional)</label>
+          <input id="rucCedula" name="rucCedula" type="text" />
+        </div>
+      )}
 
       <div class="campo">
         <label for="producto">{productoLabel}</label>
-        <input id="producto" name="producto" type="text" />
+        {opcionesProducto && opcionesProducto.length > 0 ? (
+          <select id="producto" name="producto">
+            <option value="">Selecciona una opción</option>
+            {opcionesProducto.map((op) => <option value={op}>{op}</option>)}
+          </select>
+        ) : (
+          <input id="producto" name="producto" type="text" />
+        )}
       </div>
 
-      <div class="campo">
-        <label for="cantidad">Cantidad</label>
-        <input id="cantidad" name="cantidad" type="number" min="1" step="1" />
-      </div>
+      {mostrarCantidad && (
+        <div class="campo">
+          <label for="cantidad">Cantidad</label>
+          <input id="cantidad" name="cantidad" type="number" min="1" step="1" />
+        </div>
+      )}
 
       <div class="campo campo--full">
         <label for="mensaje">Mensaje</label>
         <textarea id="mensaje" name="mensaje" rows="4"></textarea>
+      </div>
+
+      <div class="campo campo--full campo--consentimiento">
+        <label class="consentimiento-label">
+          <input id="consentimiento" name="consentimiento" type="checkbox" required />
+          <span>
+            Acepto que mis datos sean usados únicamente para responder a esta
+            consulta, conforme a la Ley Orgánica de Protección de Datos
+            Personales (LOPDP) de Ecuador.
+          </span>
+        </label>
       </div>
 
       <div class="campo campo--full">
@@ -110,13 +159,15 @@ const formId = 'form-contacto';
   }
 
   input,
-  textarea {
+  textarea,
+  select {
     padding: 0.65rem 0.8rem;
     border: 1px solid #d5d5d5;
     border-radius: 8px;
     font-family: var(--font-texto);
     font-size: 1rem;
     min-height: 44px;
+    background: #fff;
   }
 
   textarea {
@@ -126,6 +177,28 @@ const formId = 'form-contacto';
   .contacto-form__estado {
     margin: 0.75rem 0 0;
     font-size: 1rem;
+  }
+
+  .campo--consentimiento {
+    padding-top: 0.25rem;
+  }
+
+  .consentimiento-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-weight: 400;
+    font-size: 0.9rem;
+    opacity: 0.85;
+    cursor: pointer;
+  }
+
+  .consentimiento-label input[type='checkbox'] {
+    min-height: auto;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
   }
 
   @media (max-width: 720px) {
@@ -150,6 +223,7 @@ const formId = 'form-contacto';
       producto: formData.get('producto') || null,
       cantidad: formData.get('cantidad') || null,
       mensaje: formData.get('mensaje') || null,
+      consentimientoLOPDP: formData.get('consentimiento') === 'on',
       enviadoEn: new Date().toISOString(),
     };
 

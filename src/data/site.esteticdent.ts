@@ -31,13 +31,34 @@ const TELEFONO_WHATSAPP_IG = '593998308906';
 export const siteConfigEsteticdent: SiteConfig = {
   negocioSlug: 'esteticdent',
   nombre: 'Estetic Dent',
+  // Logo real entregado por Leo como archivo (2026-07-21, originales/Logo.jpg,
+  // 165x181px) — ver README.md de public/images/esteticdent/ para el proceso
+  // de recorte circular + upscale (sin IA generativa, para no distorsionar el
+  // wordmark exacto de la marca).
+  logoUrl: '/images/esteticdent/logo-estetic-dent.webp',
   tagline: 'Especialistas en ortodoncia, endodoncia, odontopediatría y cirugía oral — al sur de Quito',
   ciudad: 'Quito, Ecuador',
-  direccion: 'Quitumbe, sur de Quito (dirección exacta por confirmar con el cliente)',
+  // Solo zona, sin dirección exacta confirmada todavía (ver comentario de
+  // arriba) — nunca renderizar el caveat "por confirmar" en el sitio público
+  // (spec SALUD 2026-07-20, "Fugas de placeholder"): si un dato opcional no
+  // está confirmado, se muestra solo lo que sí se sabe (la zona), no una nota
+  // parentética visible al paciente.
+  direccion: 'Quitumbe, sur de Quito',
   telefonoWhatsApp: TELEFONO_WHATSAPP_IG,
   colores: brandKitEsteticdent.paleta,
   fuentes: brandKitEsteticdent.tipografia,
-  mapaEmbedUrl: '',
+  // FASE 3.5 (spec de diseño de Leo): embed de la ZONA (Av. Quitumbe Ñan, ver
+  // comentario de dirección arriba), no de la dirección exacta del local —
+  // esa todavía no está confirmada. Formato "google.com/maps?q=...&output=embed"
+  // no requiere API key. Reemplazar por el embed de la ubicación exacta en
+  // cuanto el cliente la confirme (comentario interno, nunca un caveat visible
+  // en el sitio — spec SALUD 2026-07-20, "Fugas de placeholder").
+  mapaEmbedUrl: 'https://www.google.com/maps?q=Av.+Quitumbe+%C3%91an,+Quito,+Ecuador&output=embed',
+  // Handle real confirmado por captura de Instagram (2026-07-19) — ver
+  // consultorio.esteticdent.ts. Sin googleBusinessUrl/ratingGoogle: ninguna
+  // calificación de Google está confirmada todavía (spec SALUD, "nunca
+  // inventar una calificación").
+  instagramUrl: 'https://www.instagram.com/esteticdent.uio/',
   seo: {
     tituloDefault: 'Estetic Dent — Odontología estética en Quito',
     descripcionDefault:

@@ -18,6 +18,15 @@ interface Props {
   site: SiteConfig;
   navItems?: { label: string; href: string }[];
   transparente?: boolean;
+  /** Color del CTA de WhatsApp del header — spec Leo Fase 3.1: un solo color
+   * (naranja) para toda acción de agendar en todo el sitio. Por defecto sigue
+   * en navy (`primario`) para no cambiar el comportamiento de otros clientes
+   * sin que lo pidan explícitamente. */
+  ctaVariante?: 'primario' | 'acento';
+  /** Enlace `tel:` visible junto al CTA de WhatsApp — spec Leo Fase 3.5. Off
+   * por defecto: la mayoría de clientes solo publican el número de WhatsApp,
+   * no una línea telefónica separada. */
+  mostrarTelefono?: boolean;
 }
 
 const {
@@ -29,12 +38,16 @@ const {
     { label: 'Contacto', href: '#contacto' },
   ],
   transparente = true,
+  ctaVariante = 'primario',
+  mostrarTelefono = false,
 } = Astro.props;
 ---
 
 <header class:list={['header', { 'header--transparente': transparente }]} data-header>
   <div class="container header__inner">
-    <a class="header__marca" href="#inicio">{site.nombre}</a>
+    <a class="header__marca" href="#inicio">
+      {site.logoUrl ? <img class="header__logo" src={site.logoUrl} alt={site.nombre} width="44" height="44" /> : site.nombre}
+    </a>
     <nav class="header__nav" aria-label="Navegación principal">
       <ul>
         {navItems.map((item) => (
@@ -43,12 +56,15 @@ const {
       </ul>
     </nav>
     <div class="header__cta">
+      {mostrarTelefono && (
+        <a class="header__tel" href={`tel:+${site.telefonoWhatsApp}`}>{site.telefonoWhatsApp}</a>
+      )}
       <WhatsAppButton
         phone={site.telefonoWhatsApp}
         message={`Hola, me gustaría más información sobre ${site.nombre}`}
         negocioSlug={site.negocioSlug}
         label="WhatsApp"
-        variante="primario"
+        variante={ctaVariante}
       />
     </div>
   </div>
@@ -84,7 +100,8 @@ const {
   }
 
   .header--transparente .header__marca,
-  .header--transparente .header__nav a {
+  .header--transparente .header__nav a,
+  .header--transparente .header__tel {
     color: #fff;
   }
 
@@ -96,7 +113,8 @@ const {
   }
 
   .header--transparente.is-scrolled .header__marca,
-  .header--transparente.is-scrolled .header__nav a {
+  .header--transparente.is-scrolled .header__nav a,
+  .header--transparente.is-scrolled .header__tel {
     color: var(--color-primario);
   }
 
@@ -110,12 +128,21 @@ const {
   }
 
   .header__marca {
+    display: flex;
+    align-items: center;
     font-family: var(--font-titulos);
     font-weight: 700;
     font-size: 1.25rem;
     text-decoration: none;
     color: var(--color-primario);
     transition: color 300ms ease;
+  }
+
+  .header__logo {
+    display: block;
+    height: 44px;
+    width: 44px;
+    object-fit: contain;
   }
 
   .header__nav ul {
@@ -132,8 +159,25 @@ const {
     transition: color 300ms ease;
   }
 
+  .header__cta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .header__tel {
+    color: var(--color-primario);
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
   @media (max-width: 720px) {
     .header__nav {
+      display: none;
+    }
+
+    .header__tel {
       display: none;
     }
   }

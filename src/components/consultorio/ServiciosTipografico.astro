@@ -5,7 +5,7 @@
 // equipo/tecnología destacada encima del listado completo, categorías
 // separadas por espacio generoso (no líneas).
 import type { CategoriaServicios } from '@/data/types';
-import AgendarBtn from './AgendarBtn.astro';
+import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
 
 interface Props {
   categorias: CategoriaServicios[];
@@ -13,14 +13,29 @@ interface Props {
   nombreEquipoDestacado?: string;
   phone: string;
   negocioSlug: string;
+  /**
+   * Mensaje pre-cargado del único CTA de WhatsApp al final del listado (spec
+   * Leo Fase 3.2: un botón por sección en vez de uno por ítem, con texto
+   * propio para poder distinguir el origen frente a los otros 4 enlaces de la
+   * página). Fase 4 reintroduce un botón por categoría — este mensaje se
+   * revisará de nuevo en ese momento.
+   */
+  mensajeAgendar?: string;
 }
 
-const { categorias, fotoEquipoDestacado, nombreEquipoDestacado, phone, negocioSlug } = Astro.props;
+const {
+  categorias,
+  fotoEquipoDestacado,
+  nombreEquipoDestacado,
+  phone,
+  negocioSlug,
+  mensajeAgendar = 'Hola, quiero agendar una cita',
+} = Astro.props;
 ---
 
 <section id="servicios" class="section" aria-labelledby="servicios-titulo">
   <div class="container">
-    <h2 id="servicios-titulo" class="section-title servicios-tipografico__titulo">Nuestros Servicios</h2>
+    <h2 id="servicios-titulo" class="section-title servicios-tipografico__titulo">Nuestros servicios</h2>
 
     {fotoEquipoDestacado && (
       <figure class="servicios-tipografico__estrella reveal--scale">
@@ -42,14 +57,25 @@ const { categorias, fotoEquipoDestacado, nombreEquipoDestacado, phone, negocioSl
                   {s.descripcion && <p class="servicios-tipografico__descripcion">{s.descripcion}</p>}
                 </div>
                 <div class="servicios-tipografico__accion">
-                  <span class="servicios-tipografico__precio">Desde ${s.precioDesde.toFixed(2)}</span>
-                  <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={s.nombre} />
+                  <span class="servicios-tipografico__precio">
+                    {s.precioDesde != null ? `Desde $${s.precioDesde.toFixed(2)}` : 'Consultar'}
+                  </span>
                 </div>
               </li>
             ))}
           </ul>
         </div>
       ))}
+    </div>
+
+    <div class="servicios-tipografico__cta">
+      <WhatsAppButton
+        phone={phone}
+        message={mensajeAgendar}
+        negocioSlug={negocioSlug}
+        label="Agendar por WhatsApp"
+        variante="acento"
+      />
     </div>
   </div>
 </section>
@@ -153,6 +179,11 @@ const { categorias, fotoEquipoDestacado, nombreEquipoDestacado, phone, negocioSl
   .servicios-tipografico__precio {
     font-weight: 700;
     color: var(--color-primario);
+  }
+
+  .servicios-tipografico__cta {
+    text-align: center;
+    margin-top: 3.5rem;
   }
 
   @media (max-width: 560px) {

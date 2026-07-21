@@ -55,12 +55,31 @@
 // tecnologiaEsteticdent en consultorio.esteticdent.ts) en vez de `fotos`, más
 // un banner con el diferenciador principal (rayos X gratis) y su propio CTA
 // de WhatsApp con mensaje distinto para medir origen.
+//
+// FASE 3 (spec de diseño de Leo — consistencia y confianza):
+// - Un solo color de CTA (naranja) para toda acción de agendar: Header pasa
+//   `ctaVariante="acento"`. El navy queda solo para superficies/texto.
+// - Los enlaces de WhatsApp de la página bajan a 5 (header, hero, fin de
+//   servicios, banner de tecnología, CTA final pre-footer), cada uno con un
+//   mensaje `?text=` distinto para poder distinguir el origen. El botón
+//   flotante persistente (FloatingWhatsApp, infraestructura de Capa 1) no
+//   cuenta dentro de esos 5 — es un mecanismo aparte, siempre visible en
+//   móvil.
+// - ContactForm oculta RUC/Cédula (no aporta nada al flujo de una cita) y
+//   "Servicio de interés" pasa a `<select>` con las categorías reales de
+//   serviciosEsteticdent.
+// - Header/Footer muestran ahora el teléfono como enlace `tel:`; LocationMap
+//   recibe un embed real (aunque de zona, no de dirección exacta — ver
+//   comentario en site.esteticdent.ts) en vez de quedar vacío.
+// - Footer pasa a 3 columnas (marca+claim / navegación+servicios / contacto+
+//   horarios+Instagram) vía los nuevos props opcionales de Footer.astro.
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/common/Header.astro';
 import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
 import Testimonials from '@/components/common/Testimonials.astro';
 import LocationMap from '@/components/common/LocationMap.astro';
 import ContactForm from '@/components/common/ContactForm.astro';
+import CtaFinal from '@/components/common/CtaFinal.astro';
 import Footer from '@/components/common/Footer.astro';
 import FloatingWhatsApp from '@/components/common/FloatingWhatsApp.astro';
 
@@ -120,6 +139,8 @@ const schema = schemaConsultorio({
       { label: 'Nuestra tecnología', href: '#tecnologia' },
       { label: 'Contacto', href: '#contacto' },
     ]}
+    ctaVariante="acento"
+    mostrarTelefono
   />
 
   <HeroEquipamiento
@@ -145,6 +166,7 @@ const schema = schemaConsultorio({
     nombreEquipoDestacado={equipoDestacado.alt}
     phone={site.telefonoWhatsApp}
     negocioSlug={site.negocioSlug}
+    mensajeAgendar={`Hola, quiero agendar una cita para uno de sus servicios odontológicos en ${site.nombre}`}
   />
 
   <Equipamiento
@@ -167,9 +189,33 @@ const schema = schemaConsultorio({
 
   <LocationMap site={site} horarios={horariosEsteticdent} />
 
-  <ContactForm site={site} productoLabel="Servicio de interés" mostrarCantidad={false} />
+  <ContactForm
+    site={site}
+    productoLabel="Servicio de interés"
+    mostrarCantidad={false}
+    mostrarRuc={false}
+    opcionesProducto={serviciosEsteticdent.map((cat) => cat.categoria)}
+  />
 
-  <Footer site={site} />
+  <CtaFinal
+    titulo="Agenda tu cita hoy mismo"
+    phone={site.telefonoWhatsApp}
+    message={`Hola, escribo desde la página web de ${site.nombre}, quiero agendar mi cita`}
+    negocioSlug={site.negocioSlug}
+  />
+
+  <Footer
+    site={site}
+    navItems={[
+      { label: 'Servicios', href: '#servicios' },
+      { label: 'Nuestra tecnología', href: '#tecnologia' },
+      { label: 'Equipo', href: '#equipo' },
+      { label: 'Contacto', href: '#contacto' },
+    ]}
+    serviciosDestacados={serviciosEsteticdent.map((cat) => cat.categoria)}
+    horarios={horariosEsteticdent}
+    mostrarTelefono
+  />
 
   <FloatingWhatsApp
     phone={site.telefonoWhatsApp}

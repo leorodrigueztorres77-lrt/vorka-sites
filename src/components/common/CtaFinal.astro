@@ -1,0 +1,50 @@
+---
+// Capa 1 — CTA de cierre genérico, justo antes del footer. Bloque de color
+// sólido (regla de profundidad visual #2, CLAUDE.md) con un único botón de
+// WhatsApp — pensado como el último de los 5 enlaces de WhatsApp de una
+// página (spec Leo Fase 3.2: "reducir los enlaces de WhatsApp a 5, cada uno
+// con mensaje pre-llenado distinto"). Genérico y reutilizable por cualquier
+// vertical/cliente — el texto/color son los únicos datos de Capa 3.
+import WhatsAppButton from './WhatsAppButton.astro';
+
+interface Props {
+  titulo?: string;
+  phone: string;
+  message: string;
+  negocioSlug: string;
+  label?: string;
+}
+
+const {
+  titulo = '¿Hablamos por WhatsApp?',
+  phone,
+  message,
+  negocioSlug,
+  label = 'Agendar por WhatsApp',
+} = Astro.props;
+---
+
+<section class="section section--solido cta-final" aria-labelledby="cta-final-titulo">
+  <div class="container cta-final__inner">
+    <h2 id="cta-final-titulo" class="cta-final__titulo">{titulo}</h2>
+    <WhatsAppButton phone={phone} message={message} negocioSlug={negocioSlug} label={label} variante="acento" />
+  </div>
+</section>
+
+<style>
+  .cta-final__inner {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .cta-final__titulo {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    margin: 0;
+    max-width: 640px;
+  }
+</style>

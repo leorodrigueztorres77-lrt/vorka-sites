@@ -1,0 +1,168 @@
+---
+// Capa 1/2 (spec SALUD 2026-07-20, "Equipo profesional obligatorio") —
+// sección genérica para mostrar de 1 a 6 profesionales de un consultorio.
+// Un consultorio de un solo profesional (ej. Odontocrea, Dr. Cristian Egas)
+// pasa un array de 1 elemento; uno con varios especialistas (ej. Estetic
+// Dent) pasa varios.
+//
+// CLAUDE.md prohíbe una foto de "doctor genérico" de stock para el perfil
+// profesional. Si `perfil.foto` no está confirmada, esta sección NUNCA
+// sustituye por un genérico — muestra un avatar con las iniciales del
+// nombre en su lugar (mismo criterio ya documentado en PerfilProfesional,
+// ver src/data/types.ts).
+import type { PerfilProfesional } from '@/data/types';
+
+interface Props {
+  profesionales: PerfilProfesional[];
+  titulo?: string;
+}
+
+const { profesionales, titulo = 'Nuestro equipo' } = Astro.props;
+
+function iniciales(nombre: string): string {
+  return nombre
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((palabra) => palabra[0]?.toUpperCase() ?? '')
+    .join('');
+}
+---
+
+{profesionales.length > 0 && (
+  <section id="equipo" class="section" aria-labelledby="equipo-titulo">
+    <div class="container">
+      <h2 id="equipo-titulo" class="section-title">{titulo}</h2>
+
+      <div class="equipo-grid">
+        {profesionales.map((perfil) => (
+          <article class="equipo-card reveal--scale">
+            {perfil.foto ? (
+              <img class="equipo-card__foto" src={perfil.foto} alt={perfil.nombre} loading="lazy" width="240" height="240" />
+            ) : (
+              <div class="equipo-card__avatar" aria-hidden="true">{iniciales(perfil.nombre)}</div>
+            )}
+
+            <p class="equipo-card__nombre">{perfil.nombre}</p>
+            <p class="equipo-card__titulo">
+              {perfil.tituloProfesional}{perfil.especialidad ? ` · ${perfil.especialidad}` : ''}
+            </p>
+
+            {perfil.lineaExperiencia && <p class="equipo-card__experiencia">{perfil.lineaExperiencia}</p>}
+
+            {perfil.credenciales && perfil.credenciales.length > 0 && (
+              <ul class="equipo-card__credenciales">
+                {perfil.credenciales.map((c) => <li>{c}</li>)}
+              </ul>
+            )}
+
+            {perfil.registroProfesional && (
+              <p class="equipo-card__registro">Reg. profesional: {perfil.registroProfesional}</p>
+            )}
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .equipo-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .equipo-grid {
+      /* Spec Leo Fase 3.7: tope de 2 columnas — un consultorio con 2
+         profesionales (ej. Estetic Dent) nunca deja una tercera celda vacía.
+         Con 1 solo profesional (ej. Odontocrea) la tarjeta simplemente ocupa
+         la primera celda, igual que antes de este cambio. */
+      grid-template-columns: repeat(2, 1fr);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+  }
+
+  .equipo-card {
+    background: var(--color-fondo, #fff);
+    border-radius: 16px;
+    padding: 1.75rem;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  .equipo-card__foto {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 1rem;
+    display: block;
+  }
+
+  .equipo-card__avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: var(--color-acento);
+    color: var(--color-texto);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: 2.25rem;
+  }
+
+  .equipo-card__nombre {
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin: 0 0 0.25rem;
+  }
+
+  .equipo-card__titulo {
+    font-size: 1rem;
+    opacity: 0.8;
+    margin: 0 0 0.75rem;
+  }
+
+  .equipo-card__experiencia {
+    font-size: 0.95rem;
+    opacity: 0.85;
+    margin: 0 0 0.75rem;
+    font-style: italic;
+  }
+
+  .equipo-card__credenciales {
+    list-style: none;
+    margin: 0 0 0.75rem;
+    padding: 0;
+    display: grid;
+    gap: 0.35rem;
+    text-align: left;
+  }
+
+  .equipo-card__credenciales li {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    padding-left: 1.2rem;
+    position: relative;
+  }
+
+  .equipo-card__credenciales li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--color-primario);
+    font-weight: 700;
+  }
+
+  .equipo-card__registro {
+    font-size: 0.85rem;
+    opacity: 0.6;
+    margin: 0;
+  }
+</style>

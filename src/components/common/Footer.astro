@@ -1,25 +1,93 @@
 ---
-// Capa 1 — footer genérico.
-import type { SiteConfig } from '@/data/types';
+// Capa 1 — footer genérico. Layout por defecto: una sola fila marca+datos +
+// línea legal (comportamiento histórico, sin cambios). Spec Leo Fase 3.6: si
+// el caller pasa `navItems`, el footer pasa a 3 columnas (marca+claim /
+// navegación+servicios / contacto+horarios+Instagram) — opt-in explícito para
+// no alterar el footer de clientes que no lo piden.
+import type { HorarioDia, SiteConfig } from '@/data/types';
 
 interface Props {
   site: SiteConfig;
+  navItems?: { label: string; href: string }[];
+  serviciosDestacados?: string[];
+  horarios?: HorarioDia[];
+  /** Enlace `tel:` — mismo criterio que Header.astro (Fase 3.5), off por defecto. */
+  mostrarTelefono?: boolean;
 }
 
-const { site } = Astro.props;
-const anio = 2026;
+const { site, navItems, serviciosDestacados, horarios, mostrarTelefono = false } = Astro.props;
+const anio = new Date().getFullYear();
+const columnas = Boolean(navItems && navItems.length > 0);
 ---
 
 <footer class="footer">
-  <div class="container footer__inner">
-    <div>
-      <p class="footer__nombre">{site.nombre}</p>
-      <p>{site.direccion}, {site.ciudad}</p>
-      {site.email && <p>{site.email}</p>}
-    </div>
-    <p class="footer__legal">
-      &copy; {anio} {site.nombre}. Todos los derechos reservados.
-    </p>
+  <div class="container">
+    {columnas ? (
+      <>
+        <div class="footer__grid">
+          <div class="footer__col footer__col--marca">
+            {site.logoUrl && <img class="footer__logo" src={site.logoUrl} alt={site.nombre} width="40" height="40" />}
+            <p class="footer__nombre">{site.nombre}</p>
+            <p class="footer__claim">{site.tagline}</p>
+          </div>
+
+          <div class="footer__col">
+            <p class="footer__col-titulo">Navegación</p>
+            <ul class="footer__lista">
+              {navItems!.map((item) => (
+                <li><a href={item.href}>{item.label}</a></li>
+              ))}
+            </ul>
+            {serviciosDestacados && serviciosDestacados.length > 0 && (
+              <>
+                <p class="footer__col-titulo footer__col-titulo--espaciado">Servicios</p>
+                <ul class="footer__lista">
+                  {serviciosDestacados.map((s) => <li>{s}</li>)}
+                </ul>
+              </>
+            )}
+          </div>
+
+          <div class="footer__col">
+            <p class="footer__col-titulo">Contacto</p>
+            <p>{site.direccion}, {site.ciudad}</p>
+            {mostrarTelefono && (
+              <p><a class="footer__tel" href={`tel:+${site.telefonoWhatsApp}`}>{site.telefonoWhatsApp}</a></p>
+            )}
+            {site.email && <p>{site.email}</p>}
+            {horarios && horarios.length > 0 && (
+              <>
+                <p class="footer__col-titulo footer__col-titulo--espaciado">Horarios</p>
+                {horarios.map((h) => <p class="footer__horario">{h.dia}: {h.horario}</p>)}
+              </>
+            )}
+            {site.instagramUrl && (
+              <p><a href={site.instagramUrl} target="_blank" rel="noopener noreferrer">Instagram →</a></p>
+            )}
+          </div>
+        </div>
+        <p class="footer__legal footer__legal--grid">
+          &copy; {anio} {site.nombre}. Todos los derechos reservados.
+        </p>
+      </>
+    ) : (
+      <div class="footer__inner">
+        <div class="footer__marca">
+          {site.logoUrl && <img class="footer__logo" src={site.logoUrl} alt={site.nombre} width="40" height="40" />}
+          <div>
+            <p class="footer__nombre">{site.nombre}</p>
+            <p>{site.direccion}, {site.ciudad}</p>
+            {mostrarTelefono && (
+              <p><a class="footer__tel" href={`tel:+${site.telefonoWhatsApp}`}>{site.telefonoWhatsApp}</a></p>
+            )}
+            {site.email && <p>{site.email}</p>}
+          </div>
+        </div>
+        <p class="footer__legal">
+          &copy; {anio} {site.nombre}. Todos los derechos reservados.
+        </p>
+      </div>
+    )}
   </div>
 </footer>
 
@@ -37,6 +105,20 @@ const anio = 2026;
     gap: 1.5rem;
   }
 
+  .footer__marca {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .footer__logo {
+    display: block;
+    height: 40px;
+    width: 40px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
   .footer__nombre {
     font-family: var(--font-titulos);
     font-weight: 600;
@@ -50,5 +132,63 @@ const anio = 2026;
 
   .footer p {
     margin: 0.15rem 0;
+  }
+
+  .footer__tel {
+    color: inherit;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .footer__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding-bottom: 1.5rem;
+  }
+
+  @media (min-width: 720px) {
+    .footer__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .footer__claim {
+    opacity: 0.75;
+    max-width: 320px;
+  }
+
+  .footer__col-titulo {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    margin: 0 0 0.75rem;
+  }
+
+  .footer__col-titulo--espaciado {
+    margin-top: 1.5rem;
+  }
+
+  .footer__lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .footer__lista a {
+    color: inherit;
+    text-decoration: none;
+    opacity: 0.85;
+  }
+
+  .footer__horario {
+    opacity: 0.85;
+    font-size: 1rem;
+  }
+
+  .footer__legal--grid {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding-top: 1.5rem;
   }
 </style>
