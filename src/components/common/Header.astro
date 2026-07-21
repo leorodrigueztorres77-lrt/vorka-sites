@@ -47,7 +47,17 @@ const {
 <header class:list={['header', { 'header--transparente': transparente }]} data-header>
   <div class="container header__inner">
     <a class="header__marca" href="#inicio">
-      {site.logoUrl ? <img class="header__logo" src={site.logoUrl} alt={site.nombre} width="44" height="44" /> : site.nombre}
+      {site.logoUrl && (
+        <img
+          class="header__logo"
+          src={site.logoUrl}
+          srcset={site.logoSrcset ? `${site.logoSrcset.src2x} 2x, ${site.logoSrcset.src4x} 4x` : undefined}
+          alt={site.nombre}
+          width="40"
+          height="40"
+        />
+      )}
+      <span class="header__marca-texto">{site.nombre}</span>
     </a>
     <nav class="header__nav" aria-label="Navegación principal">
       <ul>
@@ -134,19 +144,36 @@ const {
   .header__marca {
     display: flex;
     align-items: center;
+    gap: 0.6rem;
     font-family: var(--font-titulos);
     font-weight: 700;
-    font-size: 1.25rem;
     text-decoration: none;
     color: var(--color-primario);
     transition: color 300ms ease;
   }
 
+  .header__marca-texto {
+    font-size: 19px;
+    letter-spacing: 0.01em;
+    color: inherit;
+  }
+
   .header__logo {
     display: block;
-    height: 44px;
-    width: 44px;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
     object-fit: contain;
+    box-shadow: none;
+    transition: box-shadow 300ms ease;
+  }
+
+  .header--transparente .header__logo {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35);
+  }
+
+  .header--transparente.is-scrolled .header__logo {
+    box-shadow: none;
   }
 
   .header__nav ul {

@@ -8,7 +8,6 @@ localmente (`sharp`) el 2026-07-18 — nunca hotlinked al CDN de Pexels.
 
 | Archivo | Origen (Pexels photo ID) | Contenido |
 |---|---|---|
-| `equipo-destacado.webp` | 35438269 | Sillón y equipo dental de última generación |
 | `equipamiento-1.webp` | 6812453 | Equipo de diagnóstico dental minimalista |
 | `equipamiento-2.webp` | 3845729 | Instrumental dental sobre bandeja en sala clara |
 
@@ -45,6 +44,68 @@ aproximado: $0.04.
 Cambiar por foto real del consultorio en cuanto el cliente la proporcione, y
 antes de cualquier entrega final confirmar con Leo — igual que el resto de
 fotos de banco de esta carpeta.
+
+## Foto generada con IA — `equipo-destacado-ia.webp` (Nivel 2.5, CLAUDE.md)
+
+⚠️ **PLACEHOLDER Nivel 2.5 — SOLO demo de venta, NUNCA entrega final.**
+
+Reemplazó a `equipo-destacado.webp` (Pexels 35438269), retirada a
+`retirados-genericos/equipo-destacado-pexels-original.webp`. Motivo: feedback
+directo de Leo cuestionando el texto "Sillón dental y equipo de última
+generación" que acompañaba esa foto — la foto de banco mostraba un sillón
+genérico, sobreexpuesto, sin ningún elemento visiblemente moderno (marca
+"Recor/SAEVO" visible, sin pantalla digital ni acabados premium). Afirmar
+"última generación" sobre esa imagen era una reclamación no verificada con el
+cliente real, el mismo tipo de riesgo que inventar una credencial.
+
+Generada con `fal-ai/nano-banana-2` vía fal.ai (2026-07-21, texto a imagen,
+`aspect_ratio: "16:9"`), paleta de marca real de Estetic Dent (navy `#122B54`
++ acento naranja `#F2703C`), con instrucción explícita de **no incluir texto,
+logos ni marcas legibles** sobre el equipo — el primer intento generó un
+sillón con un logo ficticio "DentaFlow" grabado en el respaldo, descartado
+por completo antes de guardarse (mismo criterio que descartar un retoque que
+altera identidad: contenido inventado que podría confundirse con una marca
+real). El segundo intento, sin ningún texto/logo visible, sí se aprobó.
+Redimensionada con `sharp` a 1800×1000 y convertida a WebP (calidad 85,
+~93 KB).
+
+El `alt`/`figcaption` (`nombreEquipoDestacado` en
+`src/data/consultorio.esteticdent.ts`) se corrigió a "Sillón dental de diseño
+moderno en Estetic Dent" — se quitó el superlativo "de última generación"
+porque sigue siendo una foto de banco (ahora generada, no Pexels) y no una
+foto real del equipo del cliente; no corresponde afirmar un nivel tecnológico
+específico sin que el cliente lo confirme.
+
+Reemplazar por foto real del consultorio en cuanto el cliente la proporcione,
+igual que el resto de fotos Nivel 2/2.5 de esta carpeta.
+
+### Reemplazo 2026-07-21 — v2, formato horizontal (corrección de recorte)
+
+⚠️ Feedback directo de Leo: "la imagen de hero de estetic dent es muy pobre,
+cámbiala". Diagnóstico: el problema no era la calidad de la foto v1 en sí,
+sino que se generó/recortó en formato **vertical (900×1350)** y
+`HeroEquipamiento.astro` la usa como fondo `background-size: cover` a pantalla
+completa (`min-height: 100vh`) con animación Ken Burns — esa combinación
+recorta agresivamente cualquier imagen que no sea horizontal, cortando gran
+parte de la composición y dejando visible solo una franja central ampliada.
+
+Regenerada con el mismo modelo (`fal-ai/nano-banana-2` vía fal.ai, API
+síncrona `https://fal.run/fal-ai/nano-banana-2`), esta vez pidiendo
+explícitamente `aspect_ratio: "16:9"` y una composición de gran angular que
+llene el cuadro horizontal completo (sillón dental tapizado azul navy,
+panel de acento naranja quemado detrás, mismo tono cálido y misma paleta de
+marca que la v1). Generada a 2752×1536, redimensionada con `sharp` a
+1920×1080 y convertida a WebP (calidad 82, ~153 KB) — mismo nombre de
+archivo (`clinica-ia.webp`), por lo que toda referencia en código usa
+cache-busting `?v=2` (ver `src/data/consultorio.esteticdent.ts`).
+
+La v1 (900×1350, vertical) se archivó sin eliminar en
+`retirados-recorte-vertical/clinica-ia-v1-vertical.webp`, siguiendo la misma
+convención de auditoría que `retirados-color-mismatch/` arriba.
+
+Sigue siendo Nivel 2.5: **SOLO demo de venta, NUNCA entrega final** —
+reemplazar por foto real del consultorio en cuanto el cliente la
+proporcione, igual que el resto de fotos de banco de esta carpeta.
 
 ## Foto real — Od. Mishel Chamorro (NO placeholder, NO Pexels)
 
@@ -95,12 +156,63 @@ cualquier cliente futuro, comparar cara a cara contra el original — si el
 resultado no es reconociblemente la misma persona, descartarlo (como el
 intento 1) y no publicarlo bajo su nombre real.
 
+## Foto real — Dra. Rosa Reascos (NO placeholder, NO Pexels)
+
+| Archivo | Origen | Contenido |
+|---|---|---|
+| `originales/Rosa Reascos.jpg` | Pieza promocional real de Instagram, entregada por Leo como archivo el 2026-07-21 (505×732, JPEG). Es un recorte de un carrusel promocional con overlay de diseño baked-in (barra divisoria blanca + bloque de color diagonal magenta/morado/azul + texto "Limpieza"). | Original sin editar, conservado como fuente/respaldo en `originales/` (no servido como asset de ningún sitio). |
+| `rosa-reascos.webp` | 1) Recorte manual (`sharp`, sin IA) a `left:0, top:40, width:505, height:394` para eliminar por completo el overlay de diseño antes de cualquier edición — necesario porque el overlay cubre ~40% del encuadre original y no era removible sin invención de contenido. 2) Retoque de luz/color con `fal-ai/nano-banana-2/edit` vía fal.ai (2026-07-21), prompt con instrucción explícita de preservar rostro/pose/expresión/identidad al 100%. 3) Redimensionado a 900px de ancho y convertido a WebP (`sharp`, calidad 85). | Foto real, con nombre, de una de las profesionales de Estetic Dent realizando una limpieza dental — usada en `TeamSection` (`profesionalesEsteticdent`, `src/data/consultorio.esteticdent.ts`). |
+
+Mismo criterio de consentimiento que la foto de la Od. Mishel Chamorro arriba
+(contenido promocional ya publicado públicamente por el propio negocio con su
+nombre) — confirmar con el cliente antes de usarla en la entrega final, no
+solo en el demo de venta.
+
+**Título profesional:** `tituloProfesional: 'Odontóloga'` es el único dato
+verificable a partir de la foto (realiza una limpieza dental con equipo
+completo) — sin `especialidad`, ya que el cliente no ha confirmado un área
+específica todavía. Confirmar con Leo/el cliente antes de la entrega final
+por si corresponde un título o especialidad distinta.
+
+## Logo real — `logo-estetic-dent.webp` (NO placeholder, NO IA generativa)
+
+| Archivo | Origen | Contenido |
+|---|---|---|
+| `originales/Logo.jpg` | Logo real entregado por Leo como archivo el 2026-07-21 (165×181, JPEG) | Insignia circular navy con wordmark blanco "Estetic Dent" y subtítulo "Su clínica dental", línea divisoria naranja — coincide con los valores ya usados en `brandkit.esteticdent.ts` (primario `#122B54`, acento `#F2703C`), sin necesidad de ajustar esos hex. |
+| `logo-estetic-dent.webp` | Recorte circular (máscara SVG, `sharp`, sin IA) + upscale tradicional 4x con kernel Lanczos3 (`sharp`), exportado con canal alfa (660×724, ~31 KB) | Insignia lista para usarse como logo real en `Header`/`Footer` (`site.logoUrl`, `src/data/site.esteticdent.ts`) |
+
+**Decisión: NO se usó fal.ai para este archivo**, a pesar de que el pedido
+original de Leo fue "ajustarlos con fal ia" para ambos adjuntos. Un logo es
+texto/wordmark exacto de marca — cualquier modelo generativo corre riesgo de
+distorsionar letras o proporciones al hacer upscaling de una imagen tan
+pequeña (165×181px), lo cual sería inaceptable en un asset de marca (a
+diferencia de una fotografía, donde una reinterpretación menor de piel/fondo
+es de bajo riesgo). Se usó en su lugar upscaling tradicional (Lanczos3, sin
+IA) que preserva el texto exacto pixel a pixel. Confirmar con Leo si prefiere
+de todos modos un pase por fal.ai (ej. para suavizar el halo JPEG alrededor
+del círculo) — no se hizo por precaución de marca, no por imposibilidad
+técnica.
+
 Nota técnica: `queue.fal.run` se llamó con `curl` directo (no con un script
 `.mjs` de Node) porque Node/`fetch` falla en este entorno con
 `UNABLE_TO_GET_ISSUER_CERT_LOCALLY` (proxy corporativo) — mismo hallazgo que
 con `clinica-ia.webp` más arriba. La imagen de entrada se envió como data URI
 base64 en `image_urls` (formato aceptado por `fal-ai/nano-banana-2/edit`),
 sin necesidad de subirla primero a almacenamiento externo.
+
+### Derivados 2026-07-21 — `logo-estetic-dent-80.webp` y `-160.webp` (srcset del header)
+
+| Archivo | Origen | Contenido |
+|---|---|---|
+| `logo-estetic-dent-80.webp` | Downscale de `logo-estetic-dent.webp` (`sharp`, `fit: contain`, fondo transparente, calidad 90) | 80×80px, ~2.1 KB — rendition @2x |
+| `logo-estetic-dent-160.webp` | Mismo proceso, 160×160px, ~4.9 KB | Rendition @4x |
+
+Motivo: el símbolo circular del header se redujo a 40px (spec Leo, lockup de
+marca), y servir el maestro de 660×724 para ese render es innecesario —
+ambos archivos se usan como `srcset` (`site.logoSrcset` en
+`src/data/site.esteticdent.ts`, consumido por `Header.astro`). Son
+downscales del maestro ya aprobado (no un nuevo upscale), así que no aplica
+el riesgo de distorsión de wordmark que motivó evitar IA generativa arriba.
 
 ### Revertido 2026-07-19 — foto quitada del hero, archivo sin uso actual
 
@@ -114,8 +226,24 @@ especialistas, no una marca de un solo profesional-estrella.
 
 `demo-esteticdent.astro` volvió al hero default de V3 (`HeroEquipamiento`,
 foto de equipo/ambiente sin personas, sin excepción de Capa 1). El archivo
-`mishel-chamorro-hero-ia.webp` **se conserva en disco pero no se sirve en
-ninguna página actualmente** — no se elimina porque podría reutilizarse en
-una futura sección de "equipo" si el cliente confirma specialties y autoriza
-su uso explícitamente para ese fin. No reintroducir en el hero sin que Leo lo
-pida de nuevo.
+`mishel-chamorro-hero-ia.webp` quedó en disco sin usarse en ninguna página en
+ese momento — no se eliminó porque podría reutilizarse en una futura sección
+de "equipo". No reintroducir en el HERO sin que Leo lo pida de nuevo.
+
+### Reincorporada 2026-07-21 — en TeamSection, no en el hero
+
+Feedback directo de Leo tras ver el hero ya corregido (foto horizontal, ver
+sección de arriba): el sitio completo se sentía frío — ninguna sección tenía
+personas ni doctores, solo ambientes y equipo. Se evaluó cambiar de variante
+de Capa 2 por completo (V1/V4, ver CLAUDE.md) vs. mantener V3 e inyectar
+calidez puntual; Leo eligió la segunda opción.
+
+`mishel-chamorro-hero-ia.webp` se reincorpora como `foto` del perfil de la
+Dra. Chamorro en `TeamSection` (`src/data/consultorio.esteticdent.ts`) — una
+tarjeta de equipo de tamaño estándar (avatar circular 120px), no dominando el
+hero como en el intento del 2026-07-19. Esto no repite el problema de
+"armonía" que motivó sacarla del hero: ese feedback era sobre su tamaño y
+protagonismo en esa posición específica, no sobre la foto en sí ni sobre
+consentimiento/autenticidad. `TeamSection` también se subió de posición en la
+página (ahora justo después de Testimonials) para que haya una cara humana
+antes del segundo scroll.

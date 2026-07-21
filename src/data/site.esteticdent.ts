@@ -36,6 +36,12 @@ export const siteConfigEsteticdent: SiteConfig = {
   // de recorte circular + upscale (sin IA generativa, para no distorsionar el
   // wordmark exacto de la marca).
   logoUrl: '/images/esteticdent/logo-estetic-dent.webp',
+  // Renditions @2x/@4x para el símbolo circular de 40px del header — evita
+  // servir el maestro de 660x724 en un render tan pequeño.
+  logoSrcset: {
+    src2x: '/images/esteticdent/logo-estetic-dent-80.webp',
+    src4x: '/images/esteticdent/logo-estetic-dent-160.webp',
+  },
   tagline: 'Especialistas en ortodoncia, endodoncia, odontopediatría y cirugía oral — al sur de Quito',
   ciudad: 'Quito, Ecuador',
   // Solo zona, sin dirección exacta confirmada todavía (ver comentario de

@@ -11,6 +11,13 @@ export interface SiteConfig {
    * un ícono genérico de relleno. Ver CLAUDE.md, "Manejo de imágenes".
    */
   logoUrl?: string;
+  /**
+   * Renditions @2x/@4x de `logoUrl` para el símbolo circular del header (ej.
+   * el mismo logo a 80px/160px) — sin esto, el `<img>` sirve `logoUrl` tal
+   * cual. Evita que un render de 40px cargue el archivo maestro a resolución
+   * completa (ver CLAUDE.md, "Manejo de imágenes").
+   */
+  logoSrcset?: { src2x: string; src4x: string };
   tagline: string;
   ciudad: string;
   direccion: string;
