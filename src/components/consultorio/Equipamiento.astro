@@ -1,15 +1,29 @@
 ---
 // Capa 2 (consultorio) — sección de equipamiento de la Variante 3 ("La
-// modernidad y el equipamiento"). Análoga a GaleriaMasonry (restaurante):
-// integrada como sección con título y contexto propio ("Nuestra
-// tecnología"), nunca una galería flotante desconectada (CLAUDE.md).
-import type { FotoGaleria } from '@/data/types';
+// modernidad y el equipamiento").
+//
+// REFACTOR 2026-07-21 (Fase 2, spec de diseño de Leo): pasa de galería de
+// fotos a argumento — cada ítem es una tarjeta con título del equipo +
+// beneficio redactado en lenguaje de paciente (no ficha técnica), y debajo un
+// banner destacado con el diferenciador principal ("Rayos X digital gratis en
+// cada consulta") + CTA de WhatsApp. El banner es opcional: sin
+// `bannerTexto`/`phone`/`negocioSlug`, la sección se queda solo con las
+// tarjetas (comportamiento seguro para cualquier caller que no los pase).
+import type { ItemTecnologia } from '@/data/types';
+import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
 
 interface Props {
-  fotos: FotoGaleria[];
+  items: ItemTecnologia[];
+  /** Diferenciador principal, ej. "Rayos X digital gratis en cada consulta". */
+  bannerTexto?: string;
+  phone?: string;
+  negocioSlug?: string;
+  /** Mensaje pre-llenado del WhatsApp del banner — distinto al de otros CTAs para medir origen. */
+  bannerMensaje?: string;
 }
 
-const { fotos } = Astro.props;
+const { items, bannerTexto, phone, negocioSlug, bannerMensaje } = Astro.props;
+const mostrarBanner = Boolean(bannerTexto && phone && negocioSlug);
 ---
 
 <section id="tecnologia" class="section section--alterno" aria-labelledby="tecnologia-titulo">
@@ -18,15 +32,26 @@ const { fotos } = Astro.props;
     <p class="equipamiento__intro">Equipos e instalaciones pensados para que tu visita sea rápida, cómoda y precisa.</p>
 
     <div class="equipamiento__grid">
-      {fotos.map((foto, i) => (
-        <img
-          src={foto.src}
-          alt={foto.alt}
-          loading="lazy"
-          class:list={['equipamiento__foto', { 'equipamiento__foto--alta': i % 3 === 0 }, 'reveal--iris']}
-        />
+      {items.map((item) => (
+        <div class="equipamiento__card reveal">
+          <h3 class="equipamiento__card-titulo">{item.titulo}</h3>
+          <p class="equipamiento__card-beneficio">{item.beneficio}</p>
+        </div>
       ))}
     </div>
+
+    {mostrarBanner && (
+      <div class="equipamiento__banner reveal">
+        <p class="equipamiento__banner-texto">{bannerTexto}</p>
+        <WhatsAppButton
+          phone={phone!}
+          message={bannerMensaje ?? bannerTexto!}
+          negocioSlug={negocioSlug!}
+          label="Agendar por WhatsApp"
+          variante="acento"
+        />
+      </div>
+    )}
   </div>
 </section>
 
@@ -38,33 +63,57 @@ const { fotos } = Astro.props;
   }
 
   .equipamiento__grid {
-    columns: 2;
-    column-gap: 1rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
   @media (min-width: 700px) {
     .equipamiento__grid {
-      columns: 3;
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 
-  .equipamiento__foto {
-    width: 100%;
-    display: block;
-    margin-bottom: 1rem;
-    border-radius: 14px;
-    break-inside: avoid;
+  .equipamiento__card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 2rem;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-    /* Regla de profundidad visual #1 (CLAUDE.md): mismo filtro de color en
-       todas las fotos del sitio. Tono más frío/clínico que el de
-       restaurante (sin el sepia cálido), acorde a la paleta teal/azul del
-       vertical consultorio. */
-    filter: saturate(1.05) brightness(1.02) contrast(1.03);
-    height: 160px;
-    object-fit: cover;
   }
 
-  .equipamiento__foto--alta {
-    height: 230px;
+  .equipamiento__card-titulo {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--color-primario);
+    margin: 0 0 0.5rem;
+  }
+
+  .equipamiento__card-beneficio {
+    font-family: var(--font-texto);
+    line-height: 1.6;
+    opacity: 0.85;
+    margin: 0;
+  }
+
+  .equipamiento__banner {
+    margin-top: 2.5rem;
+    background: var(--color-primario);
+    color: #fff;
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .equipamiento__banner-texto {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    margin: 0;
+    max-width: 480px;
   }
 </style>

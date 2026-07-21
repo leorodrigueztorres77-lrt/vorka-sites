@@ -19,7 +19,7 @@ import ServiciosTipografico from '@/components/consultorio/ServiciosTipografico.
 import Equipamiento from '@/components/consultorio/Equipamiento.astro';
 
 import { siteConfigConsultorio } from '@/data/site.config.consultorio';
-import { serviciosSample, galeriaSample, horariosSample, testimoniosSample } from '@/data/consultorio.sample';
+import { serviciosSample, galeriaSample, tecnologiaSample, horariosSample, testimoniosSample } from '@/data/consultorio.sample';
 
 const equipoDestacado = galeriaSample[1];
 ---
@@ -54,13 +54,18 @@ const equipoDestacado = galeriaSample[1];
     negocioSlug={siteConfigConsultorio.negocioSlug}
   />
 
-  <Equipamiento fotos={galeriaSample} />
+  <Equipamiento
+    items={tecnologiaSample}
+    bannerTexto="Rayos X digital gratis en cada consulta"
+    phone={siteConfigConsultorio.telefonoWhatsApp}
+    negocioSlug={siteConfigConsultorio.negocioSlug}
+  />
 
   <Testimonials testimonios={testimoniosSample.slice(0, 1)} />
 
   <LocationMap site={siteConfigConsultorio} horarios={horariosSample} />
 
-  <ContactForm site={siteConfigConsultorio} productoLabel="Especialidad de interés" />
+  <ContactForm site={siteConfigConsultorio} productoLabel="Especialidad de interés" mostrarCantidad={false} />
 
   <Footer site={siteConfigConsultorio} />
 

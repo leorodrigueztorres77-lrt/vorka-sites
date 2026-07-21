@@ -49,6 +49,12 @@
 // confirmados todavía — mostrar esa cifra sería inventar una calificación
 // (CLAUDE.md, regla explícita). El componente ya soporta la línea si Leo
 // confirma el dato real más adelante.
+//
+// FASE 2 (spec de diseño de Leo): #tecnologia pasa de galería de fotos a
+// argumento — Equipamiento ahora recibe `items` (título+beneficio, ver
+// tecnologiaEsteticdent en consultorio.esteticdent.ts) en vez de `fotos`, más
+// un banner con el diferenciador principal (rayos X gratis) y su propio CTA
+// de WhatsApp con mensaje distinto para medir origen.
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/common/Header.astro';
 import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
@@ -67,6 +73,7 @@ import { siteConfigEsteticdent } from '@/data/site.esteticdent';
 import {
   serviciosEsteticdent,
   galeriaEsteticdent,
+  tecnologiaEsteticdent,
   horariosEsteticdent,
   testimoniosEsteticdent,
   profesionalesEsteticdent,
@@ -140,7 +147,13 @@ const schema = schemaConsultorio({
     negocioSlug={site.negocioSlug}
   />
 
-  <Equipamiento fotos={fotosEquipamiento} />
+  <Equipamiento
+    items={tecnologiaEsteticdent}
+    bannerTexto="Rayos X digital gratis en cada consulta"
+    bannerMensaje={`Hola, quiero agendar mi consulta con rayos X digital gratis en ${site.nombre}`}
+    phone={site.telefonoWhatsApp}
+    negocioSlug={site.negocioSlug}
+  />
 
   <TeamSection profesionales={profesionalesEsteticdent} />
 

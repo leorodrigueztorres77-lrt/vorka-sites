@@ -5,6 +5,12 @@
 export interface SiteConfig {
   negocioSlug: string;
   nombre: string;
+  /**
+   * Logo real del negocio (imagen), opcional. Sin este dato, Header/Footer
+   * caen en el wordmark tipográfico de `nombre` (Capa 1 por defecto) — nunca
+   * un ícono genérico de relleno. Ver CLAUDE.md, "Manejo de imágenes".
+   */
+  logoUrl?: string;
   tagline: string;
   ciudad: string;
   direccion: string;
@@ -41,6 +47,14 @@ export interface SiteConfig {
     googleFontsUrl?: string;
   };
   mapaEmbedUrl?: string;
+  /**
+   * Sedes adicionales (consultorio, ej. Odontocrea con Chillogallo + La
+   * Magdalena) — la sede "principal" sigue siendo `direccion`/`mapaEmbedUrl`
+   * de arriba (compatibilidad con clientes de una sola ubicación). Si el
+   * negocio tiene más de una sede, agregar las EXTRA aquí; LocationMap
+   * renderiza matriz + `sedesAdicionales` en el mismo bloque "Visítanos".
+   */
+  sedesAdicionales?: Sede[];
   seo: {
     tituloDefault: string;
     descripcionDefault: string;
@@ -48,6 +62,32 @@ export interface SiteConfig {
   webhookContactoUrl?: string;
   /** Año de fundación — usado por variantes de Capa 2 con badge de trayectoria (ej. V1, V4). */
   anioFundacion?: number;
+  /**
+   * Link al perfil de Google Business del negocio (spec SALUD 2026-07-20,
+   * sección "Bloque de confianza local"). Sin este dato, no se muestra ningún
+   * badge de calificación — nunca inventar una calificación sin esta fuente.
+   */
+  googleBusinessUrl?: string;
+  /** Calificación real de Google, solo si `googleBusinessUrl` está confirmado. */
+  ratingGoogle?: number;
+  totalResenasGoogle?: number;
+  instagramUrl?: string;
+  /** Formas de pago aceptadas, ej. ["Efectivo", "Tarjeta", "DeUna", "PayPhone"]. */
+  formasPago?: string[];
+  /** Sellos de confianza cortos, ej. "Bioseguridad certificada", "8 años de experiencia". */
+  sellosConfianza?: string[];
+}
+
+/**
+ * Sede adicional de un negocio con más de una ubicación (spec SALUD
+ * 2026-07-20). Mismo patrón dirección+horario+mapa que la sede principal del
+ * SiteConfig, para que LocationMap pueda repetirlo sin duplicar lógica.
+ */
+export interface Sede {
+  nombre: string;
+  direccion: string;
+  horarios?: HorarioDia[];
+  mapaEmbedUrl?: string;
 }
 
 /**
@@ -139,7 +179,13 @@ export interface EstadoFidelizacion {
 export interface ServicioMedico {
   nombre: string;
   descripcion?: string;
-  precioDesde: number;
+  /**
+   * Sin confirmar por el cliente: dejar `undefined` — los componentes de
+   * Capa 2 muestran "Consultar" en vez de inventar un monto (spec SALUD
+   * 2026-07-20, "Precios y servicios"). Nunca forzar un número de relleno
+   * solo para satisfacer este campo.
+   */
+  precioDesde?: number;
   /** Duración estimada en minutos — usado por V2 ("los servicios completos"). */
   duracionMin?: number;
   imagen?: string;
@@ -168,9 +214,15 @@ export interface PerfilProfesional {
   especialidad?: string;
   universidad?: string;
   aniosExperiencia?: number;
+  /** Sin foto real confirmada: dejar `undefined` — TeamSection muestra
+   * iniciales en vez de sustituir con un genérico de stock (CLAUDE.md). */
   foto?: string;
   /** Credenciales cortas en lista, ej. "Especialista en Ortodoncia", "Postgrado PUCE". */
   credenciales?: string[];
+  /** Número de registro profesional (Senescyt/ACESS), si el cliente lo provee. */
+  registroProfesional?: string;
+  /** 1 línea de experiencia en beneficio del paciente, ej. "8 años atendiendo casos de ortodoncia compleja". */
+  lineaExperiencia?: string;
 }
 
 /**
@@ -182,4 +234,14 @@ export interface PasoProceso {
   numero: number;
   titulo: string;
   descripcion?: string;
+}
+
+/**
+ * Argumento de tecnología/equipamiento (Capa 2, consultorio V3 — "la
+ * modernidad y el equipamiento"). Título del equipo + beneficio redactado en
+ * lenguaje de paciente, no ficha técnica — ver Equipamiento.astro.
+ */
+export interface ItemTecnologia {
+  titulo: string;
+  beneficio: string;
 }

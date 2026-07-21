@@ -4,6 +4,7 @@ import type {
   FotoGaleria,
   HistoriaNegocio,
   HorarioDia,
+  ItemTecnologia,
   PasoProceso,
   PerfilProfesional,
   Testimonio,
@@ -77,6 +78,15 @@ export const galeriaSample: FotoGaleria[] = [
   { src: '/images/placeholder-consultorio-2.webp', alt: 'Equipo de diagnóstico digital' },
   { src: '/images/placeholder-consultorio-3.webp', alt: 'Recepción del consultorio' },
   { src: '/images/placeholder-consultorio-4.webp', alt: 'Sala de espera' },
+];
+
+// V3 ("la modernidad y el equipamiento") — argumento de tecnología, ver
+// Equipamiento.astro. Placeholder genérico para la página de showcase;
+// demo-personalizer lo reemplaza con el equipamiento real del cliente.
+export const tecnologiaSample: ItemTecnologia[] = [
+  { titulo: 'Radiografía digital', beneficio: 'Diagnóstico en minutos y con menos radiación que una placa tradicional.' },
+  { titulo: 'Cámara intraoral', beneficio: 'Ves lo que vemos, antes de decidir cualquier tratamiento.' },
+  { titulo: 'Esterilización certificada', beneficio: 'Instrumental sellado e individual para cada paciente.' },
 ];
 
 export const horariosSample: HorarioDia[] = [
