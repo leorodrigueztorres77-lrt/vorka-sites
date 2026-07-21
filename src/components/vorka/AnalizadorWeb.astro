@@ -165,7 +165,7 @@ const waBase = buildWhatsAppLink({
 
   .analizador__sub {
     font-family: var(--font-texto);
-    font-size: 1.0625rem;
+    font-size: var(--t-md);
     line-height: 1.7;
     color: var(--color-gris);
     max-width: 560px;
@@ -186,12 +186,12 @@ const waBase = buildWhatsAppLink({
     min-width: 240px;
     min-height: 48px;
     padding: 12px 20px;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    border-radius: 100px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--r-full);
     background: var(--color-fondo-alterno);
     color: var(--color-texto);
     font-family: var(--font-texto);
-    font-size: 1rem;
+    font-size: var(--t-base);
   }
 
   .analizador__input:focus {
@@ -201,7 +201,7 @@ const waBase = buildWhatsAppLink({
 
   .analizador__estado {
     font-family: var(--font-texto);
-    font-size: 0.9375rem;
+    font-size: var(--t-sm);
     color: var(--color-gris);
     min-height: 24px;
     margin-top: 20px;
@@ -230,6 +230,9 @@ const waBase = buildWhatsAppLink({
   .analizador__nota-num {
     font-family: var(--font-titulos);
     font-weight: 700;
+    /* 5rem: numeral de nota gigante, un caso único fuera de la escala de
+       encabezados/cuerpo (t-display topa en 4rem) — excepción documentada,
+       igual que el bisel del teléfono en Hero.astro. */
     font-size: 5rem;
     line-height: 1;
   }
@@ -248,13 +251,13 @@ const waBase = buildWhatsAppLink({
 
   .analizador__nota-label {
     font-family: var(--font-texto);
-    font-size: 1rem;
+    font-size: var(--t-base);
     color: var(--color-gris);
   }
 
   .analizador__veredicto {
     font-family: var(--font-texto);
-    font-size: 1.0625rem;
+    font-size: var(--t-md);
     line-height: 1.6;
     color: var(--color-texto);
     max-width: 520px;
@@ -263,7 +266,7 @@ const waBase = buildWhatsAppLink({
 
   .analizador__fuente {
     font-family: var(--font-texto);
-    font-size: 0.75rem;
+    font-size: var(--t-xs);
     color: var(--color-gris);
     margin: 0;
   }

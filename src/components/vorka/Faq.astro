@@ -65,15 +65,15 @@ const preguntas = [
 
   .faq__item {
     padding: 20px 24px;
-    border-radius: 12px;
+    border-radius: var(--r-md);
     background: var(--color-fondo);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-elevar);
   }
 
   .faq__pregunta {
     font-family: var(--font-titulos);
     font-weight: 700;
-    font-size: 1.0625rem;
+    font-size: var(--t-md);
     color: var(--color-texto);
     cursor: pointer;
     list-style: none;
@@ -97,7 +97,7 @@ const preguntas = [
   .faq__respuesta {
     margin: 12px 0 0;
     font-family: var(--font-texto);
-    font-size: 1rem;
+    font-size: var(--t-base);
     line-height: 1.7;
     color: var(--color-gris);
   }

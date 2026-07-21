@@ -6,7 +6,7 @@ import type { SiteConfig } from './types';
 export const siteConfigVorka: SiteConfig = {
   negocioSlug: 'vorka',
   nombre: 'VORKA',
-  tagline: 'Think Smart, Move Fast.',
+  tagline: 'Piensa rápido. Ejecuta más rápido.',
   ciudad: 'Ecuador',
   direccion: 'Atención remota',
   telefonoWhatsApp: '593997109978',
@@ -18,11 +18,12 @@ export const siteConfigVorka: SiteConfig = {
     fondoAlterno: '#333333',
     gris: '#666666',
   },
+  // Fase 1 (rediseño 2026-07): Plus Jakarta Sans + Inter, auto-hospedadas en
+  // public/fonts/vorka/ (ver Vorka/index.astro) — sin googleFontsUrl a
+  // propósito, así BaseLayout no inyecta el <link> a fonts.googleapis.com.
   fuentes: {
-    titulos: "'Poppins', sans-serif",
-    texto: "'Montserrat', sans-serif",
-    googleFontsUrl:
-      'https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Montserrat:wght@300;400;500;600;700&display=swap',
+    titulos: "'Plus Jakarta Sans', sans-serif",
+    texto: "'Inter', sans-serif",
   },
   seo: {
     // SEO GTM (spec de Leo 2026-07): mensaje amplio para negocios locales.

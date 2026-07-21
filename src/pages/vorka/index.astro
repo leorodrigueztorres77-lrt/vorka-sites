@@ -51,6 +51,15 @@ const schema = {
   ogDescripcion="Web lista en días. Ventas por WhatsApp. Factura SRI automática. Para cualquier negocio local."
 >
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(schema)} />
+  <link
+    rel="preload"
+    href="/fonts/vorka/plus-jakarta-sans-var.woff2"
+    as="font"
+    type="font/woff2"
+    crossorigin
+    slot="head"
+  />
+  <link rel="preload" href="/fonts/vorka/inter-var.woff2" as="font" type="font/woff2" crossorigin slot="head" />
   <Nav site={site} />
   <main id="inicio">
     <Hero site={site} />
@@ -79,5 +88,76 @@ const schema = {
   :global(.btn--primario) {
     color: #0b2b13;
     font-weight: 700;
+  }
+
+  /* Fase 1 (rediseño 2026-07): tipografía auto-hospedada de Vorka. Archivos
+     variables (un solo .woff2 cubre todo el rango de pesos vía el eje
+     `wght`) descargados de Google Fonts y servidos desde public/fonts/vorka/
+     — nunca desde fonts.googleapis.com (ver site.vorka.ts, sin
+     googleFontsUrl a propósito). @font-face no queda scopeado por Astro
+     (no es parte del árbol de este componente), así que aplica a toda la
+     página sin necesidad de :global(). */
+  @font-face {
+    font-family: 'Plus Jakarta Sans';
+    font-style: normal;
+    font-weight: 500 800;
+    font-display: swap;
+    src: url('/fonts/vorka/plus-jakarta-sans-var.woff2') format('woff2');
+  }
+
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url('/fonts/vorka/inter-var.woff2') format('woff2');
+  }
+
+  /* Fase 1 — sistema de diseño Vorka (tokens). Construido sobre los colores
+     base que ya inyecta BaseLayout vía site.vorka.ts (--color-primario,
+     --color-acento, --color-texto, --color-fondo, --color-fondo-alterno,
+     --color-gris) — este bloque NO los reemplaza, añade la capa de
+     profundidad/radio/tipografía que faltaba. Exclusivo de /vorka/: usa
+     :global(:root) porque <html> lo renderiza BaseLayout, fuera del árbol de
+     este componente (mismo patrón que .btn--primario arriba), pero Astro
+     igual empaqueta este CSS solo en el bundle de esta página — no se filtra
+     a las webs de clientes.
+
+     Valores elegidos a partir del inventario real de los 13 componentes de
+     Vorka (catalogado antes de este cambio): radios dispersos en
+     8/12/16/28/40/100px se colapsan en 3 (r-sm/r-md/r-full); el bezel de
+     40px/28px del mockup de teléfono en Hero.astro queda fuera a propósito
+     — es geometría de dispositivo físico, no parte de la escala de
+     contenido. Las sombras negras sobre fondo oscuro (#1A1A1A/#333) se
+     reemplazan por --shadow-elevar (neutra, para profundidad real) y
+     --accent-glow (para elementos que deben destacar con el verde de marca,
+     nunca negro puro sobre fondo oscuro). Escala tipográfica modular, ratio
+     1.25 sobre base 16px. */
+  :global(:root) {
+    --bg-0: var(--color-fondo);
+    --bg-1: var(--color-fondo-alterno);
+    --bg-2: #454545;
+
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-default: rgba(255, 255, 255, 0.18);
+
+    --shadow-elevar: 0 8px 24px -6px rgba(0, 0, 0, 0.45), 0 1px 0 var(--border-subtle) inset;
+    --accent-glow: 0 8px 28px -8px rgba(57, 211, 83, 0.4);
+    --accent-glow-sm: 0 4px 14px -4px rgba(57, 211, 83, 0.32);
+
+    --r-sm: 8px;
+    --r-md: 16px;
+    --r-full: 999px;
+
+    --t-xs: 0.8rem;
+    --t-sm: 0.9rem;
+    --t-base: 1rem;
+    --t-md: 1.25rem;
+    --t-lg: 1.563rem;
+    --t-xl: 1.953rem;
+    --t-2xl: 2.441rem;
+    --t-display: clamp(2.75rem, 5vw + 1rem, 4rem);
+
+    --section-pad: clamp(2.5rem, 5vw, 3.5rem);
   }
 </style>

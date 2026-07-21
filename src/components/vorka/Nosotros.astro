@@ -4,12 +4,30 @@
 // de la página con este tratamiento, para que tenga peso propio. Los 5
 // pills usan la iconografía declarada en CLAUDE.md ("Identidad de marca —
 // VORKA": inteligencia, agilidad, innovación, confianza, resultados).
+// Fase 1 (rediseño 2026-07): emojis reemplazados por SVG inline estilo
+// Lucide (stroke 1.5, 24px, var(--color-acento)) — misma convención de
+// íconos ya aplicada en Servicios.astro.
 const valores = [
-  { icono: '🧠', label: 'Inteligencia' },
-  { icono: '⚡', label: 'Agilidad' },
-  { icono: '💡', label: 'Innovación' },
-  { icono: '🤝', label: 'Confianza' },
-  { icono: '📈', label: 'Resultados' },
+  {
+    label: 'Inteligencia',
+    svg: '<path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z" /><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z" />',
+  },
+  {
+    label: 'Agilidad',
+    svg: '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />',
+  },
+  {
+    label: 'Innovación',
+    svg: '<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" /><path d="M9 18h6" /><path d="M10 22h4" />',
+  },
+  {
+    label: 'Confianza',
+    svg: '<path d="M20 13c0 5-3.5 7.5-7.5 8.5-.34.09-.66.09-1 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" />',
+  },
+  {
+    label: 'Resultados',
+    svg: '<path d="M22 7 13.5 15.5l-5-5L2 17" /><path d="M16 7h6v6" />',
+  },
 ];
 ---
 
@@ -24,7 +42,9 @@ const valores = [
     <ul class="nosotros__pills reveal">
       {valores.map((valor) => (
         <li class="pill">
-          <span class="pill__icono" aria-hidden="true">{valor.icono}</span>
+          <span class="pill__icono" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" set:html={valor.svg} />
+          </span>
           {valor.label}
         </li>
       ))}
@@ -47,7 +67,7 @@ const valores = [
 
   .nosotros__mision {
     font-family: var(--font-texto);
-    font-size: 1.125rem;
+    font-size: var(--t-md);
     line-height: 1.7;
     max-width: 680px;
     margin: 0;
@@ -68,20 +88,21 @@ const valores = [
     align-items: center;
     gap: 8px;
     padding: 12px 24px;
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    border-radius: 100px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--r-full);
     font-family: var(--font-texto);
     font-weight: 600;
-    font-size: 0.9375rem;
+    font-size: var(--t-sm);
   }
 
   .pill__icono {
-    font-size: 1.125rem;
+    display: inline-flex;
+    color: var(--color-acento);
   }
 
   .nosotros__equipo {
     font-family: var(--font-texto);
-    font-size: 0.9375rem;
+    font-size: var(--t-sm);
     line-height: 1.7;
     max-width: 620px;
     margin: 0;

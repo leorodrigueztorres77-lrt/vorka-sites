@@ -43,9 +43,12 @@ const href = buildWhatsAppLink({
     justify-content: center;
     width: 56px;
     height: 56px;
+    /* 50%: círculo perfecto, geometría del botón — no forma parte de la
+       escala r-sm/r-md/r-full. #25d366: verde oficial de marca WhatsApp,
+       nunca themeable. */
     border-radius: 50%;
     background: #25d366;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    box-shadow: var(--shadow-elevar);
     transition: transform 200ms ease, box-shadow 200ms ease;
   }
 
@@ -60,11 +63,11 @@ const href = buildWhatsAppLink({
     top: 50%;
     transform: translateY(-50%);
     padding: 6px 14px;
-    border-radius: 8px;
+    border-radius: var(--r-sm);
     background: rgba(0, 0, 0, 0.85);
     color: #ffffff;
     font-family: var(--font-texto);
-    font-size: 0.8125rem;
+    font-size: var(--t-xs);
     font-weight: 500;
     white-space: nowrap;
     opacity: 0;

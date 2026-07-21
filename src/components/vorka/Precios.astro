@@ -118,7 +118,7 @@ const planes = [
 <style>
   .precios__sub {
     font-family: var(--font-texto);
-    font-size: 1.0625rem;
+    font-size: var(--t-md);
     color: var(--color-gris);
     text-align: center;
     margin: -24px 0 48px;
@@ -137,10 +137,10 @@ const planes = [
     flex-direction: column;
     gap: 12px;
     padding: 32px;
-    border-radius: 16px;
+    border-radius: var(--r-md);
     background: var(--color-fondo);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--border-default);
+    box-shadow: var(--shadow-elevar);
   }
 
   .plan--destacado {
@@ -153,11 +153,11 @@ const planes = [
     left: 50%;
     transform: translateX(-50%);
     padding: 4px 16px;
-    border-radius: 100px;
+    border-radius: var(--r-full);
     background: var(--color-primario);
-    color: #1a1a1a;
+    color: var(--color-fondo);
     font-family: var(--font-texto);
-    font-size: 0.75rem;
+    font-size: var(--t-xs);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -167,7 +167,7 @@ const planes = [
   .plan__nombre {
     font-family: var(--font-titulos);
     font-weight: 700;
-    font-size: 1.25rem;
+    font-size: var(--t-md);
     color: var(--color-texto);
     margin: 0;
   }
@@ -175,7 +175,7 @@ const planes = [
   .plan__precio {
     font-family: var(--font-titulos);
     font-weight: 700;
-    font-size: 2.5rem;
+    font-size: var(--t-2xl);
     line-height: 1;
     color: var(--color-primario);
     margin: 0;
@@ -183,7 +183,7 @@ const planes = [
 
   .plan__subtitulo {
     font-family: var(--font-texto);
-    font-size: 0.9375rem;
+    font-size: var(--t-sm);
     line-height: 1.6;
     color: var(--color-gris);
     margin: 0 0 4px;
@@ -191,7 +191,7 @@ const planes = [
 
   .plan__base {
     font-family: var(--font-texto);
-    font-size: 0.8125rem;
+    font-size: var(--t-xs);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.03em;
@@ -213,7 +213,7 @@ const planes = [
     display: flex;
     gap: 10px;
     font-family: var(--font-texto);
-    font-size: 0.9375rem;
+    font-size: var(--t-sm);
     line-height: 1.5;
     color: var(--color-texto);
   }
@@ -226,7 +226,7 @@ const planes = [
 
   .plan__mantenimiento {
     font-family: var(--font-texto);
-    font-size: 0.8125rem;
+    font-size: var(--t-xs);
     color: var(--color-gris);
     margin: 8px 0 4px;
   }
@@ -238,7 +238,7 @@ const planes = [
     min-height: 44px;
     padding: 12px 24px;
     border: 1px solid var(--color-primario);
-    border-radius: 100px;
+    border-radius: var(--r-full);
     color: var(--color-primario);
     font-family: var(--font-texto);
     font-weight: 600;
@@ -248,12 +248,12 @@ const planes = [
 
   .plan__cta-secundario:hover {
     background: var(--color-primario);
-    color: #1a1a1a;
+    color: var(--color-fondo);
   }
 
   .precios__nota {
     font-family: var(--font-texto);
-    font-size: 0.875rem;
+    font-size: var(--t-sm);
     color: var(--color-gris);
     text-align: center;
     max-width: 560px;

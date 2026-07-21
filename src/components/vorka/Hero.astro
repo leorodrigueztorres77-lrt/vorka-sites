@@ -96,13 +96,15 @@ const { site } = Astro.props;
   }
 
   .hero__telefono {
+    /* 40px: bezel de teléfono, geometría de dispositivo físico — no forma
+       parte de la escala r-sm/r-md/r-full (ver nota en index.astro). */
     position: relative;
     width: 264px;
     padding: 12px;
     border-radius: 40px;
     background: #0d0d0d;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border-default);
+    box-shadow: var(--accent-glow);
   }
 
   .hero__telefono-notch {
@@ -112,12 +114,13 @@ const { site } = Astro.props;
     transform: translateX(-50%);
     width: 88px;
     height: 8px;
-    border-radius: 100px;
-    background: rgba(255, 255, 255, 0.18);
+    border-radius: var(--r-full);
+    background: var(--border-default);
     z-index: 1;
   }
 
   .hero__telefono img {
+    /* 28px: bezel interior, misma excepción que .hero__telefono arriba. */
     display: block;
     width: 100%;
     height: auto;
@@ -149,10 +152,10 @@ const { site } = Astro.props;
     display: inline-block;
     padding: 8px 16px;
     border: 1px solid var(--color-primario);
-    border-radius: 100px;
+    border-radius: var(--r-full);
     color: var(--color-primario);
     font-family: var(--font-texto);
-    font-size: 0.875rem;
+    font-size: var(--t-sm);
     font-weight: 600;
     letter-spacing: 0.02em;
   }
@@ -160,7 +163,7 @@ const { site } = Astro.props;
   .hero__titulo {
     font-family: var(--font-titulos);
     font-weight: 700;
-    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-size: var(--t-display);
     line-height: 1.1;
     color: var(--color-texto);
     margin: 0;
@@ -172,7 +175,7 @@ const { site } = Astro.props;
 
   .hero__sub {
     font-family: var(--font-texto);
-    font-size: 1.125rem;
+    font-size: var(--t-md);
     line-height: 1.7;
     color: var(--color-gris);
     max-width: 560px;
@@ -218,7 +221,7 @@ const { site } = Astro.props;
     align-items: center;
     gap: 6px;
     font-family: var(--font-texto);
-    font-size: 0.875rem;
+    font-size: var(--t-sm);
     color: var(--color-gris);
   }
 

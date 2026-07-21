@@ -75,8 +75,8 @@ const filas = [
     width: 100%;
     max-width: 860px;
     margin: 0 0 40px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 16px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--r-md);
     overflow: hidden;
   }
 
@@ -96,7 +96,7 @@ const filas = [
     background: var(--color-fondo-alterno);
     font-family: var(--font-texto);
     font-weight: 700;
-    font-size: 0.8125rem;
+    font-size: var(--t-xs);
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: var(--color-gris);
@@ -109,13 +109,13 @@ const filas = [
   .comparativa__concepto {
     font-family: var(--font-texto);
     font-weight: 600;
-    font-size: 0.9375rem;
+    font-size: var(--t-sm);
     color: var(--color-texto);
   }
 
   .comparativa__valor {
     font-family: var(--font-texto);
-    font-size: 0.9375rem;
+    font-size: var(--t-sm);
     color: var(--color-gris);
   }
 
@@ -136,7 +136,7 @@ const filas = [
 
   .comparativa__subtext {
     font-family: var(--font-texto);
-    font-size: 0.875rem;
+    font-size: var(--t-sm);
     color: var(--color-gris);
     margin: 12px 0 0;
   }
@@ -153,7 +153,7 @@ const filas = [
     }
 
     .comparativa__concepto {
-      font-size: 1rem;
+      font-size: var(--t-base);
       margin-bottom: 2px;
     }
 
