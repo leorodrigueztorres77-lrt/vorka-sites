@@ -23,6 +23,32 @@
 // (Servicios con foto destacada + Equipamiento) antes de llegar a los
 // testimonios. Este reorden no es un cambio de Capa 2 (Testimonials ya es
 // Capa 1, position-agnostic) — es composición de página, propia de Capa 3.
+//
+// AJUSTE 2026-07-21: TeamSection también se sube — pasa de estar al final de
+// la página (después de Equipamiento) a justo después de Testimonials. Con la
+// foto real de la Dra. Chamorro ya incorporada (ver consultorio.esteticdent.ts),
+// esto pone una cara humana antes del segundo scroll, sin la cual la variante
+// V3 (equipamiento/tecnología) se leía como un consultorio vacío — feedback
+// directo de Leo tras ver el hero corregido: "no tiene calidez... sin
+// personas sin doctores". Mismo principio que el reorden de Testimonials de
+// arriba: composición de página (Capa 3), TeamSection sigue siendo Capa 1/2
+// position-agnostic.
+//
+// REFACTOR 2026-07-21 (Fase 1, spec de diseño de Leo): nuevo orden de
+// secciones — Hero → Servicios → Tecnología → Equipo → Testimonios →
+// Ubicación → Contacto. Reemplaza el orden anterior (Hero → Testimonios →
+// Equipo → Servicios → Tecnología); la lógica de "propuesta → prueba social"
+// se mantiene pero ahora Servicios/Tecnología (el argumento de la variante
+// V3) va primero, y el bloque de confianza humana (Equipo + Testimonios) va
+// justo antes del cierre (Ubicación/Contacto).
+//
+// Hero: `eyebrow`/`subheadline` usan copy confirmado (zona Quitumbe, rayos X
+// gratis — ya documentados arriba en site.esteticdent.ts). `pruebaSocial` NO
+// se pasa: el spec pedía literal "★ 4.9 en Google", pero
+// site.esteticdent.ts confirma que ratingGoogle/googleBusinessUrl no están
+// confirmados todavía — mostrar esa cifra sería inventar una calificación
+// (CLAUDE.md, regla explícita). El componente ya soporta la línea si Leo
+// confirma el dato real más adelante.
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/common/Header.astro';
 import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
@@ -35,6 +61,7 @@ import FloatingWhatsApp from '@/components/common/FloatingWhatsApp.astro';
 import HeroEquipamiento from '@/components/consultorio/HeroEquipamiento.astro';
 import ServiciosTipografico from '@/components/consultorio/ServiciosTipografico.astro';
 import Equipamiento from '@/components/consultorio/Equipamiento.astro';
+import TeamSection from '@/components/consultorio/TeamSection.astro';
 
 import { siteConfigEsteticdent } from '@/data/site.esteticdent';
 import {
@@ -42,16 +69,43 @@ import {
   galeriaEsteticdent,
   horariosEsteticdent,
   testimoniosEsteticdent,
+  profesionalesEsteticdent,
 } from '@/data/consultorio.esteticdent';
+import { validarConfigCliente } from '@/lib/validarConfigCliente';
+import { schemaConsultorio } from '@/lib/schemaOrg';
 
 const site = siteConfigEsteticdent;
 const equipoDestacado = galeriaEsteticdent[1];
 // La foto destacada de arriba ya se muestra en grande en ServiciosTipografico —
 // se excluye aquí para que Equipamiento no la repita en la grilla masonry.
 const fotosEquipamiento = galeriaEsteticdent.filter((_, i) => i !== 1);
+
+// Demo de venta a prospecto (todavía no cliente confirmado) — muestra el
+// bloque ilustrativo de Testimonials en vez de ocultar la sección entera.
+const modoDemo = true;
+
+validarConfigCliente({
+  site,
+  servicios: serviciosEsteticdent,
+  galeria: galeriaEsteticdent,
+  horarios: horariosEsteticdent,
+});
+
+// SEO local (spec SALUD 2026-07-20). Título afinado con la zona ya
+// confirmada (Quitumbe, ver site.esteticdent.ts) — más específico que solo
+// "Quito" para búsquedas locales, sin inventar ningún dato nuevo.
+const tituloPagina = 'Estetic Dent — Odontología estética en Quitumbe, Quito';
+const schema = schemaConsultorio({
+  site,
+  url: 'https://vorka-sites.vercel.app/demo-esteticdent/',
+  tipo: 'Dentist',
+  horarios: horariosEsteticdent,
+  servicios: serviciosEsteticdent,
+});
 ---
 
-<BaseLayout site={site}>
+<BaseLayout site={site} titulo={tituloPagina} ogImage={new URL(galeriaEsteticdent[0].src, 'https://vorka-sites.vercel.app').href}>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(schema)} />
   <Header
     site={site}
     navItems={[
@@ -61,7 +115,12 @@ const fotosEquipamiento = galeriaEsteticdent.filter((_, i) => i !== 1);
     ]}
   />
 
-  <HeroEquipamiento imagenFondo={galeriaEsteticdent[0].src} titular="Precisión dental, sin esperas">
+  <HeroEquipamiento
+    imagenFondo={galeriaEsteticdent[0].src}
+    eyebrow="Odontología de especialidades · Quitumbe, Quito"
+    titular="Precisión dental, sin esperas"
+    subheadline="Especialistas en ortodoncia, endodoncia y cirugía oral. Rayos X digital gratis en cada consulta."
+  >
     <Fragment slot="cta">
       <WhatsAppButton
         phone={site.telefonoWhatsApp}
@@ -73,8 +132,6 @@ const fotosEquipamiento = galeriaEsteticdent.filter((_, i) => i !== 1);
     </Fragment>
   </HeroEquipamiento>
 
-  <Testimonials testimonios={testimoniosEsteticdent} fondoSolido patron />
-
   <ServiciosTipografico
     categorias={serviciosEsteticdent}
     fotoEquipoDestacado={equipoDestacado.src}
@@ -85,9 +142,19 @@ const fotosEquipamiento = galeriaEsteticdent.filter((_, i) => i !== 1);
 
   <Equipamiento fotos={fotosEquipamiento} />
 
+  <TeamSection profesionales={profesionalesEsteticdent} />
+
+  <Testimonials
+    testimonios={testimoniosEsteticdent}
+    fondoSolido
+    patron
+    modoDemo={modoDemo}
+    fotos={fotosEquipamiento}
+  />
+
   <LocationMap site={site} horarios={horariosEsteticdent} />
 
-  <ContactForm site={site} productoLabel="Servicio de interés" />
+  <ContactForm site={site} productoLabel="Servicio de interés" mostrarCantidad={false} />
 
   <Footer site={site} />
 

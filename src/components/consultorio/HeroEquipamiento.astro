@@ -2,18 +2,35 @@
 // Capa 2 (consultorio) — Hero de la Variante 3 ("La modernidad y el
 // equipamiento", referencia visual: Vervedent). Análogo a HeroVideo
 // (restaurante): video de fondo en loop si existe; si no, foto del
-// consultorio con Ken Burns suave como respaldo. Deliberadamente sin
-// subtítulo, sin badges, sin señal social: el equipamiento y el ambiente
-// hablan solos (misma regla de la variante en vertical-web-builder).
+// consultorio con Ken Burns suave como respaldo.
+//
+// AJUSTE 2026-07-21 (feedback real Estetic Dent): el hero pasa de bloque
+// centrado con un solo titular a un bloque de texto alineado a la izquierda
+// (eyebrow → titular → subheadline → CTA → prueba social), con overlay en
+// degradado en vez de plano — da más jerarquía y espacio para contexto sin
+// perder la regla de "hero con foto protagonista = titular limpio" (nada de
+// mini-fotos intercaladas). Los 4 campos nuevos son opcionales: sin ellos, el
+// hero se comporta igual que antes (solo titular + CTA, ahora a la
+// izquierda en vez de centrado).
 interface Props {
   /** Si se pasa, tiene prioridad sobre imagenFondo. */
   videoFondo?: string;
   imagenFondo: string;
-  /** Titular corto, máx. 4 palabras. */
+  /** Texto corto sobre el titular, ej. "Odontología de especialidades · Zona". */
+  eyebrow?: string;
+  /** Titular corto, máx. 4-6 palabras. */
   titular: string;
+  /** 1 línea de contexto bajo el titular. */
+  subheadline?: string;
+  /**
+   * Línea de prueba social bajo el CTA (ej. calificación de Google). Dejar
+   * `undefined` si el dato no está confirmado — nunca inventar una cifra
+   * (CLAUDE.md, "nunca inventar una calificación").
+   */
+  pruebaSocial?: string;
 }
 
-const { videoFondo, imagenFondo, titular } = Astro.props;
+const { videoFondo, imagenFondo, eyebrow, titular, subheadline, pruebaSocial } = Astro.props;
 ---
 
 <section id="inicio" class="hero-equipamiento">
@@ -28,9 +45,14 @@ const { videoFondo, imagenFondo, titular } = Astro.props;
   <div class="hero-equipamiento__overlay"></div>
 
   <div class="container hero-equipamiento__inner">
-    <h1 class="hero-equipamiento__titular reveal">{titular}</h1>
-    <div class="hero-equipamiento__cta reveal">
-      <slot name="cta" />
+    <div class="hero-equipamiento__texto">
+      {eyebrow && <p class="hero-equipamiento__eyebrow reveal">{eyebrow}</p>}
+      <h1 class="hero-equipamiento__titular reveal">{titular}</h1>
+      {subheadline && <p class="hero-equipamiento__subheadline reveal">{subheadline}</p>}
+      <div class="hero-equipamiento__cta reveal">
+        <slot name="cta" />
+      </div>
+      {pruebaSocial && <p class="hero-equipamiento__prueba-social reveal">{pruebaSocial}</p>}
     </div>
   </div>
 </section>
@@ -41,10 +63,9 @@ const { videoFondo, imagenFondo, titular } = Astro.props;
     min-height: 100vh;
     display: flex;
     align-items: center;
-    justify-content: center;
     overflow: hidden;
     color: #fff;
-    text-align: center;
+    text-align: left;
   }
 
   .hero-equipamiento__media {
@@ -73,7 +94,7 @@ const { videoFondo, imagenFondo, titular } = Astro.props;
   .hero-equipamiento__overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: linear-gradient(90deg, rgba(10, 20, 35, 0.78) 0%, rgba(10, 20, 35, 0.25) 65%);
   }
 
   .hero-equipamiento__inner {
@@ -81,18 +102,51 @@ const { videoFondo, imagenFondo, titular } = Astro.props;
     z-index: 1;
   }
 
+  .hero-equipamiento__texto {
+    max-width: 560px;
+  }
+
+  .hero-equipamiento__eyebrow {
+    font-family: var(--font-texto);
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #fff;
+    opacity: 0.92;
+    margin: 0 0 0.75rem;
+  }
+
   .hero-equipamiento__titular {
     font-family: var(--font-titulos);
     font-weight: 700;
     color: #fff;
-    font-size: clamp(2.5rem, 8vw, 6.5rem);
-    line-height: 1.05;
-    margin: 0 0 2rem;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1.1;
+    margin: 0 0 1rem;
+  }
+
+  .hero-equipamiento__subheadline {
+    font-family: var(--font-texto);
+    font-size: 1.125rem;
+    line-height: 1.5;
+    color: #fff;
+    opacity: 0.92;
+    margin: 0 0 1.75rem;
   }
 
   .hero-equipamiento__cta {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+  }
+
+  .hero-equipamiento__prueba-social {
+    font-family: var(--font-texto);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #fff;
+    opacity: 0.92;
+    margin: 1rem 0 0;
   }
 
   @media (prefers-reduced-motion: reduce) {
