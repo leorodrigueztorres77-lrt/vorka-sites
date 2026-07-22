@@ -13,12 +13,12 @@ import Nav from '@/components/vorka/Nav.astro';
 import Hero from '@/components/vorka/Hero.astro';
 import Ticker from '@/components/vorka/Ticker.astro';
 import Servicios from '@/components/vorka/Servicios.astro';
-import Precios from '@/components/vorka/Precios.astro';
+import Precios, { planes } from '@/components/vorka/Precios.astro';
 import Portafolio from '@/components/vorka/Portafolio.astro';
 import AnalizadorWeb from '@/components/vorka/AnalizadorWeb.astro';
 import Nosotros from '@/components/vorka/Nosotros.astro';
 import Stats from '@/components/vorka/Stats.astro';
-import Faq from '@/components/vorka/Faq.astro';
+import Faq, { preguntas } from '@/components/vorka/Faq.astro';
 import CtaFinal from '@/components/vorka/CtaFinal.astro';
 import ComparativaValor from '@/components/vorka/ComparativaValor.astro';
 import SistemaVorka from '@/components/vorka/SistemaVorka.astro';
@@ -44,6 +44,51 @@ const schema = {
     telephone: '+593997109978',
   },
 };
+
+// Schema FAQPage (Fase 4, SEO técnico) — construido a partir de las mismas
+// preguntas exportadas por Faq.astro (evita que el schema se desalinee del
+// copy visible). Las respuestas admiten HTML (links a demos); Google
+// recomienda texto plano en acceptedAnswer.text, así que se limpian tags acá.
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: preguntas.map((item) => ({
+    '@type': 'Question',
+    name: item.pregunta,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.respuesta.replace(/<[^>]+>/g, ''),
+    },
+  })),
+};
+
+// Schema Service+Offer (Fase 4, SEO técnico) — construido a partir de los
+// mismos 3 planes exportados por Precios.astro. `precio` viene como texto
+// ("$350", "desde $750"); se extrae el número para `price` y se conserva el
+// "desde" solo como pista visual, no como parte del dato estructurado.
+const extraerPrecio = (precio: string) => precio.replace(/[^\d]/g, '');
+
+const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  serviceType: 'Diseño y desarrollo de webs para negocios locales',
+  provider: { '@type': 'LocalBusiness', name: 'Vorka' },
+  areaServed: 'Ecuador',
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Planes de Vorka',
+    itemListElement: planes.map((plan, i) => ({
+      '@type': 'Offer',
+      position: i + 1,
+      name: `Plan ${plan.nombre}`,
+      description: plan.subtitulo,
+      price: extraerPrecio(plan.precio),
+      priceCurrency: 'USD',
+    })),
+  },
+};
+
+const canonicalUrl = 'https://vorka-sites.vercel.app/vorka/';
 ---
 
 <BaseLayout
@@ -52,6 +97,9 @@ const schema = {
   ogDescripcion="Web lista en días. Ventas por WhatsApp. Factura SRI automática. Para cualquier negocio local."
 >
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(schema)} />
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(faqSchema)} />
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(serviceSchema)} />
+  <link rel="canonical" href={canonicalUrl} slot="head" />
   <link
     rel="preload"
     href="/fonts/vorka/plus-jakarta-sans-var.woff2"

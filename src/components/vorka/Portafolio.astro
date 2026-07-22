@@ -55,7 +55,13 @@ const proyectos = [
     <h2 class="section-title reveal">Así se ve un negocio como el tuyo con Vorka</h2>
     <div class="portafolio__grid">
       {proyectos.map((proyecto) => (
-        <a class="proyecto reveal--scale" href={proyecto.href} target="_blank" rel="noopener noreferrer">
+        <a
+          class="proyecto reveal--scale"
+          href={proyecto.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Ver demo de ${proyecto.nombre}, ${proyecto.vertical.toLowerCase()} en ${proyecto.ciudad}`}
+        >
           <div class="proyecto__navegador">
             <span class="proyecto__demo-badge">Demo</span>
             <div class="proyecto__navegador-barra" aria-hidden="true">

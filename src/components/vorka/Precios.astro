@@ -19,7 +19,10 @@ const linkPlan = (plan: string) =>
     negocioSlug: site.negocioSlug,
   });
 
-const planes = [
+// Exportado (Fase 4, SEO técnico) para que /vorka/index.astro construya el
+// schema Service+Offer con estos mismos 3 planes — nunca duplicar precios a
+// mano en el schema, eso desalinearía copy visible vs. datos estructurados.
+export const planes = [
   {
     nombre: 'Básica',
     precio: '$350',
