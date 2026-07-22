@@ -1,0 +1,163 @@
+---
+// Vorka — "El sistema Vorka" (Fase 3 del rediseño 2026-07, PROMPT MAESTRO).
+// Dos secciones scroll-driven estilo Apple: <canvas> + secuencia de frames
+// WebP (public/frames/<seq>/{desktop,mobile}/) pintada por ScrollSequence
+// (src/lib/scrollSequence.ts, GSAP ScrollTrigger, mode 'scrub' = pinned).
+// Visuales abstractos oscuros en la paleta de marca de Vorka — nunca texto
+// renderizado por el modelo de video (poco confiable); el copy real vive en
+// <h3>/<p> normales dentro de .seq-overlay, server-rendered por Astro, así
+// que queda indexable con o sin JS (ver Fase 4, verificación de
+// indexabilidad de estos overlays).
+---
+
+<section class="sistema" aria-label="Cómo funciona Vorka">
+  <div class="container sistema__intro">
+    <p class="sistema__eyebrow reveal">Cómo funciona</p>
+    <h2 class="section-title reveal">El sistema Vorka, de principio a fin</h2>
+  </div>
+
+  <div class="seq" id="seq-construccion">
+    <canvas aria-hidden="true"></canvas>
+    <div class="seq-overlay">
+      <h3 class="seq-titulo">Tu negocio, convertido en una web que vende</h3>
+      <p class="seq-texto">
+        Estructura, diseño y contenido reales de tu negocio — listos en 5–7 días, no en meses.
+      </p>
+    </div>
+  </div>
+
+  <div class="seq" id="seq-conversion">
+    <canvas aria-hidden="true"></canvas>
+    <div class="seq-overlay">
+      <h3 class="seq-titulo">De un mensaje de WhatsApp a un pedido confirmado</h3>
+      <p class="seq-texto">
+        Cada visita a tu web se conecta directo con tu WhatsApp — sin apps que instalar, sin
+        fricción para tu cliente.
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { ScrollSequence } from '@/lib/scrollSequence';
+
+  const BASE = import.meta.env.BASE_URL;
+
+  new ScrollSequence({
+    section: document.getElementById('seq-construccion')!,
+    seqName: 'construccion',
+    frameCount: 100,
+    mode: 'scrub',
+    pinVh: 250,
+    posterSrc: `${BASE}frames/construccion/desktop/frame-0001.webp`,
+  });
+
+  new ScrollSequence({
+    section: document.getElementById('seq-conversion')!,
+    seqName: 'conversion',
+    frameCount: 100,
+    mode: 'scrub',
+    pinVh: 250,
+    posterSrc: `${BASE}frames/conversion/desktop/frame-0001.webp`,
+  });
+</script>
+
+<style>
+  .sistema {
+    background: var(--bg-0);
+  }
+
+  .sistema__intro {
+    padding: var(--section-pad) 0;
+    text-align: center;
+  }
+
+  .sistema__eyebrow {
+    font-family: var(--font-texto);
+    font-weight: 600;
+    font-size: var(--t-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-primario);
+    margin: 0 0 12px;
+  }
+
+  .seq {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    background: #0d0d0d;
+  }
+
+  .seq + .seq {
+    margin-top: 2px;
+  }
+
+  .seq canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .seq-fallback {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .seq-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: var(--section-pad);
+    background: linear-gradient(to top, rgba(13, 13, 13, 0.75), transparent 55%);
+    color: var(--color-texto);
+    pointer-events: none;
+  }
+
+  .seq-titulo {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: clamp(1.75rem, 4vw, var(--t-2xl));
+    line-height: 1.15;
+    max-width: 20ch;
+    margin: 0 0 12px;
+  }
+
+  .seq-texto {
+    font-family: var(--font-texto);
+    font-size: var(--t-md);
+    line-height: 1.6;
+    max-width: 48ch;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0;
+  }
+
+  .seq-hud {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    padding: 6px 12px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #39d353;
+    font: 13px/1.4 monospace;
+    border-radius: var(--r-sm);
+    z-index: 10;
+  }
+
+  @media (max-width: 720px) {
+    .seq {
+      height: 100svh;
+    }
+
+    .seq-overlay {
+      padding: 24px;
+    }
+  }
+</style>

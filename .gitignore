@@ -16,3 +16,9 @@ npm-debug.log*
 
 # macOS-specific files
 .DS_Store
+
+# Fase 3 (scroll-driven /vorka/): assets fuente sin optimizar de fal.ai
+# (imagenes/videos crudos) y frames master intermedios de ffmpeg — solo los
+# WebP finales en public/frames/ se commitean.
+scripts/_source/
+.frames-tmp/
