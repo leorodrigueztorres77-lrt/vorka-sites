@@ -4,6 +4,14 @@
 // #2, CLAUDE.md: bloque de color con peso, no plano). CTA único de WhatsApp
 // como acción principal (misma jerarquía de CTA que el resto de Capa 1) +
 // link secundario de scroll a Portafolio, sin competir en peso visual.
+//
+// Fase 2 (rediseño 2026-07) — fix de animación: el badge y el <h1> NO llevan
+// la clase .reveal del estándar de Capa 1. Ese fade (opacity 0 → 1, gateado
+// por el IntersectionObserver de BaseLayout) retrasa el primer pintado del
+// texto más grande del hero — justo el candidato a LCP más probable de esta
+// página — hasta que JS corre y el observer dispara. El resto del contenido
+// (subtítulo, CTA, proof list) sí conserva el fade: no son candidatos a LCP
+// y el retraso ahí es puramente cosmético.
 import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
 import type { SiteConfig } from '@/data/types';
 
@@ -17,8 +25,8 @@ const { site } = Astro.props;
 <section class="hero">
   <div class="container hero__inner">
     <div class="hero__contenido">
-      <span class="hero__badge reveal">Agencia digital · Ecuador</span>
-      <h1 class="hero__titulo reveal">
+      <span class="hero__badge">Agencia digital · Ecuador</span>
+      <h1 class="hero__titulo">
         Tu negocio merece<br />
         <span class="hero__acento">una web que venda.</span>
       </h1>
@@ -43,22 +51,40 @@ const { site } = Astro.props;
       </ul>
     </div>
 
-    <!-- Mockup NEUTRO de web mobile-first (decisión de Leo 2026-07: sin
-         rubro específico para no encasillar a Vorka — reemplaza la captura
-         del demo El Fogón). Generado con IA (Nano Banana 2 vía fal.ai) con
-         la paleta de Vorka; regenerar con scripts/fal-mockup-vorka.mjs de
-         SiteWise+ si cambia la identidad. -->
-    <div class="hero__mockup reveal--scale" aria-hidden="false">
+    <!-- Composición de 2 dispositivos, 100% HTML/CSS (Fase 2 del rediseño
+         2026-07): sustituye el mockup generado con IA (frágil, no
+         reproducible — el script fal-mockup-vorka.mjs nunca llegó a existir
+         en el repo) por un wireframe neutro de web mobile-first (sin rubro
+         específico, misma decisión de Leo de no encasillar a Vorka) más una
+         tarjeta de chat de WhatsApp simulada superpuesta. Al ser DOM/CSS
+         puro (cero bytes de imagen, cero decode) es el candidato a LCP más
+         liviano posible para el hero — por eso NO lleva `reveal--scale`:
+         envolverlo en el fade/scale de Capa 1 retrasaría su primer pintado
+         hasta que el IntersectionObserver corra, justo el error que tenía
+         la versión anterior con la imagen. -->
+    <div class="hero__mockup" aria-hidden="true">
       <div class="hero__telefono">
-        <span class="hero__telefono-notch" aria-hidden="true"></span>
-        <img
-          src="/images/vorka/mockup-negocio-movil.webp"
-          alt="Web profesional mobile-first para tu negocio — Vorka"
-          width="320"
-          height="574"
-          loading="eager"
-          fetchpriority="high"
-        />
+        <span class="hero__telefono-notch"></span>
+        <div class="hero__pantalla">
+          <div class="hero__pantalla-nav"></div>
+          <div class="hero__pantalla-hero"></div>
+          <span class="hero__pantalla-cta">Pedir por WhatsApp</span>
+          <div class="hero__pantalla-fila"></div>
+          <div class="hero__pantalla-fila"></div>
+          <div class="hero__pantalla-fila hero__pantalla-fila--corta"></div>
+        </div>
+      </div>
+
+      <div class="hero__chat">
+        <div class="hero__chat-cabecera">
+          <span class="hero__chat-avatar"></span>
+          <div class="hero__chat-info">
+            <span class="hero__chat-nombre">Tu negocio</span>
+            <span class="hero__chat-estado">en línea</span>
+          </div>
+        </div>
+        <p class="hero__chat-burbuja hero__chat-burbuja--entrante">Hola! Vi tu web, quiero hacer un pedido</p>
+        <p class="hero__chat-burbuja hero__chat-burbuja--saliente">¡Con gusto! Dime qué necesitas y lo confirmamos ✅</p>
       </div>
     </div>
   </div>
@@ -90,6 +116,7 @@ const { site } = Astro.props;
   }
 
   .hero__mockup {
+    position: relative;
     display: flex;
     justify-content: center;
     flex-shrink: 0;
@@ -119,12 +146,142 @@ const { site } = Astro.props;
     z-index: 1;
   }
 
-  .hero__telefono img {
-    /* 28px: bezel interior, misma excepción que .hero__telefono arriba. */
-    display: block;
+  .hero__pantalla {
+    /* 28px: bezel interior de la pantalla, misma excepción documentada que
+       .hero__telefono arriba — geometría de dispositivo, no forma parte de
+       la escala r-sm/r-md/r-full. Fondo blanco a propósito: representa una
+       web de cliente (tema claro), en contraste con el fondo oscuro de
+       Vorka alrededor. */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     width: 100%;
-    height: auto;
+    aspect-ratio: 240 / 430;
+    padding: 16px 12px;
     border-radius: 28px;
+    background: #ffffff;
+    overflow: hidden;
+  }
+
+  .hero__pantalla-nav {
+    width: 56px;
+    height: 10px;
+    border-radius: 4px;
+    background: #e5e5e5;
+  }
+
+  .hero__pantalla-hero {
+    height: 96px;
+    border-radius: var(--r-sm);
+    background: linear-gradient(135deg, #e9e9e9, #d6d6d6);
+  }
+
+  .hero__pantalla-cta {
+    align-self: flex-start;
+    padding: 8px 20px;
+    border-radius: var(--r-full);
+    background: var(--color-primario);
+    color: #ffffff;
+    /* 11px: texto decorativo en miniatura dentro de un wireframe a escala
+       de teléfono — no es contenido real, cae fuera de la escala t-xs..t-2xl. */
+    font-family: var(--font-texto);
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .hero__pantalla-fila {
+    height: 14px;
+    width: 100%;
+    border-radius: 4px;
+    background: #eeeeee;
+  }
+
+  .hero__pantalla-fila--corta {
+    width: 60%;
+  }
+
+  .hero__chat {
+    position: absolute;
+    right: -20px;
+    bottom: 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 176px;
+    padding: 12px;
+    border-radius: var(--r-md);
+    background: #ffffff;
+    box-shadow: var(--shadow-elevar);
+  }
+
+  .hero__chat-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #ececec;
+  }
+
+  .hero__chat-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--color-primario);
+    flex-shrink: 0;
+  }
+
+  .hero__chat-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+  }
+
+  .hero__chat-nombre {
+    font-family: var(--font-texto);
+    font-size: 11px;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+
+  .hero__chat-estado {
+    /* #25d366: verde "en línea" oficial de la UI de WhatsApp — igual que en
+       WhatsAppFlotante.astro, no themeable. */
+    font-family: var(--font-texto);
+    font-size: 10px;
+    color: #25d366;
+  }
+
+  .hero__chat-burbuja {
+    margin: 0;
+    padding: 6px 10px;
+    max-width: 88%;
+    border-radius: 10px;
+    font-family: var(--font-texto);
+    font-size: 11px;
+    line-height: 1.4;
+    color: #1a1a1a;
+  }
+
+  .hero__chat-burbuja--entrante {
+    align-self: flex-start;
+    background: #f0f0f0;
+    border-bottom-left-radius: 2px;
+  }
+
+  .hero__chat-burbuja--saliente {
+    /* #dcf8c6: verde de burbuja saliente de la UI real de WhatsApp —
+       excepción de marca, no forma parte de la paleta temática de Vorka. */
+    align-self: flex-end;
+    background: #dcf8c6;
+    border-bottom-right-radius: 2px;
+  }
+
+  @media (max-width: 720px) {
+    .hero__chat {
+      width: 144px;
+      right: -12px;
+      bottom: 40px;
+    }
   }
 
   @media (min-width: 961px) {

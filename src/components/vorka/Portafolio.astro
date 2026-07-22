@@ -1,10 +1,13 @@
 ---
-// Vorka — Portafolio (spec GTM de Leo 2026-07, Fase 7). 3 proyectos reales de
-// Capa 3 con badge de tipo y ciudad. Sin capturas de pantalla todavía (cada
-// tarjeta usa el degradado real de la marca del cliente, ver brandkit.*.ts) —
-// las capturas reales de pantalla completa quedan para Fase 2. Incluye ya un
-// vertical no-restaurante (Estetic Dent, salud) para romper la percepción de
-// "solo restaurantes" (resuelve la NOTA GTM PENDIENTE anterior).
+// Vorka — Portafolio (spec GTM de Leo 2026-07, Fase 7; capturas reales
+// añadidas en Fase 2 del rediseño 2026-07). 3 proyectos reales de Capa 3 con
+// badge de tipo y ciudad. Cada tarjeta muestra la captura de página completa
+// real del demo (390px, ver scripts/capture-demo-screenshots.mjs) dentro de
+// un browser-frame oscuro; en hover/focus la captura hace scroll vertical
+// para revelar el sitio completo (truco de translateY con unidades de
+// container query, sin JS — ver estilos de .proyecto__viewport). Incluye ya
+// un vertical no-restaurante (Estetic Dent, salud) para romper la percepción
+// de "solo restaurantes".
 import { buildWhatsAppLink } from '@/lib/whatsapp';
 import { siteConfigVorka } from '@/data/site.vorka';
 
@@ -21,8 +24,8 @@ const proyectos = [
     ciudad: 'Conocoto, Quito',
     descripcion: 'Comida ecuatoriana tradicional en Conocoto, Quito.',
     href: '/demo-el-fogon-ecuatoriano/',
-    colorInicio: '#C1440E',
-    colorFin: '#9B3510',
+    captura: '/images/vorka/portafolio/el-fogon-ecuatoriano.webp',
+    capturaAlto: 11430,
   },
   {
     nombre: 'Shangrila',
@@ -31,8 +34,8 @@ const proyectos = [
     ciudad: 'Quito',
     descripcion: 'Parrilla casual y enérgica.',
     href: '/demo-shangrila/',
-    colorInicio: '#E85D2C',
-    colorFin: '#C2410C',
+    captura: '/images/vorka/portafolio/shangrila.webp',
+    capturaAlto: 4116,
   },
   {
     nombre: 'Estetic Dent',
@@ -40,8 +43,8 @@ const proyectos = [
     ciudad: 'Quitumbe, Quito',
     descripcion: 'Consultorio odontológico moderno en el sur de Quito.',
     href: '/demo-esteticdent/',
-    colorInicio: '#122B54',
-    colorFin: '#0B1A38',
+    captura: '/images/vorka/portafolio/esteticdent.webp',
+    capturaAlto: 8999,
   },
 ];
 ---
@@ -53,12 +56,24 @@ const proyectos = [
     <div class="portafolio__grid">
       {proyectos.map((proyecto) => (
         <a class="proyecto reveal--scale" href={proyecto.href} target="_blank" rel="noopener noreferrer">
-          <div
-            class="proyecto__portada"
-            style={`background: linear-gradient(135deg, ${proyecto.colorInicio}, ${proyecto.colorFin});`}
-          >
+          <div class="proyecto__navegador">
             <span class="proyecto__demo-badge">Demo</span>
-            <span class="proyecto__portada-nombre">{proyecto.nombre}</span>
+            <div class="proyecto__navegador-barra" aria-hidden="true">
+              <span class="proyecto__dot proyecto__dot--rojo"></span>
+              <span class="proyecto__dot proyecto__dot--amarillo"></span>
+              <span class="proyecto__dot proyecto__dot--verde"></span>
+              <span class="proyecto__navegador-url">vorka.ec{proyecto.href}</span>
+            </div>
+            <div class="proyecto__viewport">
+              <img
+                src={proyecto.captura}
+                alt={`Captura real de la web de ${proyecto.nombre}`}
+                width="390"
+                height={proyecto.capturaAlto}
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
           </div>
           <div class="proyecto__info">
             <span class="proyecto__vertical">{proyecto.vertical} · {proyecto.ciudad}</span>
@@ -125,22 +140,20 @@ const proyectos = [
     transform: translateY(-4px);
   }
 
-  .proyecto__portada {
+  .proyecto__navegador {
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 220px;
+    background: #0d0d0d;
   }
 
   .proyecto__demo-badge {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 8px;
+    right: 8px;
+    z-index: 1;
     padding: 3px 12px;
     border: 1px solid #666666;
     border-radius: var(--r-full);
-    background: transparent;
+    background: rgba(13, 13, 13, 0.85);
     color: #666666;
     font-family: var(--font-texto);
     font-size: var(--t-xs);
@@ -149,14 +162,79 @@ const proyectos = [
     letter-spacing: 0.04em;
   }
 
-  .proyecto__portada-nombre {
-    font-family: 'Cormorant Garamond', Georgia, serif;
-    font-style: italic;
-    font-weight: 700;
-    font-size: var(--t-xl);
-    color: #ffffff;
-    text-align: center;
-    padding: 0 24px;
+  .proyecto__navegador-barra {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 32px;
+    padding: 0 16px;
+    background: var(--bg-1);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .proyecto__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Colores de semáforo de ventana de navegador — convención universal de
+     macOS/Chrome, no forman parte de la paleta temática de Vorka. */
+  .proyecto__dot--rojo {
+    background: #ff5f56;
+  }
+
+  .proyecto__dot--amarillo {
+    background: #f5a623;
+  }
+
+  .proyecto__dot--verde {
+    background: #27c93f;
+  }
+
+  .proyecto__navegador-url {
+    margin-left: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--font-texto);
+    font-size: var(--t-xs);
+    color: var(--color-gris);
+  }
+
+  .proyecto__viewport {
+    /* container-type: size habilita las unidades cqh de abajo — así el
+       translateY de hover se calcula 100% en JS-free CSS puro a partir del
+       alto real de la captura vs. el alto fijo de este viewport. */
+    container-type: size;
+    height: 360px;
+    overflow: hidden;
+    background: var(--bg-1);
+  }
+
+  .proyecto__viewport img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transform: translateY(0);
+    transition: transform 6s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .proyecto:hover .proyecto__viewport img,
+  .proyecto:focus-visible .proyecto__viewport img {
+    transform: translateY(calc(-100% + 100cqh));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .proyecto__viewport img {
+      transition: none;
+    }
+
+    .proyecto:hover .proyecto__viewport img,
+    .proyecto:focus-visible .proyecto__viewport img {
+      transform: translateY(0);
+    }
   }
 
   .proyecto__info {
