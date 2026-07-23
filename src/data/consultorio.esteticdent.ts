@@ -92,50 +92,53 @@ export const galeriaEsteticdent: FotoGaleria[] = [
 ];
 
 // TODO PLACEHOLDER Nivel 2.5 (generado con IA, SOLO demo de venta) —
-// cabeceras 3:2 de las cards ancla de servicios. Regeneradas 2026-07-22 con
-// Pollinations.ai (Flux, gratuito — pedido explícito de Leo de usar la vía
-// gratuita) reemplazando el stock de Pexels: la IA permite que las tres
-// compartan la paleta real de la marca (navy + naranja quemado), imposible
-// con banco de fotos. Las personas NO son reales (sintéticas) — ver README.md
-// de public/images/esteticdent/ con prompt y seed de cada una. Reemplazar por
-// fotos reales de pacientes de la clínica (con consentimiento) antes de la
-// entrega final. El alt describe la foto, nunca delata que es de relleno
-// (spec SALUD, "Fugas de placeholder").
+// cabeceras 3:2 de las cards ancla de servicios. Set 2026-07-23 del pipeline
+// de Gemini (gemini-2.5-flash-image, assets/prompts/shots-esteticdent.json):
+// QC en assets/generated/review/QC-REPORT.md, aprobación humana de Leo,
+// masters en assets/generated/approved/. Reemplaza el set de Pollinations
+// del 2026-07-22 (archivado en retirados-pollinations/). Las personas NO son
+// reales (sintéticas) — reemplazar por fotos reales de pacientes de la
+// clínica (con consentimiento) antes de la entrega final. El alt describe la
+// foto, nunca delata que es de relleno (spec SALUD, "Fugas de placeholder").
 export const imagenesAnclaEsteticdent: Record<string, FotoGaleria> = {
   'Limpieza dental': {
-    src: '/images/esteticdent/servicio-limpieza-ia.webp',
-    alt: 'Paciente sonriendo en el sillón dental tras su limpieza',
+    src: '/images/esteticdent/card-limpieza.webp',
+    src2x: '/images/esteticdent/card-limpieza@2x.webp',
+    alt: 'Paciente sonriendo en el sillón dental durante su visita',
   },
   'Diseño de sonrisa': {
-    src: '/images/esteticdent/servicio-diseno-sonrisa-ia.webp',
-    alt: 'Sonrisa luminosa y alineada de una paciente',
+    src: '/images/esteticdent/card-diseno-sonrisa.webp',
+    src2x: '/images/esteticdent/card-diseno-sonrisa@2x.webp',
+    alt: 'Selección del tono dental con guía de colores junto a la sonrisa de una paciente',
   },
   'Urgencias con atención prioritaria': {
-    src: '/images/esteticdent/servicio-urgencias-ia.webp',
-    alt: 'Odontóloga atendiendo con prioridad a una paciente en el sillón dental',
+    src: '/images/esteticdent/card-urgencias.webp',
+    src2x: '/images/esteticdent/card-urgencias@2x.webp',
+    alt: 'Odontóloga tranquilizando a un paciente en el sillón dental',
   },
 };
 
 // TODO PLACEHOLDER Nivel 2.5 (generado con IA, SOLO demo de venta) —
 // cabeceras 16:9 de las cards de tecnología, una por ítem de
-// tecnologiaEsteticdent (mismo orden). Generadas 2026-07-22 con
-// Pollinations.ai (Flux) para que cada foto coincida con el TEMA de su card
-// (radiografía/cámara/esterilización) — las fotos ambientales anteriores
-// (equipamiento-1/2) no correspondían al equipo descrito. Ver README.md de
-// la carpeta. Reemplazar por fotos reales del equipamiento del consultorio
-// antes de la entrega final.
+// tecnologiaEsteticdent (mismo orden: radiografía, cámara, esterilización).
+// Mismo set 2026-07-23 del pipeline de Gemini (ver comentario de arriba).
+// Reemplazar por fotos reales del equipamiento del consultorio antes de la
+// entrega final.
 export const fotosTecnologiaEsteticdent: FotoGaleria[] = [
   {
-    src: '/images/esteticdent/tecnologia-rayosx-ia.webp',
-    alt: 'Odontóloga revisando una radiografía panorámica digital en pantalla',
+    src: '/images/esteticdent/tec-radiografia.webp',
+    src2x: '/images/esteticdent/tec-radiografia@2x.webp',
+    alt: 'Profesional señalando una radiografía panorámica digital en el monitor',
   },
   {
-    src: '/images/esteticdent/tecnologia-camara-ia.webp',
-    alt: 'Odontóloga mostrando a la paciente su imagen intraoral en pantalla',
+    src: '/images/esteticdent/tec-camara-intraoral.webp',
+    src2x: '/images/esteticdent/tec-camara-intraoral@2x.webp',
+    alt: 'Cámara intraoral en la mano de una odontóloga con la imagen dental en pantalla',
   },
   {
-    src: '/images/esteticdent/tecnologia-esterilizacion-ia.webp',
-    alt: 'Instrumental dental sellado en fundas de esterilización individuales',
+    src: '/images/esteticdent/tec-esterilizacion.webp',
+    src2x: '/images/esteticdent/tec-esterilizacion@2x.webp',
+    alt: 'Instrumental dental sellado en fundas de esterilización sobre bandeja metálica',
   },
 ];
 

@@ -319,3 +319,18 @@ real por par) documentados arriba — misma regla dura para la entrega final.
 Regla intacta: personas sintéticas presentadas como pacientes/equipo real en
 la ENTREGA FINAL publicada = prohibido (CLAUDE.md). Todo esto es material de
 demo de venta y debe reemplazarse por fotos reales con consentimiento.
+
+## Set 2026-07-23 — pipeline de Gemini (reemplaza las cabeceras Pollinations)
+
+⚠️ **PLACEHOLDER Nivel 2.5 — personas sintéticas, SOLO demo de venta.**
+Generado con el pipeline oficial (`scripts/generate-images.mjs`,
+`gemini-2.5-flash-image`, shot list `assets/prompts/shots-esteticdent.json`),
+QC documentado en `assets/generated/review/QC-REPORT.md`, aprobación humana
+de Leo 2026-07-23, masters versionados en `assets/generated/approved/`.
+Archivos: `card-limpieza`, `card-diseno-sonrisa`, `card-urgencias` (3:2),
+`tec-radiografia`, `tec-camara-intraoral`, `tec-esterilizacion` (16:9),
+`hero-consultorio` y `ambiente-recepcion` (reserva) — cada uno con rendition
+`@2x`. Los WebP de Pollinations que reemplazan quedaron en
+`retirados-pollinations/` (sus fuentes siguen en `originales/`).
+`hero-consultorio` NO está integrado: Leo pidió mantener el hero actual
+(`clinica-ia.webp`); queda optimizado y listo por si decide cambiarlo.
