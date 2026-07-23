@@ -24,3 +24,10 @@ dev-server-err.log
 # WebP finales en public/frames/ se commitean.
 scripts/_source/
 .frames-tmp/
+
+# Pipeline de imagenes IA (Gemini): la salida cruda de review/ es transitoria
+# (se regenera con generate-images.mjs); solo se versionan el QC-REPORT.md y
+# lo aprobado manualmente en approved/ (masters con aprobacion humana).
+assets/generated/review/*
+!assets/generated/review/.gitkeep
+!assets/generated/review/QC-REPORT.md

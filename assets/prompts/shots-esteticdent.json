@@ -1,0 +1,53 @@
+{
+  "base": "assets/prompts/_base-dental.md",
+  "shots": [
+    {
+      "id": "hero-consultorio",
+      "sujeto": "consultorio dental amplio y luminoso visto desde la entrada, sillón moderno azul marino, ventana grande a la izquierda, sin personas",
+      "aspect": "16:9",
+      "uso": "hero"
+    },
+    {
+      "id": "card-limpieza",
+      "sujeto": "paciente mujer adulta sonriendo relajada en el sillón dental mientras una higienista prepara instrumental al fondo, desenfocada",
+      "aspect": "3:2",
+      "uso": "card-servicio"
+    },
+    {
+      "id": "card-diseno-sonrisa",
+      "sujeto": "primer plano de manos con guantes sosteniendo una guía de tonos dentales junto a la sonrisa de una paciente, encuadre parcial del rostro",
+      "aspect": "3:2",
+      "uso": "card-servicio"
+    },
+    {
+      "id": "card-urgencias",
+      "sujeto": "odontóloga con mascarilla atendiendo con gesto tranquilizador a un paciente adulto en el sillón, luz cálida",
+      "aspect": "3:2",
+      "uso": "card-servicio"
+    },
+    {
+      "id": "tec-radiografia",
+      "sujeto": "monitor mostrando una radiografía panorámica dental en un consultorio, una profesional la señala, vista lateral",
+      "aspect": "16:9",
+      "uso": "card-tecnologia"
+    },
+    {
+      "id": "tec-camara-intraoral",
+      "sujeto": "primer plano de una cámara intraoral (dispositivo tipo lápiz blanco) en la mano enguantada de una odontóloga, con la imagen dental visible en un monitor al fondo",
+      "aspect": "16:9",
+      "uso": "card-tecnologia"
+    },
+    {
+      "id": "tec-esterilizacion",
+      "sujeto": "instrumental dental sellado en bolsas de esterilización individuales sobre bandeja metálica, primer plano, luz limpia",
+      "aspect": "16:9",
+      "uso": "card-tecnologia"
+    },
+    {
+      "id": "ambiente-recepcion",
+      "sujeto": "detalle de sala de espera pequeña y cálida de clínica, dos sillas, planta, luz de tarde, sin personas",
+      "aspect": "3:2",
+      "uso": "reserva"
+    }
+  ]
+}
