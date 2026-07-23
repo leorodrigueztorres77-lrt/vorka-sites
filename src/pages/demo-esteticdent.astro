@@ -100,6 +100,23 @@
 // AJUSTE 2026-07-21: testimoniosEsteticdent ya trae una reseña real de
 // Google Business (ver consultorio.esteticdent.ts) — se quita `modoDemo` de
 // Testimonials, ya no hace falta el bloque ilustrativo.
+//
+// SPEC 2026-07-22 (densidad visual y experiencia móvil, Leo):
+// - Cards ancla de servicios con imagen de cabecera 3:2 (sonrisas/pacientes,
+//   TODO placeholders de banco — ver imagenesAnclaEsteticdent).
+// - Listado de servicios en móvil como acordeón <details> por categoría
+//   (Capa 2, ServiciosTipografico).
+// - Cards de tecnología reincorporan las 3 fotos existentes (clínica/equipos)
+//   como cabecera 16:9 — se les quita a Testimonials para no duplicarlas en
+//   la misma página.
+// - Nueva sección "Sonrisas reales" (AntesDespues) entre Tecnología y Equipo,
+//   TODO placeholders — ver sonrisasEsteticdent y su regla de autenticidad.
+// - Barra de acción fija inferior solo móvil (MobileActionBar): "Agendar por
+//   WhatsApp" + "Llamar"; se oculta cuando #contacto está en viewport.
+//   FloatingWhatsApp se oculta en <768px (la barra lo reemplaza ahí) y queda
+//   solo para el rango tablet 768-900px.
+// - Ritmo móvil (<768px): --section-pad 56px, H2 32px, hero 85svh (ver
+//   bloque <style is:global> abajo).
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/common/Header.astro';
 import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
@@ -109,10 +126,12 @@ import ContactForm from '@/components/common/ContactForm.astro';
 import CtaFinal from '@/components/common/CtaFinal.astro';
 import Footer from '@/components/common/Footer.astro';
 import FloatingWhatsApp from '@/components/common/FloatingWhatsApp.astro';
+import MobileActionBar from '@/components/common/MobileActionBar.astro';
 
 import HeroEquipamiento from '@/components/consultorio/HeroEquipamiento.astro';
 import ServiciosTipografico from '@/components/consultorio/ServiciosTipografico.astro';
 import Equipamiento from '@/components/consultorio/Equipamiento.astro';
+import AntesDespues from '@/components/consultorio/AntesDespues.astro';
 import TeamSection from '@/components/consultorio/TeamSection.astro';
 
 import { siteConfigEsteticdent } from '@/data/site.esteticdent';
@@ -123,6 +142,8 @@ import {
   horariosEsteticdent,
   testimoniosEsteticdent,
   profesionalesEsteticdent,
+  imagenesAnclaEsteticdent,
+  sonrisasEsteticdent,
 } from '@/data/consultorio.esteticdent';
 import { validarConfigCliente } from '@/lib/validarConfigCliente';
 import { schemaConsultorio } from '@/lib/schemaOrg';
@@ -138,7 +159,11 @@ const serviciosAnclaEsteticdent = NOMBRES_ANCLA.map((nombre) =>
   todosLosServiciosEsteticdent.find((s) => s.nombre === nombre),
 )
   .filter((s): s is (typeof todosLosServiciosEsteticdent)[number] => Boolean(s))
-  .map((servicio) => ({ servicio, etiqueta: servicio.tipo }));
+  .map((servicio) => ({
+    servicio,
+    etiqueta: servicio.tipo,
+    imagen: imagenesAnclaEsteticdent[servicio.nombre],
+  }));
 
 const categoriasRestantesEsteticdent = serviciosEsteticdent
   .map((cat) => ({ ...cat, servicios: cat.servicios.filter((s) => !NOMBRES_ANCLA.includes(s.nombre)) }))
@@ -146,8 +171,12 @@ const categoriasRestantesEsteticdent = serviciosEsteticdent
 // AJUSTE 2026-07-21 (feedback directo de Leo): se quita la foto del sillón
 // dental ("equipo-destacado-ia.webp", índice 1) de ServiciosTipografico por
 // completo — ya no se muestra ni la imagen ni su caption. Se mantiene fuera
-// también de esta galería (Testimonials) para no reintroducirla en la página
-// por otra vía; queda sin usarse hasta que Leo indique qué hacer con ella.
+// también de Equipamiento para no reintroducirla en la página por otra vía;
+// queda sin usarse hasta que Leo indique qué hacer con ella.
+// SPEC 2026-07-22: estas 3 fotos (clínica + 2 de equipos) vuelven a la
+// sección de tecnología como cabecera 16:9 de sus cards — emparejadas por
+// índice con tecnologiaEsteticdent (clínica→radiografía, equipo 1→cámara,
+// equipo 2→esterilización). Dejan de pasarse a Testimonials.
 const fotosEquipamiento = galeriaEsteticdent.filter((_, i) => i !== 1);
 
 validarConfigCliente({
@@ -217,20 +246,21 @@ const schema = schemaConsultorio({
 
   <Equipamiento
     items={tecnologiaEsteticdent}
+    fotos={fotosEquipamiento}
     bannerTexto="Rayos X digital gratis en cada consulta"
     bannerMensaje={`Hola, quiero agendar mi consulta con rayos X digital gratis en ${site.nombre}`}
     phone={site.telefonoWhatsApp}
     negocioSlug={site.negocioSlug}
   />
 
+  <AntesDespues
+    pares={sonrisasEsteticdent}
+    intro="Resultados de los tratamientos que más nos piden."
+  />
+
   <TeamSection profesionales={profesionalesEsteticdent} />
 
-  <Testimonials
-    testimonios={testimoniosEsteticdent}
-    fondoSolido
-    patron
-    fotos={fotosEquipamiento}
-  />
+  <Testimonials testimonios={testimoniosEsteticdent} fondoSolido patron />
 
   <LocationMap site={site} horarios={horariosEsteticdent} />
 
@@ -262,9 +292,45 @@ const schema = schemaConsultorio({
     mostrarTelefono
   />
 
+  <MobileActionBar
+    phone={site.telefonoWhatsApp}
+    message={`Hola, quiero agendar una cita en ${site.nombre}`}
+    negocioSlug={site.negocioSlug}
+    telefonoLlamada={site.telefonoWhatsApp}
+    ocultarConSelector="#contacto"
+  />
+
   <FloatingWhatsApp
     phone={site.telefonoWhatsApp}
     message={`Hola, quiero agendar una cita en ${site.nombre}`}
     negocioSlug={site.negocioSlug}
   />
 </BaseLayout>
+
+<style is:global>
+  /* Ritmo móvil del demo (spec 2026-07-22, Capa 3 — solo esta página):
+     secciones de 56px, H2 de 32px, hero de 85svh. `body` (y no `:root`)
+     para ganarle en cascada al default de global.css sin depender del orden
+     de los bundles. FloatingWhatsApp se oculta en <768px: MobileActionBar
+     ya cubre el WhatsApp persistente ahí. */
+  @media (max-width: 767px) {
+    body {
+      --section-pad: 3.5rem;
+    }
+
+    .section-title {
+      font-size: 2rem;
+    }
+
+    /* Los estilos scoped de Astro compilan a `.clase[data-astro-cid-*]`
+       (especificidad 0,2,0) — estos overrides necesitan 0,2,1 (elemento +
+       clase doblada) para ganarles sin !important. */
+    section.hero-equipamiento.hero-equipamiento {
+      min-height: 85svh;
+    }
+
+    a.wa-flotante.wa-flotante {
+      display: none;
+    }
+  }
+</style>

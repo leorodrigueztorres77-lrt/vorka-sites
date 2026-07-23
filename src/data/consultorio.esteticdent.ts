@@ -1,4 +1,4 @@
-import type { CategoriaServicios, FotoGaleria, HorarioDia, ItemTecnologia, PerfilProfesional, Testimonio } from './types';
+import type { CategoriaServicios, FotoGaleria, HorarioDia, ItemTecnologia, ParAntesDespues, PerfilProfesional, Testimonio } from './types';
 
 // Capa 3 — Estetic Dent. Los precios/duraciones de abajo siguen siendo
 // relleno placeholder (el cliente no entregó un catálogo por escrito) — Leo
@@ -89,6 +89,73 @@ export const galeriaEsteticdent: FotoGaleria[] = [
   { src: '/images/esteticdent/equipo-destacado-ia.webp', alt: 'Sillón dental de diseño moderno en Estetic Dent' },
   { src: '/images/esteticdent/equipamiento-1.webp', alt: 'Equipo de diagnóstico dental minimalista' },
   { src: '/images/esteticdent/equipamiento-2.webp', alt: 'Instrumental dental sobre bandeja en sala clara' },
+];
+
+// TODO PLACEHOLDER Nivel 2 (spec de densidad visual de Leo, 2026-07-22) —
+// cabeceras 3:2 de las cards ancla de servicios: sonrisas/pacientes de banco
+// (Pexels, misma serie fotográfica para coherencia de color; ver README.md de
+// public/images/esteticdent/ con el origen exacto). Reemplazar por fotos
+// reales de pacientes de la clínica (con consentimiento) antes de la entrega
+// final. El alt describe la foto, nunca delata que es de relleno (spec SALUD,
+// "Fugas de placeholder").
+export const imagenesAnclaEsteticdent: Record<string, FotoGaleria> = {
+  'Limpieza dental': {
+    src: '/images/esteticdent/servicio-limpieza.webp',
+    alt: 'Paciente sonriendo durante su limpieza dental',
+  },
+  'Diseño de sonrisa': {
+    src: '/images/esteticdent/servicio-diseno-sonrisa.webp',
+    alt: 'Sonrisa luminosa y alineada de una paciente',
+  },
+  'Urgencias con atención prioritaria': {
+    src: '/images/esteticdent/servicio-urgencias.webp',
+    alt: 'Odontóloga atendiendo a una paciente con microscopio clínico',
+  },
+};
+
+// TODO PLACEHOLDER Nivel 2 (spec de densidad visual de Leo, 2026-07-22) —
+// pares antes/después de "Sonrisas reales", fotos de banco (Pexels) SOLO para
+// el demo de venta. Cada par usa la MISMA persona (dos momentos de la misma
+// sesión fotográfica) para que el par sea plausible, pero NO son casos
+// clínicos reales: publicar esto en la entrega final sería publicidad
+// engañosa (CLAUDE.md, regla de autenticidad). Antes de publicar, reemplazar
+// por casos reales del consultorio con consentimiento escrito del paciente —
+// si el cliente no los tiene, la sección se quita completa (basta con pasar
+// un array vacío: AntesDespues.astro la omite sola).
+export const sonrisasEsteticdent: ParAntesDespues[] = [
+  {
+    tratamiento: 'Ortodoncia con alineadores',
+    antes: {
+      src: '/images/esteticdent/sonrisa-ortodoncia-antes.webp',
+      alt: 'Paciente revisando su alineador dental antes del tratamiento',
+    },
+    despues: {
+      src: '/images/esteticdent/sonrisa-ortodoncia-despues.webp',
+      alt: 'Paciente riendo con su sonrisa alineada tras el tratamiento',
+    },
+  },
+  {
+    tratamiento: 'Blanqueamiento dental',
+    antes: {
+      src: '/images/esteticdent/sonrisa-blanqueamiento-antes.webp',
+      alt: 'Selección del tono dental de la paciente con guía de colores',
+    },
+    despues: {
+      src: '/images/esteticdent/sonrisa-blanqueamiento-despues.webp',
+      alt: 'Paciente mostrando su sonrisa más luminosa en el sillón dental',
+    },
+  },
+  {
+    tratamiento: 'Diseño de sonrisa',
+    antes: {
+      src: '/images/esteticdent/sonrisa-diseno-antes.webp',
+      alt: 'Paciente durante el tratamiento dental en consultorio',
+    },
+    despues: {
+      src: '/images/esteticdent/sonrisa-diseno-despues.webp',
+      alt: 'Paciente sonriendo en el sillón dental con su nueva sonrisa',
+    },
+  },
 ];
 
 // Fase 2 (spec de diseño 2026-07-21): argumento de tecnología — título del

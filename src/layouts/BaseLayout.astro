@@ -143,6 +143,7 @@ const ogDescripcionPagina = ogDescripcion ?? descripcionPagina;
 
         let origen = 'otro';
         if (link.closest('.wa-flotante')) origen = 'flotante';
+        else if (link.closest('.accion-movil')) origen = 'barra-movil';
         else if (link.closest('.agendar-btn')) origen = 'agendar-servicio';
         else if (link.closest('header')) origen = 'header';
         else if (link.closest('.cta-final')) origen = 'cta-final';

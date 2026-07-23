@@ -1,0 +1,98 @@
+---
+// Capa 1 — barra de acción fija inferior, SOLO móvil (<768px): dos botones
+// siempre a mano durante todo el scroll — "Agendar por WhatsApp" (acento,
+// 60% del ancho) y "Llamar" (outline, 40%). Se oculta sola cuando la sección
+// indicada por `ocultarConSelector` (por defecto el formulario de contacto)
+// entra al viewport, para no competir con ese canal de conversión.
+//
+// La página que la usa debería ocultar FloatingWhatsApp en <768px (o no
+// montarlo): ambos ocupan el borde inferior y el botón de WhatsApp de esta
+// barra ya cumple ese rol. El padding-bottom que esta barra añade al <body>
+// en móvil evita que tape el footer.
+import { buildWhatsAppLink } from '@/lib/whatsapp';
+
+interface Props {
+  phone: string;
+  message: string;
+  negocioSlug: string;
+  /** Número para el botón "Llamar", formato internacional sin +, ej. '593998308906'. */
+  telefonoLlamada: string;
+  /** Selector de la sección que oculta la barra al entrar al viewport. */
+  ocultarConSelector?: string;
+}
+
+const { phone, message, negocioSlug, telefonoLlamada, ocultarConSelector = '#contacto' } = Astro.props;
+const hrefWhatsApp = buildWhatsAppLink({ phone, message, negocioSlug });
+const hrefTel = `tel:+${telefonoLlamada}`;
+---
+
+<nav class="accion-movil" aria-label="Acciones rápidas" data-ocultar-con={ocultarConSelector}>
+  <a class="btn btn--acento accion-movil__whatsapp" href={hrefWhatsApp} target="_blank" rel="noopener noreferrer">
+    Agendar por WhatsApp
+  </a>
+  <a class="btn accion-movil__llamar" href={hrefTel}>Llamar</a>
+</nav>
+
+<script>
+  // Oculta la barra mientras la sección objetivo (formulario de contacto)
+  // está en el viewport, y la devuelve al salir.
+  const barra = document.querySelector<HTMLElement>('.accion-movil');
+  const selector = barra?.dataset.ocultarCon;
+  const objetivo = selector ? document.querySelector(selector) : null;
+  if (barra && objetivo && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        barra.classList.toggle('accion-movil--oculta', entry.isIntersecting);
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(objetivo);
+  }
+</script>
+
+<style>
+  .accion-movil {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 60;
+    display: none;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: #fff;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    transition: transform 0.25s ease;
+  }
+
+  .accion-movil--oculta {
+    transform: translateY(110%);
+  }
+
+  .accion-movil__whatsapp {
+    flex: 3;
+  }
+
+  .accion-movil__llamar {
+    flex: 2;
+    background: transparent;
+    color: var(--color-primario);
+    border: 2px solid var(--color-primario);
+  }
+
+  @media (max-width: 767px) {
+    .accion-movil {
+      display: flex;
+    }
+
+    /* La barra mide ~72px (12+44+12 + borde, grilla de 8pt): el body
+       necesita ese colchón para que la barra no tape el footer. */
+    :global(body) {
+      padding-bottom: 80px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .accion-movil {
+      transition: none;
+    }
+  }
+</style>

@@ -157,6 +157,18 @@ export interface FotoGaleria {
 }
 
 /**
+ * Par antes/después de un tratamiento (Capa 2, consultorio — sección
+ * "Sonrisas reales"). Las fotos de un mismo par deben ser de la MISMA
+ * persona para que el par sea creíble; en la entrega final solo se publican
+ * casos reales del propio consultorio con consentimiento del paciente.
+ */
+export interface ParAntesDespues {
+  tratamiento: string;
+  antes: FotoGaleria;
+  despues: FotoGaleria;
+}
+
+/**
  * Sección "Nuestra historia" (Capa 2, restaurante) — usada por las variantes
  * cuyo orden de secciones pone la historia del negocio antes que el menú.
  */

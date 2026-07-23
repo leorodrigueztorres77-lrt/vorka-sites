@@ -9,11 +9,17 @@
 // cada consulta") + CTA de WhatsApp. El banner es opcional: sin
 // `bannerTexto`/`phone`/`negocioSlug`, la sección se queda solo con las
 // tarjetas (comportamiento seguro para cualquier caller que no los pase).
-import type { ItemTecnologia } from '@/data/types';
+import type { FotoGaleria, ItemTecnologia } from '@/data/types';
 import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
 
 interface Props {
   items: ItemTecnologia[];
+  /**
+   * Fotos de cabecera de las tarjetas (16:9, lazy), emparejadas por índice
+   * con `items` — clínica/equipos reales del negocio. Opcional: sin esto las
+   * tarjetas quedan solo con texto (comportamiento anterior a 2026-07-22).
+   */
+  fotos?: FotoGaleria[];
   /** Diferenciador principal, ej. "Rayos X digital gratis en cada consulta". */
   bannerTexto?: string;
   phone?: string;
@@ -22,7 +28,7 @@ interface Props {
   bannerMensaje?: string;
 }
 
-const { items, bannerTexto, phone, negocioSlug, bannerMensaje } = Astro.props;
+const { items, fotos, bannerTexto, phone, negocioSlug, bannerMensaje } = Astro.props;
 const mostrarBanner = Boolean(bannerTexto && phone && negocioSlug);
 ---
 
@@ -32,10 +38,22 @@ const mostrarBanner = Boolean(bannerTexto && phone && negocioSlug);
     <p class="equipamiento__intro">Equipos e instalaciones pensados para que tu visita sea rápida, cómoda y precisa.</p>
 
     <div class="equipamiento__grid">
-      {items.map((item) => (
+      {items.map((item, i) => (
         <div class="equipamiento__card reveal">
-          <h3 class="equipamiento__card-titulo">{item.titulo}</h3>
-          <p class="equipamiento__card-beneficio">{item.beneficio}</p>
+          {fotos?.[i] && (
+            <img
+              class="equipamiento__card-foto"
+              src={fotos[i].src}
+              alt={fotos[i].alt}
+              loading="lazy"
+              width="800"
+              height="450"
+            />
+          )}
+          <div class="equipamiento__card-cuerpo">
+            <h3 class="equipamiento__card-titulo">{item.titulo}</h3>
+            <p class="equipamiento__card-beneficio">{item.beneficio}</p>
+          </div>
         </div>
       ))}
     </div>
@@ -77,8 +95,23 @@ const mostrarBanner = Boolean(bannerTexto && phone && negocioSlug);
   .equipamiento__card {
     background: #fff;
     border-radius: 16px;
-    padding: 2rem;
+    overflow: hidden;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .equipamiento__card-foto {
+    width: 100%;
+    height: auto; /* sin esto, el atributo height del <img> pisa al aspect-ratio */
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    /* Regla de profundidad visual #1 (CLAUDE.md): mismo filtro que el resto
+       de fotos del sitio para que las tres cabeceras se lean como un solo
+       lugar. */
+    filter: saturate(1.05) brightness(1.02) contrast(1.03);
+  }
+
+  .equipamiento__card-cuerpo {
+    padding: 1.5rem 2rem 2rem;
   }
 
   .equipamiento__card-titulo {

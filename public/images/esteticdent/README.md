@@ -247,3 +247,40 @@ protagonismo en esa posición específica, no sobre la foto en sí ni sobre
 consentimiento/autenticidad. `TeamSection` también se subió de posición en la
 página (ahora justo después de Testimonials) para que haya una cara humana
 antes del segundo scroll.
+
+## Fotos nuevas 2026-07-22 — spec de densidad visual (cards ancla + "Sonrisas reales")
+
+⚠️ **PLACEHOLDER Nivel 2 — Pexels, SOLO demo de venta.** Descargadas y
+convertidas a WebP con `sharp` (recorte `attention`, calidad 78). Los
+originales JPG están en `originales/pexels-<id>.jpg`. Casi todas pertenecen a
+la MISMA serie fotográfica (misma clínica, mismos modelos, fotógrafo Gustavo
+Fring en Pexels) para cumplir el tratamiento de color unificado (regla de
+profundidad visual #1, CLAUDE.md).
+
+**Cabeceras 3:2 de las cards ancla de servicios:**
+
+| Archivo | Origen (Pexels ID) | Contenido |
+|---|---|---|
+| `servicio-limpieza.webp` | 3845653 | Paciente sonriendo durante su limpieza, con espejo dental |
+| `servicio-diseno-sonrisa.webp` | 3762398 | Sonrisa luminosa en primer plano (fondo azul) |
+| `servicio-urgencias.webp` | 3845746 | Odontóloga atendiendo con microscopio clínico |
+
+**Pares antes/después de la sección "Sonrisas reales" (1:1):**
+
+| Archivo | Origen (Pexels ID) | Contenido |
+|---|---|---|
+| `sonrisa-ortodoncia-antes.webp` | 3845678 | Paciente (sonrisa cerrada) revisando alineador |
+| `sonrisa-ortodoncia-despues.webp` | 3845757 | La misma paciente riendo con la odontóloga |
+| `sonrisa-blanqueamiento-antes.webp` | 3845548 | Guía de tonos VITA contra la sonrisa de la paciente |
+| `sonrisa-blanqueamiento-despues.webp` | 3845625 | La misma paciente con sonrisa abierta en el sillón |
+| `sonrisa-diseno-antes.webp` | 3845735 | Paciente (hombre) durante tratamiento |
+| `sonrisa-diseno-despues.webp` | 3845810 | El mismo paciente sonriendo en el sillón |
+
+Cada par antes/después usa la **misma persona** (dos momentos de la misma
+sesión de fotos) para que el par sea plausible en el demo — pero **NO son
+casos clínicos reales**. Regla dura para la entrega final: o se reemplazan
+por casos reales del propio consultorio **con consentimiento escrito del
+paciente**, o la sección "Sonrisas reales" se retira completa (pasar array
+vacío a `AntesDespues.astro` — la sección se omite sola). Publicar resultados
+de banco como si fueran propios es publicidad engañosa (CLAUDE.md, regla de
+autenticidad del vertical).

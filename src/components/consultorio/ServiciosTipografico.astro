@@ -4,13 +4,24 @@
 // y una descripción técnica pero accesible bastan. Una sola foto grande de
 // equipo/tecnología destacada encima del listado completo, categorías
 // separadas por espacio generoso (no líneas).
-import type { CategoriaServicios, ServicioMedico } from '@/data/types';
+//
+// AJUSTE 2026-07-22 (spec de densidad visual/móvil de Leo):
+// - Las cards ancla aceptan una imagen de cabecera 3:2 opcional
+//   (`imagen` en ServicioAncla) arriba del título — sonrisas/pacientes,
+//   no equipamiento.
+// - En móvil (<768px) cada categoría del listado es un acordeón <details>
+//   cerrado por defecto (cabecera: nombre + "desde $XX" + chevron). En
+//   desktop se fuerza `open` vía script y la cabecera vuelve a verse como el
+//   h3 centrado de siempre — la lista completa, sin interacción.
+import type { CategoriaServicios, FotoGaleria, ServicioMedico } from '@/data/types';
 import AgendarBtn from './AgendarBtn.astro';
 
 interface ServicioAncla {
   servicio: ServicioMedico;
   /** Badge corto sobre la card, ej. "Más solicitado" — omitir si no aplica. */
   etiqueta?: string;
+  /** Imagen de cabecera 3:2 (sonrisa/paciente, nunca equipamiento) — opcional. */
+  imagen?: FotoGaleria;
 }
 
 interface Props {
@@ -36,6 +47,15 @@ const {
   phone,
   negocioSlug,
 } = Astro.props;
+
+// "desde $XX" de la cabecera del acordeón: el precio de entrada más bajo de
+// la categoría. Si ningún servicio tiene precio, la cabecera lo omite.
+const precioDesdeCategoria = (cat: CategoriaServicios): number | null => {
+  const precios = cat.servicios
+    .map((s) => s.precioDesde)
+    .filter((p): p is number => p != null);
+  return precios.length > 0 ? Math.min(...precios) : null;
+};
 ---
 
 <section id="servicios" class="section" aria-labelledby="servicios-titulo">
@@ -51,48 +71,88 @@ const {
 
     {serviciosAncla.length > 0 && (
       <div class="servicios-tipografico__anclas">
-        {serviciosAncla.map(({ servicio, etiqueta }) => (
+        {serviciosAncla.map(({ servicio, etiqueta, imagen }) => (
           <article class="servicios-tipografico__ancla reveal--scale">
+            {imagen && (
+              <img
+                class="servicios-tipografico__ancla-img"
+                src={imagen.src}
+                alt={imagen.alt}
+                loading="lazy"
+                width="900"
+                height="600"
+              />
+            )}
             {etiqueta && <span class="servicios-tipografico__ancla-badge">{etiqueta}</span>}
-            <p class="servicios-tipografico__ancla-nombre">{servicio.nombre}</p>
-            {servicio.descripcion && <p class="servicios-tipografico__ancla-descripcion">{servicio.descripcion}</p>}
-            <p class="servicios-tipografico__ancla-precio">
-              {servicio.precioDesde != null ? `Desde $${servicio.precioDesde.toFixed(2)}` : 'Consultar'}
-            </p>
-            <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={servicio.nombre} />
+            <div class="servicios-tipografico__ancla-cuerpo">
+              <p class="servicios-tipografico__ancla-nombre">{servicio.nombre}</p>
+              {servicio.descripcion && <p class="servicios-tipografico__ancla-descripcion">{servicio.descripcion}</p>}
+              <p class="servicios-tipografico__ancla-precio">
+                {servicio.precioDesde != null ? `Desde $${servicio.precioDesde.toFixed(2)}` : 'Consultar'}
+              </p>
+              <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={servicio.nombre} />
+            </div>
           </article>
         ))}
       </div>
     )}
 
     <div class="servicios-tipografico">
-      {categorias.map((cat) => (
-        <div class="servicios-tipografico__categoria reveal">
-          <h3>{cat.categoria}</h3>
-          <ul class="servicios-tipografico__lista">
-            {cat.servicios.map((s) => (
-              <li class="servicios-tipografico__servicio">
-                <div class="servicios-tipografico__texto">
-                  <p class="servicios-tipografico__nombre">{s.nombre}</p>
-                  {s.duracionMin && <p class="servicios-tipografico__duracion">≈ {s.duracionMin} min</p>}
-                  {s.descripcion && <p class="servicios-tipografico__descripcion">{s.descripcion}</p>}
-                </div>
-                <div class="servicios-tipografico__accion">
-                  <span class="servicios-tipografico__precio">
-                    {s.precioDesde != null ? `Desde $${s.precioDesde.toFixed(2)}` : 'Consultar'}
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
-          <div class="servicios-tipografico__categoria-cta">
-            <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={cat.categoria} />
-          </div>
-        </div>
-      ))}
+      {categorias.map((cat) => {
+        const desde = precioDesdeCategoria(cat);
+        return (
+          <details class="servicios-tipografico__categoria reveal">
+            <summary class="servicios-tipografico__cabecera">
+              <h3>{cat.categoria}</h3>
+              {desde != null && <span class="servicios-tipografico__desde">desde ${desde}</span>}
+              <svg class="servicios-tipografico__chevron" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </summary>
+            <div class="servicios-tipografico__contenido">
+              <ul class="servicios-tipografico__lista">
+                {cat.servicios.map((s) => (
+                  <li class="servicios-tipografico__servicio">
+                    <div class="servicios-tipografico__texto">
+                      <p class="servicios-tipografico__nombre">{s.nombre}</p>
+                      {s.duracionMin && <p class="servicios-tipografico__duracion">≈ {s.duracionMin} min</p>}
+                      {s.descripcion && <p class="servicios-tipografico__descripcion">{s.descripcion}</p>}
+                    </div>
+                    <div class="servicios-tipografico__accion">
+                      <span class="servicios-tipografico__precio">
+                        {s.precioDesde != null ? `Desde $${s.precioDesde.toFixed(2)}` : 'Consultar'}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <div class="servicios-tipografico__categoria-cta">
+                <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={cat.categoria} />
+              </div>
+            </div>
+          </details>
+        );
+      })}
     </div>
   </div>
 </section>
+
+{/* is:inline para aplicar el estado desktop antes del primer paint — un
+   script bundleado (deferred) dejaría ver un instante las categorías
+   plegadas en pantallas grandes. */}
+<script is:inline>
+  (() => {
+    const mq = window.matchMedia('(min-width: 768px)');
+    const sync = () => {
+      document.querySelectorAll('#servicios details.servicios-tipografico__categoria').forEach((d) => {
+        if (mq.matches) d.setAttribute('open', '');
+        else d.removeAttribute('open');
+      });
+    };
+    sync();
+    mq.addEventListener('change', sync);
+  })();
+</script>
 
 <style>
   .servicios-tipografico__titulo {
@@ -142,31 +202,52 @@ const {
     position: relative;
     background: var(--color-fondo, #fff);
     border-radius: 16px;
-    padding: 2rem 1.75rem;
+    overflow: hidden;
     text-align: center;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     display: flex;
     flex-direction: column;
+  }
+
+  .servicios-tipografico__ancla-img {
+    width: 100%;
+    height: auto; /* sin esto, el atributo height del <img> pisa al aspect-ratio */
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    /* Mismo tratamiento de color que el resto de fotos del sitio (regla de
+       profundidad visual #1, CLAUDE.md). */
+    filter: saturate(1.05) brightness(1.02) contrast(1.03);
+  }
+
+  .servicios-tipografico__ancla-cuerpo {
+    padding: 1.5rem 1.75rem 2rem;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 0.75rem;
+    flex: 1;
   }
 
   .servicios-tipografico__ancla-badge {
     position: absolute;
-    top: -0.75rem;
+    top: 0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
     background: var(--color-acento);
     color: #1a1a1a;
     font-size: 0.8rem;
     font-weight: 700;
     padding: 0.35rem 1rem;
     border-radius: 999px;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
   }
 
   .servicios-tipografico__ancla-nombre {
     font-family: var(--font-titulos);
     font-weight: 700;
     font-size: 1.35rem;
-    margin: 0.5rem 0 0;
+    margin: 0;
   }
 
   .servicios-tipografico__ancla-descripcion {
@@ -194,13 +275,43 @@ const {
     margin-bottom: 0;
   }
 
-  .servicios-tipografico__categoria h3 {
+  /* La cabecera del <details> se ve como el h3 centrado de siempre en
+     desktop (sin chevron, sin precio, sin interacción — el script fuerza
+     open); en móvil se convierte en la fila táctil del acordeón. */
+  .servicios-tipografico__cabecera {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .servicios-tipografico__cabecera::-webkit-details-marker {
+    display: none;
+  }
+
+  .servicios-tipografico__cabecera h3 {
     font-family: var(--font-titulos);
     font-weight: 600;
     font-size: 1.75rem;
     text-align: center;
-    margin: 0 0 2rem;
+    margin: 0;
     color: var(--color-primario);
+  }
+
+  .servicios-tipografico__desde,
+  .servicios-tipografico__chevron {
+    display: none;
+  }
+
+  .servicios-tipografico__contenido {
+    margin-top: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .servicios-tipografico__cabecera {
+      pointer-events: none;
+    }
   }
 
   .servicios-tipografico__lista {
@@ -258,9 +369,61 @@ const {
     margin-top: 1.75rem;
   }
 
-  @media (max-width: 560px) {
+  /* Acordeón móvil (<768px): cerrado por defecto, cabecera táctil de 48px+
+     (grilla de 8pt), chevron que rota al abrir. */
+  @media (max-width: 767px) {
+    .servicios-tipografico__categoria {
+      margin-bottom: 1rem;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      background: var(--color-fondo, #fff);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .servicios-tipografico__categoria:last-child {
+      margin-bottom: 0;
+    }
+
+    .servicios-tipografico__cabecera {
+      justify-content: flex-start;
+      min-height: 48px;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+    }
+
+    .servicios-tipografico__cabecera h3 {
+      font-size: 1.2rem;
+      text-align: left;
+      flex: 1;
+    }
+
+    .servicios-tipografico__desde {
+      display: inline;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--color-primario);
+      white-space: nowrap;
+    }
+
+    .servicios-tipografico__chevron {
+      display: block;
+      flex-shrink: 0;
+      color: var(--color-primario);
+      transition: transform 0.2s ease;
+    }
+
+    .servicios-tipografico__categoria[open] .servicios-tipografico__chevron {
+      transform: rotate(180deg);
+    }
+
+    .servicios-tipografico__contenido {
+      margin-top: 0;
+      padding: 0.25rem 1rem 1.25rem;
+    }
+
     .servicios-tipografico__servicio {
       flex-direction: column;
+      gap: 0.5rem;
     }
 
     .servicios-tipografico__accion {

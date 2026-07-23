@@ -76,8 +76,11 @@ select:focus-visible,
   padding: 0 1.25rem;
 }
 
+/* --section-pad permite que una página (Capa 3) ajuste el ritmo vertical de
+   sus secciones sin tocar este archivo compartido — ej. demo-esteticdent lo
+   sube en móvil para dar más aire entre bloques densos. */
 .section {
-  padding: 3.5rem 0;
+  padding: var(--section-pad, 3.5rem) 0;
 }
 
 .section--alterno {
@@ -237,7 +240,7 @@ select:focus-visible,
 }
 
 @media (max-width: 720px) {
-  .section {
-    padding: 2.5rem 0;
+  :root {
+    --section-pad: 2.5rem;
   }
 }
