@@ -151,37 +151,45 @@ export const fotosTecnologiaEsteticdent: FotoGaleria[] = [
 // por casos reales del consultorio con consentimiento escrito del paciente —
 // si el cliente no los tiene, la sección se quita completa (basta con pasar
 // un array vacío: AntesDespues.astro la omite sola).
+// RE-GRADE 2026-07-23 v3 (feedback de Leo: la v2 seguia desentonando del set
+// Gemini): el problema no era solo saturacion sino balance de blancos — las
+// fotos de stock estan iluminadas con flash frio (azulado) mientras el set
+// Gemini tiene luz ambiental calida. v3 corrige temperatura de color primero
+// (sharp .linear() sube rojo/baja azul) y despues aplica la misma reduccion
+// de saturacion/gamma que v2. NO se regeneraron con IA: la regla dura del
+// pipeline prohibe fabricar resultados clinicos antes/despues. Filename
+// nuevo = cache-busting (leccion El Fogon).
 export const sonrisasEsteticdent: ParAntesDespues[] = [
   {
     tratamiento: 'Ortodoncia con alineadores',
     antes: {
-      src: '/images/esteticdent/sonrisa-ortodoncia-antes.webp',
+      src: '/images/esteticdent/sonrisa-ortodoncia-antes-v3.webp',
       alt: 'Paciente revisando su alineador dental antes del tratamiento',
     },
     despues: {
-      src: '/images/esteticdent/sonrisa-ortodoncia-despues.webp',
+      src: '/images/esteticdent/sonrisa-ortodoncia-despues-v3.webp',
       alt: 'Paciente riendo con su sonrisa alineada tras el tratamiento',
     },
   },
   {
     tratamiento: 'Blanqueamiento dental',
     antes: {
-      src: '/images/esteticdent/sonrisa-blanqueamiento-antes.webp',
+      src: '/images/esteticdent/sonrisa-blanqueamiento-antes-v3.webp',
       alt: 'Selección del tono dental de la paciente con guía de colores',
     },
     despues: {
-      src: '/images/esteticdent/sonrisa-blanqueamiento-despues.webp',
+      src: '/images/esteticdent/sonrisa-blanqueamiento-despues-v3.webp',
       alt: 'Paciente mostrando su sonrisa más luminosa en el sillón dental',
     },
   },
   {
     tratamiento: 'Diseño de sonrisa',
     antes: {
-      src: '/images/esteticdent/sonrisa-diseno-antes.webp',
+      src: '/images/esteticdent/sonrisa-diseno-antes-v3.webp',
       alt: 'Paciente durante el tratamiento dental en consultorio',
     },
     despues: {
-      src: '/images/esteticdent/sonrisa-diseno-despues.webp',
+      src: '/images/esteticdent/sonrisa-diseno-despues-v3.webp',
       alt: 'Paciente sonriendo en el sillón dental con su nueva sonrisa',
     },
   },

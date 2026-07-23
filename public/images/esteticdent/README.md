@@ -334,3 +334,31 @@ Archivos: `card-limpieza`, `card-diseno-sonrisa`, `card-urgencias` (3:2),
 `retirados-pollinations/` (sus fuentes siguen en `originales/`).
 `hero-consultorio` NO está integrado: Leo pidió mantener el hero actual
 (`clinica-ia.webp`); queda optimizado y listo por si decide cambiarlo.
+
+## Re-grade 2026-07-23 v3 — pares antes/después de "Sonrisas reales"
+
+⚠️ **Sigue siendo Nivel 2 (stock Pexels), NO se regeneró con IA** — la regla
+dura del pipeline prohíbe fabricar antes/después clínicos (ver
+`scripts/generate-images.mjs`, `PATRONES_PROHIBIDOS`).
+
+Feedback de Leo tras integrar el set Gemini: los 6 pares de stock seguían
+desentonando ("siguen siendo no coherentes"). Un primer ajuste de
+saturación/brillo (`-v2.webp`, descartado, nunca commiteado) resultó
+insuficiente porque el problema real no era saturación sino **balance de
+blancos**: las fotos de stock están iluminadas con flash frío/azulado,
+mientras el set Gemini tiene luz ambiental cálida. `-v3.webp` corrige
+temperatura de color primero (`sharp .linear([1.08, 1.0, 0.86], [-6, 0, 4])`
+para subir rojo/bajar azul) y después aplica la reducción de
+saturación/gamma (`modulate({ saturation: 0.62, brightness: 1.02 }).gamma(1.06)`).
+
+Regrades desde los originales `sonrisa-*.webp` (no desde el intento
+descartado), archivos: `sonrisa-ortodoncia-antes-v3.webp`,
+`sonrisa-ortodoncia-despues-v3.webp`, `sonrisa-blanqueamiento-antes-v3.webp`,
+`sonrisa-blanqueamiento-despues-v3.webp`, `sonrisa-diseno-antes-v3.webp`,
+`sonrisa-diseno-despues-v3.webp`. Los `sonrisa-*.webp` sin sufijo se
+conservan como fuente/respaldo para futuros regrades. Filename nuevo =
+cache-busting (lección El Fogón).
+
+Regla intacta: reemplazar por casos reales del propio consultorio con
+consentimiento escrito del paciente antes de la entrega final, o retirar la
+sección completa si el cliente no los tiene.
