@@ -13,6 +13,7 @@ import FloatingWhatsApp from '@/components/common/FloatingWhatsApp.astro';
 
 import Historia from '@/components/restaurant/Historia.astro';
 import ServiciosTabs from '@/components/consultorio/ServiciosTabs.astro';
+import TeamSection from '@/components/consultorio/TeamSection.astro';
 
 import { siteConfigOdontocrea } from '@/data/site.odontocrea';
 import {
@@ -21,9 +22,36 @@ import {
   historiaOdontocrea,
   horariosOdontocrea,
   testimoniosOdontocrea,
+  galeriaOdontocrea,
+  profesionalesOdontocrea,
 } from '@/data/consultorio.odontocrea';
+import { validarConfigCliente } from '@/lib/validarConfigCliente';
+import { schemaConsultorio } from '@/lib/schemaOrg';
 
 const site = siteConfigOdontocrea;
+
+// Demo de venta a prospecto (todavía no cliente confirmado) — muestra el
+// bloque ilustrativo de Testimonials en vez de ocultar la sección entera.
+const modoDemo = true;
+
+validarConfigCliente({
+  site,
+  servicios: serviciosOdontocrea,
+  galeria: galeriaOdontocrea,
+  horarios: horariosOdontocrea,
+});
+
+// SEO local (spec SALUD 2026-07-20). Zona no se afina a un barrio único en
+// el título (a diferencia de Estetic Dent) porque el negocio tiene 2 sedes en
+// zonas distintas (Chillogallo + La Magdalena) — "Quito" es lo único que
+// aplica a ambas sin favorecer una sobre la otra.
+const schema = schemaConsultorio({
+  site,
+  url: 'https://vorka-sites.vercel.app/demo-odontocrea/',
+  tipo: 'Dentist',
+  horarios: horariosOdontocrea,
+  servicios: serviciosOdontocrea,
+});
 
 const navItems = [
   { label: 'Servicios', href: '#servicios' },
@@ -32,10 +60,11 @@ const navItems = [
 ];
 ---
 
-<BaseLayout site={site}>
+<BaseLayout site={site} ogImage={new URL(heroFotoOdontocrea, 'https://vorka-sites.vercel.app').href}>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(schema)} />
   <Header site={site} navItems={navItems} />
 
-  <HeroSplit site={site} imagen={heroFotoOdontocrea} imagenAlt="Clínica dental Odontocrea (foto de banco, placeholder temporal)" estilo="superpuesto">
+  <HeroSplit site={site} imagen={heroFotoOdontocrea} imagenAlt="Clínica dental Odontocrea, sala de atención moderna" estilo="superpuesto">
     <Fragment slot="cta">
       <a class="btn btn--primario" href="#servicios">Ver todos los servicios</a>
       <WhatsAppButton
@@ -50,13 +79,22 @@ const navItems = [
 
   <Historia historia={historiaOdontocrea} nombreNegocio={site.nombre} fondoAlterno revealFoto="escala" />
 
+  <TeamSection profesionales={profesionalesOdontocrea} />
+
   <ServiciosTabs categorias={serviciosOdontocrea} phone={site.telefonoWhatsApp} negocioSlug={site.negocioSlug} />
 
-  <Testimonials testimonios={testimoniosOdontocrea} carrusel fondoSolido patron />
+  <Testimonials
+    testimonios={testimoniosOdontocrea}
+    carrusel
+    fondoSolido
+    patron
+    modoDemo={modoDemo}
+    fotos={galeriaOdontocrea.slice(1)}
+  />
 
   <LocationMap site={site} horarios={horariosOdontocrea} />
 
-  <ContactForm site={site} productoLabel="Especialidad de interés" />
+  <ContactForm site={site} productoLabel="Especialidad de interés" mostrarCantidad={false} />
 
   <Footer site={site} />
 

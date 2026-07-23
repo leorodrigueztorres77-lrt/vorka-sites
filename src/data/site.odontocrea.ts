@@ -1,4 +1,4 @@
-import type { SiteConfig } from './types';
+import type { Sede, SiteConfig } from './types';
 import { brandKitOdontocrea } from './brandkit.odontocrea';
 
 // Capa 3 — Odontocrea (consultorio odontológico, Quito).
@@ -24,6 +24,18 @@ const TELEFONO_WHATSAPP_IG = '593983591828';
 // Cadena Lt. 301, La Libertad de Chillogallo, Quito". Existe una segunda sede
 // ("SUCURSAL La Magdalena") sin dirección exacta visible en las capturas.
 // Confirmar ambas direcciones con el cliente antes de publicar.
+// Segunda sede (spec SALUD 2026-07-20, "Bloque de confianza local" —
+// multi-sede). Solo la zona ("La Magdalena") está confirmada por captura de
+// Instagram — sin dirección exacta ni horario propio todavía. `direccion`
+// muestra únicamente el dato ya confirmado (la zona), sin ningún paréntesis
+// "por confirmar" visible al paciente (spec SALUD, "Fugas de placeholder");
+// ese caveat vive solo aquí, en el comentario interno. Confirmar la dirección
+// exacta con el cliente antes de publicar la entrega final.
+const sedeLaMagdalena: Sede = {
+  nombre: 'Sucursal La Magdalena',
+  direccion: 'La Magdalena, Quito',
+};
+
 export const siteConfigOdontocrea: SiteConfig = {
   negocioSlug: 'odontocrea',
   nombre: 'Odontocrea',
@@ -34,6 +46,13 @@ export const siteConfigOdontocrea: SiteConfig = {
   colores: brandKitOdontocrea.paleta,
   fuentes: brandKitOdontocrea.tipografia,
   mapaEmbedUrl: '',
+  sedesAdicionales: [sedeLaMagdalena],
+  // Handle real confirmado por captura de Instagram (2026-07-19) — ver
+  // consultorio.odontocrea.ts. Sin googleBusinessUrl/ratingGoogle: ninguna
+  // calificación de Google está confirmada todavía, así que LocationMap no
+  // muestra ningún badge de rating (spec SALUD, "nunca inventar una
+  // calificación").
+  instagramUrl: 'https://www.instagram.com/odontocrea.uio/',
   seo: {
     tituloDefault: 'Odontocrea — Todas las especialidades odontológicas en Quito',
     descripcionDefault:

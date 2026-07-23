@@ -28,7 +28,10 @@ const navItems = [
   { label: 'Contacto', href: '#contacto' },
 ];
 
-const precioDesde = Math.min(...serviciosSample.flatMap((cat) => cat.servicios.map((s) => s.precioDesde)));
+const preciosConfirmados = serviciosSample
+  .flatMap((cat) => cat.servicios.map((s) => s.precioDesde))
+  .filter((p): p is number => p != null);
+const precioDesde = preciosConfirmados.length > 0 ? Math.min(...preciosConfirmados) : undefined;
 ---
 
 <BaseLayout site={siteConfigConsultorio}>
@@ -75,7 +78,7 @@ const precioDesde = Math.min(...serviciosSample.flatMap((cat) => cat.servicios.m
     </div>
   </section>
 
-  <ContactForm site={siteConfigConsultorio} productoLabel="Especialidad de interés" />
+  <ContactForm site={siteConfigConsultorio} productoLabel="Especialidad de interés" mostrarCantidad={false} />
 
   <Footer site={siteConfigConsultorio} />
 

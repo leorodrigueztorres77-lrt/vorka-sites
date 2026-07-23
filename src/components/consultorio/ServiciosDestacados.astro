@@ -35,7 +35,9 @@ const destacados = categorias.flatMap((cat) =>
               <p class="servicios-destacados-card__nombre">{s.nombre}</p>
               {s.descripcion && <p class="servicios-destacados-card__descripcion">{s.descripcion}</p>}
               <div class="servicios-destacados-card__fila">
-                <span class="servicios-destacados-card__precio">Desde ${s.precioDesde.toFixed(2)}</span>
+                <span class="servicios-destacados-card__precio">
+                  {s.precioDesde != null ? `Desde $${s.precioDesde.toFixed(2)}` : 'Consultar'}
+                </span>
                 <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={s.nombre} />
               </div>
             </div>
@@ -56,7 +58,9 @@ const destacados = categorias.flatMap((cat) =>
                   {s.descripcion && <p class="servicios-completo__descripcion">{s.descripcion}</p>}
                 </div>
                 <div class="servicios-completo__accion">
-                  <span class="servicios-completo__precio">Desde ${s.precioDesde.toFixed(2)}</span>
+                  <span class="servicios-completo__precio">
+                    {s.precioDesde != null ? `Desde $${s.precioDesde.toFixed(2)}` : 'Consultar'}
+                  </span>
                   <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={s.nombre} />
                 </div>
               </li>

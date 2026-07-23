@@ -56,7 +56,9 @@ const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
                     {destacados.map((s) => (
                       <div class="servicios-tabs__destacado-item reveal--scale">
                         <img src={s.imagen} alt={s.nombre} loading="lazy" width="280" height="280" />
-                        <span class="servicios-tabs__precio-burbuja">Desde ${s.precioDesde.toFixed(2)}</span>
+                        <span class="servicios-tabs__precio-burbuja">
+                          {s.precioDesde != null ? `Desde $${s.precioDesde.toFixed(2)}` : 'Consultar'}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -78,7 +80,9 @@ const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
                     {s.descripcion && <p class="servicios-tabs__descripcion">{s.descripcion}</p>}
                   </div>
                   <div class="servicios-tabs__accion">
-                    <span class="servicios-tabs__precio">Desde ${s.precioDesde.toFixed(2)}</span>
+                    <span class="servicios-tabs__precio">
+                      {s.precioDesde != null ? `Desde $${s.precioDesde.toFixed(2)}` : 'Consultar'}
+                    </span>
                     <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={s.nombre} />
                   </div>
                 </li>

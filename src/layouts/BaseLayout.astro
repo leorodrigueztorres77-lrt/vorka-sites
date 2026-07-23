@@ -123,5 +123,46 @@ const ogDescripcionPagina = ogDescripcion ?? descripcionPagina;
         revealables.forEach((el) => el.classList.add('is-visible'));
       }
     </script>
+
+    <script>
+      // Tracking de CTAs de WhatsApp (spec SALUD 2026-07-20, "CTAs y
+      // tracking"). No asume ningún proveedor de analítica específico —
+      // ningún cliente tiene todavía un GTM/GA4 confirmado, así que esto solo
+      // empuja a `window.dataLayer` si ya existe (convención estándar de
+      // GTM/GA4); si no existe, no hace nada. Un solo listener delegado en
+      // `document` cubre Header, cada Hero de las 5 variantes de Capa 2, el
+      // botón flotante y el botón "Agendar" por servicio — sin tener que
+      // tocar cada variante una por una, clasificando el origen del click
+      // por su posición en la página (misma lógica que ya distingue estas
+      // zonas visualmente: `.wa-flotante`, `.agendar-btn`, `header`, `#inicio`,
+      // `.cta-final`).
+      document.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement | null;
+        const link = target?.closest('a[href*="wa.me"]') as HTMLAnchorElement | null;
+        if (!link) return;
+
+        let origen = 'otro';
+        if (link.closest('.wa-flotante')) origen = 'flotante';
+        else if (link.closest('.agendar-btn')) origen = 'agendar-servicio';
+        else if (link.closest('header')) origen = 'header';
+        else if (link.closest('.cta-final')) origen = 'cta-final';
+        else if (link.closest('#inicio')) origen = 'hero';
+
+        let negocioSlug: string | null = null;
+        try {
+          negocioSlug = new URL(link.href).searchParams.get('negocio');
+        } catch {
+          negocioSlug = null;
+        }
+
+        const dataLayer = ((window as unknown as { dataLayer?: unknown[] }).dataLayer ??= []);
+        dataLayer.push({
+          event: 'whatsapp_click',
+          cta_origen: origen,
+          negocio_slug: negocioSlug,
+          cta_texto: link.textContent?.trim(),
+        });
+      });
+    </script>
   </body>
 </html>

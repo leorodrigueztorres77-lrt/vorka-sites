@@ -54,6 +54,21 @@ a {
   color: inherit;
 }
 
+/* Estado de foco visible (spec SALUD 2026-07-20, "Calidad general" —
+   accesibilidad). Sin esto, navegar por teclado no muestra ningún indicador
+   de qué elemento tiene el foco. Usa --color-acento (siempre definido, ver
+   BaseLayout) para que el color se adapte a la identidad de cada cliente sin
+   tocar este archivo compartido. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 2px;
+}
+
 .container {
   width: 100%;
   max-width: var(--max-width);

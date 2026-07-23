@@ -1,4 +1,4 @@
-import type { CategoriaServicios, HistoriaNegocio, HorarioDia, Testimonio } from './types';
+import type { CategoriaServicios, FotoGaleria, HistoriaNegocio, HorarioDia, PerfilProfesional, Testimonio } from './types';
 
 // Capa 3 — Odontocrea. El cliente no entregó todavía un catálogo de precios
 // por escrito, así que los precios/duraciones de abajo siguen siendo relleno
@@ -53,11 +53,27 @@ export const serviciosOdontocrea: CategoriaServicios[] = [
 // (ver README.md de esa carpeta con el origen exacto de cada archivo).
 // Reemplazar por fotos reales de la clínica en cuanto el cliente las
 // proporcione.
-// ?v=2 (2026-07-19): mismo nombre de archivo, contenido reemplazado (fotos con
-// personas posando retiradas por problema de autenticidad) — cache-busting
-// obligatorio (lección de El Fogón Ecuatoriano, CLAUDE.md) para forzar
-// refresco en navegadores que ya cachearon la v1.
+// Intento 2026-07-20 (spec SALUD, "el hero nunca debe mostrar una silla
+// vacía") de reemplazar esta foto por una con personas fue revertido: el
+// README.md de esta carpeta documenta que Leo ya rechazó explícitamente fotos
+// de banco con personas posando como "doctor"/"paciente" para este cliente
+// (2026-07-19, retirados-fake-personas/) — ese precedente pesa más que la
+// regla genérica del spec hasta que Leo confirme lo contrario. Se mantiene la
+// foto original de sillón/equipo (Pexels, ver README.md).
 export const heroFotoOdontocrea = '/images/odontocrea/hero-1600.webp?v=2';
+
+// Galería complementaria (spec SALUD 2026-07-20, requisito de ≥4 imágenes) —
+// hero + foto de historia + 2 fotos adicionales de banco (Pexels, Nivel 2),
+// integradas junto a Testimonials en vez de como galería flotante (regla de
+// profundidad visual #2, CLAUDE.md). Ninguna muestra personas posando (ver
+// nota arriba). Ver README.md de esta carpeta para el origen exacto de cada
+// archivo.
+export const galeriaOdontocrea: FotoGaleria[] = [
+  { src: heroFotoOdontocrea, alt: 'Sillón y equipo dental en sala de atención de Odontocrea' },
+  { src: '/images/odontocrea/historia.webp?v=2', alt: 'Equipo de Odontocrea en el consultorio' },
+  { src: '/images/odontocrea/equipo-diagnostico.webp', alt: 'Equipo de diagnóstico dental de cerca' },
+  { src: '/images/odontocrea/instrumental.webp', alt: 'Instrumental dental esterilizado y modelos de ortodoncia' },
+];
 
 // Texto actualizado 2026-07-19 para reflejar datos reales de Instagram: la
 // bio del negocio usa textualmente "Tu Sonrisa y salud Oral es nuestra
@@ -79,18 +95,24 @@ export const horariosOdontocrea: HorarioDia[] = [
   { dia: 'Domingo', horario: 'Cerrado' },
 ];
 
-// PLACEHOLDER — el cliente no tiene todavía reseñas reales de Google citables
-// para esta entrega. Nombres ecuatorianos creíbles, nunca presentar como
-// reseñas reales hasta reemplazar por citas verificadas.
-export const testimoniosOdontocrea: Testimonio[] = [
+// Vacío a propósito (spec SALUD 2026-07-20, "Nunca fabricar testimonios"): el
+// cliente no ha confirmado reseñas reales de Google todavía. Testimonials.astro
+// omite la sección entera cuando este array está vacío en la entrega final;
+// para la demo de venta la página pasa `modoDemo` en su lugar, que muestra un
+// bloque explícitamente rotulado como ilustrativo — nunca nombres inventados.
+export const testimoniosOdontocrea: Testimonio[] = [];
+
+// Equipo (spec SALUD 2026-07-20, "TeamSection obligatorio"). Único nombre
+// confirmado hoy: "Dr. Cristian Egas" aparece como contacto directo en una
+// publicación de Instagram (ver site.odontocrea.ts) — no hay confirmación de
+// que sea el único profesional del consultorio ni de su especialidad exacta,
+// así que se usa el título genérico "Odontólogo" en vez de inventar una
+// especialidad. Sin foto (`foto` undefined a propósito): no hay foto real
+// confirmada todavía, y CLAUDE.md prohíbe sustituir por un genérico de stock
+// — TeamSection muestra sus iniciales en su lugar.
+export const profesionalesOdontocrea: PerfilProfesional[] = [
   {
-    nombre: 'Mónica Salazar',
-    texto: 'Llevo a toda mi familia, desde mis hijos hasta mi mamá. Siempre nos atienden con mucha paciencia.',
-    calificacion: 5,
-  },
-  {
-    nombre: 'Fernando Ríos',
-    texto: 'Me hice el tratamiento de conducto y no dolió nada de lo que esperaba. Muy buena atención.',
-    calificacion: 5,
+    nombre: 'Dr. Cristian Egas',
+    tituloProfesional: 'Odontólogo',
   },
 ];

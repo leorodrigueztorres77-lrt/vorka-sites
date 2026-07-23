@@ -50,7 +50,9 @@ const portadaDe = (cat: CategoriaServicios) => cat.imagenPortada ?? cat.servicio
                 {s.descripcion && <p class="servicios-portadas__descripcion">{s.descripcion}</p>}
               </div>
               <div class="servicios-portadas__accion">
-                <span class="servicios-portadas__precio">Desde ${s.precioDesde.toFixed(2)}</span>
+                <span class="servicios-portadas__precio">
+                  {s.precioDesde != null ? `Desde $${s.precioDesde.toFixed(2)}` : 'Consultar'}
+                </span>
                 <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={s.nombre} />
               </div>
             </li>

@@ -10,6 +10,8 @@ nunca hotlinked al CDN de Pexels.
 |---|---|---|
 | `hero-1600.webp` | 6812479 | Sillón y equipo dental moderno, consultorio vacío |
 | `historia.webp` | 4687905 | Modelo anatómico de implante dental sobre mesa |
+| `equipo-diagnostico.webp` | 305567 | Equipo de diagnóstico dental de cerca, sin personas |
+| `instrumental.webp` | 6528776 | Instrumental de extracción esterilizado + modelos de ortodoncia sobre mesón azul de clínica |
 
 Ninguna de estas fotos muestra personas — ni "doctor genérico" ni "paciente"
 posando (regla de autenticidad de CLAUDE.md). Son ambientales/equipo/modelo,
@@ -33,3 +35,26 @@ perfil profesional, y que aquí aparecía además en fotos ambientales, agravand
 el problema. Detectado tras feedback directo de Leo sobre calidad de imagen
 (mismo patrón ya corregido antes en El Fogón Ecuatoriano). Conservadas en
 `retirados-fake-personas/` solo como respaldo — no se sirven en ningún sitio.
+
+## Intento de reemplazo del hero revertido (2026-07-20, spec SALUD)
+
+El spec SALUD pide que el hero nunca muestre una silla vacía. Se probó
+reemplazar `hero-1600.webp` por una foto de banco con una odontóloga
+atendiendo a un paciente (Pexels 8413334) + una foto de apoyo de un
+odontólogo explicando un tratamiento (Pexels 6627325). Al revisar el
+historial de esta misma carpeta se confirmó que Leo ya había rechazado
+exactamente ese patrón para este cliente (ver sección anterior) — se revirtió
+antes de publicar nada. Backup de la versión intentada en
+`retirados-sin-personas/hero-1600-v2-silla-vacia.webp` (duplicado del archivo
+en uso; conservado por convención de archivado no destructivo). Los dos
+archivos fuente descartados (`originales/pexels-6627325.jpg`,
+`originales/pexels-8413334.jpg`) fueron eliminados.
+
+Para llegar al mínimo de 4 imágenes que exige la validación de build sin
+volver a violar la regla de "sin personas posando", se añadieron
+`equipo-diagnostico.webp` (Pexels 305567) e `instrumental.webp` (Pexels
+6528776) — ambas ambientales/equipo, sin personas ni marcas visibles de
+terceros. Se descartó además, sin llegar a usarse, una foto de recepción
+(Pexels 6809645) que mostraba el logo real de otra clínica ("Deko+") en la
+pared — nunca convertida ni referenciada por código, por el riesgo de
+publicar la marca de un competidor en el sitio de Odontocrea.

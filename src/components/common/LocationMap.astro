@@ -3,6 +3,15 @@
 // Antes horario y mapa eran dos secciones separadas ("Visítanos" + "Ubicación")
 // — CLAUDE.md documenta que ningún sitio de referencia analizado (Sweetgreen,
 // Chipotle, Carbon Health, One Medical) separa esto; siempre van juntos.
+//
+// Ampliado (spec SALUD 2026-07-20, "Bloque de confianza local"): soporta
+// negocios con más de una sede (`site.sedesAdicionales`, ej. Odontocrea con
+// Chillogallo + La Magdalena) y añade una fila de confianza opcional —
+// calificación de Google (solo si `googleBusinessUrl`+`ratingGoogle` están
+// confirmados, nunca inventada), link a Instagram, sellos de confianza y
+// formas de pago. Cada pieza es opcional e independiente: un cliente sin
+// ninguno de estos datos ve exactamente la sección "Visítanos" de antes, sin
+// ningún hueco vacío ni caveat "por confirmar" visible.
 import type { HorarioDia, SiteConfig } from '@/data/types';
 import Hours from '@/components/restaurant/Hours.astro';
 
@@ -13,13 +22,37 @@ interface Props {
 }
 
 const { site, horarios } = Astro.props;
+
+const tieneRating = Boolean(site.googleBusinessUrl && site.ratingGoogle != null);
+const tieneConfianza = Boolean(
+  tieneRating || site.instagramUrl || (site.sellosConfianza && site.sellosConfianza.length > 0),
+);
+const tieneMultiSede = Boolean(site.sedesAdicionales && site.sedesAdicionales.length > 0);
 ---
 
 <section id="ubicacion" class="section" aria-labelledby="visitanos-titulo">
   <div class="container">
     <h2 id="visitanos-titulo" class="section-title">Visítanos</h2>
+
+    {tieneConfianza && (
+      <div class="confianza-fila">
+        {tieneRating && (
+          <a class="confianza-badge confianza-badge--rating" href={site.googleBusinessUrl} target="_blank" rel="noopener noreferrer">
+            ⭐ {site.ratingGoogle?.toFixed(1)} en Google{site.totalResenasGoogle != null ? ` · ${site.totalResenasGoogle} reseñas` : ''}
+          </a>
+        )}
+        {site.instagramUrl && (
+          <a class="confianza-badge" href={site.instagramUrl} target="_blank" rel="noopener noreferrer">
+            Síguenos en Instagram
+          </a>
+        )}
+        {site.sellosConfianza?.map((sello) => <span class="confianza-badge confianza-badge--sello">{sello}</span>)}
+      </div>
+    )}
+
     <div class="ubicacion-grid">
       <div class="ubicacion-datos">
+        {tieneMultiSede && <p class="ubicacion-sede-nombre">Sede principal</p>}
         <p><strong>Dirección:</strong> {site.direccion}</p>
         <p><strong>Ciudad:</strong> {site.ciudad}</p>
         {horarios && horarios.length > 0 && <Hours horarios={horarios} />}
@@ -34,15 +67,84 @@ const { site, horarios } = Astro.props;
         ></iframe>
       )}
     </div>
+
+    {tieneMultiSede &&
+      site.sedesAdicionales!.map((sede) => (
+        <div class="ubicacion-grid ubicacion-grid--sede">
+          <div class="ubicacion-datos">
+            <p class="ubicacion-sede-nombre">{sede.nombre}</p>
+            <p><strong>Dirección:</strong> {sede.direccion}</p>
+            {sede.horarios && sede.horarios.length > 0 && <Hours horarios={sede.horarios} />}
+          </div>
+          {sede.mapaEmbedUrl && (
+            <iframe
+              class="ubicacion-mapa"
+              src={sede.mapaEmbedUrl}
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              title={`Mapa de ubicación de ${site.nombre} — ${sede.nombre}`}
+            ></iframe>
+          )}
+        </div>
+      ))}
+
+    {site.formasPago && site.formasPago.length > 0 && (
+      <p class="formas-pago"><strong>Formas de pago:</strong> {site.formasPago.join(' · ')}</p>
+    )}
   </div>
 </section>
 
 <style>
+  .confianza-fila {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .confianza-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: var(--color-fondo-alterno, #f4f4f4);
+    color: var(--color-texto);
+    border-radius: 100px;
+    padding: 0.5rem 1.1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    min-height: 44px;
+    box-sizing: border-box;
+  }
+
+  a.confianza-badge:hover {
+    background: var(--color-acento);
+  }
+
+  .confianza-badge--sello {
+    background: transparent;
+    border: 1px solid var(--color-gris, #ddd);
+    font-weight: 500;
+  }
+
   .ubicacion-grid {
     display: grid;
     grid-template-columns: 1fr 1.4fr;
     gap: 2rem;
     align-items: start;
+  }
+
+  .ubicacion-grid--sede {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-gris, #e5e5e5);
+  }
+
+  .ubicacion-sede-nombre {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin: 0 0 0.5rem;
+    color: var(--color-primario);
   }
 
   .ubicacion-datos {
@@ -55,6 +157,12 @@ const { site, horarios } = Astro.props;
     height: 320px;
     border: 0;
     border-radius: 12px;
+  }
+
+  .formas-pago {
+    margin: 2rem 0 0;
+    font-size: 0.95rem;
+    opacity: 0.85;
   }
 
   @media (max-width: 720px) {

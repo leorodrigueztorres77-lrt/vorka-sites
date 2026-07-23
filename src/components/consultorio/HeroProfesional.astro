@@ -13,6 +13,15 @@ interface Props {
 }
 
 const { site, perfil } = Astro.props;
+
+function iniciales(nombre: string): string {
+  return nombre
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((palabra) => palabra[0]?.toUpperCase() ?? '')
+    .join('');
+}
 ---
 
 <section id="inicio" class="hero-profesional">
@@ -38,13 +47,11 @@ const { site, perfil } = Astro.props;
     </div>
 
     <div class="hero-profesional__foto reveal--scale">
-      <img
-        src={perfil.foto ?? '/images/placeholder-profesional.webp'}
-        alt={perfil.nombre}
-        loading="eager"
-        width="560"
-        height="640"
-      />
+      {perfil.foto ? (
+        <img src={perfil.foto} alt={perfil.nombre} loading="eager" width="560" height="640" />
+      ) : (
+        <div class="hero-profesional__avatar" aria-hidden="true">{iniciales(perfil.nombre)}</div>
+      )}
     </div>
   </div>
 </section>
@@ -123,5 +130,20 @@ const { site, perfil } = Astro.props;
     object-fit: cover;
     border-radius: 20px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  }
+
+  .hero-profesional__avatar {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    background: var(--color-acento);
+    color: var(--color-texto);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: clamp(3rem, 8vw, 5rem);
   }
 </style>

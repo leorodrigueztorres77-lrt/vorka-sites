@@ -47,7 +47,9 @@ const todosServicios = categorias.flatMap((cat) =>
               {s.duracionMin && <p class="servicios-filtrable__duracion">≈ {s.duracionMin} min</p>}
               {s.descripcion && <p class="servicios-filtrable__descripcion">{s.descripcion}</p>}
               <div class="servicios-filtrable__fila">
-                <span class="servicios-filtrable__precio">Desde ${s.precioDesde.toFixed(2)}</span>
+                <span class="servicios-filtrable__precio">
+                  {s.precioDesde != null ? `Desde $${s.precioDesde.toFixed(2)}` : 'Consultar'}
+                </span>
                 <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={s.nombre} />
               </div>
             </div>

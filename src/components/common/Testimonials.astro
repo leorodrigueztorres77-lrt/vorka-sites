@@ -24,18 +24,61 @@ interface Props {
    * conversión de esas variantes. Ignora `fotos` (no hay espacio en un carrusel
    * angosto para columna de fotos aparte). */
   carrusel?: boolean;
+  /**
+   * Demo de venta a un prospecto que todavía no es cliente (spec SALUD
+   * 2026-07-20, "Nunca fabricar testimonios"). Sin esto, un array vacío
+   * simplemente omite la sección entera — nunca se rellena con nombres
+   * inventados. Con esto activo y el array vacío, se muestra un bloque
+   * ilustrativo explícitamente rotulado como tal, nunca reseñas con nombre
+   * y texto que parezcan reales.
+   */
+  modoDemo?: boolean;
+  /** Link al perfil de Google del negocio, si ya está confirmado — habilita
+   * el enlace "Ver todas las reseñas en Google". */
+  googleReviewsUrl?: string;
 }
 
-const { testimonios, fondoSolido = false, patron = false, fotos, carrusel = false } = Astro.props;
+const {
+  testimonios,
+  fondoSolido = false,
+  patron = false,
+  fotos,
+  carrusel = false,
+  modoDemo = false,
+  googleReviewsUrl,
+} = Astro.props;
+
+const hayTestimonios = testimonios.length > 0;
 ---
 
+{(hayTestimonios || modoDemo) && (
 <section
   class:list={['section', fondoSolido ? 'section--solido' : 'section--alterno', { 'section--patron': patron }]}
   aria-labelledby="testimonios-titulo"
 >
   <div class="container">
     <h2 id="testimonios-titulo" class="section-title">Lo que dicen nuestros clientes</h2>
-    {carrusel ? (
+    {googleReviewsUrl && hayTestimonios && (
+      <p class="testimonios-google-link">
+        <a href={googleReviewsUrl} target="_blank" rel="noopener noreferrer">Ver todas las reseñas en Google →</a>
+      </p>
+    )}
+    {!hayTestimonios && modoDemo ? (
+      <div class:list={['testimonios-layout', { 'testimonios-layout--con-fotos': fotos && fotos.length > 0 }]}>
+        <p class="testimonios-placeholder-demo">
+          <strong>Demo de venta:</strong> aquí se integran las reseñas reales de Google
+          del negocio una vez confirmado el cliente — esta sección no muestra
+          nombres ni citas inventadas.
+        </p>
+        {fotos && fotos.length > 0 && (
+          <div class="testimonios-fotos">
+            {fotos.map((foto) => (
+              <img src={foto.src} alt={foto.alt} loading="lazy" />
+            ))}
+          </div>
+        )}
+      </div>
+    ) : carrusel ? (
       <div class="testimonios-carrusel">
         {testimonios.map((t) => (
           <blockquote class="testimonio testimonio--carrusel reveal--scale">
@@ -71,8 +114,22 @@ const { testimonios, fondoSolido = false, patron = false, fotos, carrusel = fals
     )}
   </div>
 </section>
+)}
 
 <style>
+  .testimonios-google-link {
+    margin: -0.5rem 0 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .testimonios-placeholder-demo {
+    border: 1px dashed currentColor;
+    border-radius: 12px;
+    padding: 1.5rem;
+    opacity: 0.85;
+    font-size: 0.95rem;
+  }
+
   .testimonios-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));

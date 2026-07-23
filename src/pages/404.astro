@@ -1,0 +1,34 @@
+---
+// 404 genérico (spec SALUD 2026-07-20, "Calidad general"). Este repo compila
+// las demos de TODOS los clientes en un solo dist/ compartido (ver
+// src/pages/index.astro, herramienta interna de revisión) — una página 404
+// aquí no puede saber a qué negocio quería llegar el visitante, así que no
+// lleva el WhatsApp de ningún cliente en particular ni su identidad visual.
+//
+// IMPORTANTE para una entrega final real: cada cliente se publica como un
+// sitio independiente (ver CLAUDE.md, "Hosting: Hostinger" — un build estático
+// por cliente). Antes de publicar la entrega final de un cliente concreto,
+// reemplazar este 404 genérico por uno personalizado con su BaseLayout,
+// identidad visual y botón de WhatsApp — este archivo es el fallback correcto
+// solo para el entorno compartido de revisión (vorka-sites.vercel.app).
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Página no encontrada — Vorka</title>
+    <meta name="robots" content="noindex, nofollow" />
+  </head>
+  <body>
+    <main style="max-width: 480px; margin: 4rem auto; padding: 0 1.5rem; font-family: system-ui, sans-serif; text-align: center;">
+      <h1 style="font-size: 1.5rem;">Página no encontrada</h1>
+      <p style="color: #555; line-height: 1.6;">
+        El link que seguiste no corresponde a ninguna página de este sitio. Si veniste buscando el sitio de un
+        negocio específico, revisa que el link esté completo.
+      </p>
+      <p><a href="/">← Volver al inicio</a></p>
+    </main>
+  </body>
+</html>

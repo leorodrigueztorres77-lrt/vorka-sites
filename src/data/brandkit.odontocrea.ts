@@ -11,10 +11,20 @@
 // Los valores hex exactos son una lectura aproximada de las capturas (no un
 // archivo de marca oficial) — confirmar con el cliente antes de producción
 // final si se dispone del logo en vectorial/con paleta exacta.
+//
+// AJUSTE 2026-07-20 (spec SALUD, "Calidad general" — contraste AA): el
+// primario y el acento leídos directo de Instagram no pasaban WCAG AA en los
+// usos reales de Capa 2 — primario (#0EA5B5) como texto/fondo con blanco
+// rendía ~2.97:1 (Header, HeroSplit, botones, ServiciosTabs, StatsFila...);
+// acento (#7C3AED) combinado con --color-texto oscuro (el patrón que usan
+// HeroProfesional/HeroConfianza/TeamSection/ServiciosFiltrable para su
+// badge/avatar) rendía ~2.57:1. Ambos se oscurecen/aclaran dentro del mismo
+// tono (teal más profundo, morado más claro) hasta pasar 4.5:1 — no es un
+// cambio de identidad, es la misma paleta ajustada a un nivel usable.
 export const brandKitOdontocrea = {
   paleta: {
-    primario: '#0EA5B5', // turquesa/teal del logo circular real de Instagram
-    acento: '#7C3AED', // morado/magenta usado en piezas gráficas promocionales reales
+    primario: '#0A7480', // turquesa/teal del logo, oscurecido para AA (blanco sobre esto: ~5.5:1)
+    acento: '#A87FF5', // morado/magenta de piezas promocionales, aclarado para AA (texto oscuro sobre esto: ~4.9:1)
     texto: '#1B2B2E', // gris-verde muy oscuro, casi negro, coherente con el teal primario
   },
   tipografia: {
