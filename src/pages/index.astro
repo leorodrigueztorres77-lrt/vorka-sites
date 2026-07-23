@@ -1,49 +1,84 @@
 ---
 // Página interna de desarrollo — NO es una web de cliente ni se despliega
-// para un negocio real. Solo enlaza las 5 variantes de Capa 2 (restaurante)
-// para que Leo/el equipo las revise localmente. demo-personalizer nunca
+// para un negocio real. Solo enlaza las 5 variantes de Capa 2 de cada
+// vertical para que Leo/el equipo las revise. demo-personalizer nunca
 // personaliza este archivo; el archivo que sí se convierte en la entrega
-// final de un cliente es la variante elegida dentro de src/pages/variantes/.
-const variantes = [
+// final de un cliente es la variante elegida dentro de src/pages/variantes/
+// (restaurante) o src/pages/variantes-consultorio/ (salud).
+const verticales = [
   {
-    href: '/variantes/v1/',
-    nombre: 'V1',
-    menu: 'Grid de tarjetas',
-    hero: 'Foto grande',
-    orden: 'Menú primero',
-    demos: [{ href: '/demo-el-fogon-ecuatoriano/', nombre: 'El Fogón Ecuatoriano' }],
+    nombre: 'Restaurante',
+    descripcion:
+      'Cada link abre una variante completa con los datos de muestra de restaurant.sample.ts.',
+    variantes: [
+      {
+        href: '/variantes/v1/',
+        nombre: 'V1',
+        detalle: 'Menú: Grid de tarjetas · Hero: Foto grande · Orden: Menú primero',
+        demos: [{ href: '/demo-el-fogon-ecuatoriano/', nombre: 'El Fogón Ecuatoriano' }],
+      },
+      {
+        href: '/variantes/v2/',
+        nombre: 'V2',
+        detalle: 'Menú: Lista simple · Hero: Dividido texto/foto · Orden: Testimonios primero',
+        demos: [{ href: '/demo-shangrila/', nombre: 'Shangrila' }],
+      },
+      {
+        href: '/variantes/v3/',
+        nombre: 'V3',
+        detalle: 'Menú: Acordeón · Hero: Foto grande · Orden: Historia primero',
+        demos: [],
+      },
+      {
+        href: '/variantes/v4/',
+        nombre: 'V4',
+        detalle: 'Menú: Grid de tarjetas · Hero: Dividido texto/foto · Orden: Historia + galería primero',
+        demos: [],
+      },
+      {
+        href: '/variantes/v5/',
+        nombre: 'V5',
+        detalle: 'Menú: Lista simple · Hero: Foto grande · Orden: Galería primero',
+        demos: [],
+      },
+    ],
   },
   {
-    href: '/variantes/v2/',
-    nombre: 'V2',
-    menu: 'Lista simple',
-    hero: 'Dividido texto/foto',
-    orden: 'Testimonios primero',
-    demos: [{ href: '/demo-shangrila/', nombre: 'Shangrila' }],
-  },
-  {
-    href: '/variantes/v3/',
-    nombre: 'V3',
-    menu: 'Acordeón',
-    hero: 'Foto grande',
-    orden: 'Historia primero',
-    demos: [],
-  },
-  {
-    href: '/variantes/v4/',
-    nombre: 'V4',
-    menu: 'Grid de tarjetas',
-    hero: 'Dividido texto/foto',
-    orden: 'Historia + galería primero',
-    demos: [],
-  },
-  {
-    href: '/variantes/v5/',
-    nombre: 'V5',
-    menu: 'Lista simple',
-    hero: 'Foto grande',
-    orden: 'Galería primero',
-    demos: [],
+    nombre: 'Salud (consultorio médico/dental)',
+    descripcion:
+      'Cada link abre una variante completa con los datos de muestra del vertical consultorio.',
+    variantes: [
+      {
+        href: '/variantes-consultorio/v1/',
+        nombre: 'V1 "Dentava"',
+        detalle: 'Argumento: el profesional es la estrella · Hero con foto grande del profesional + credenciales sin scroll',
+        demos: [],
+      },
+      {
+        href: '/variantes-consultorio/v2/',
+        nombre: 'V2 "Reddent"',
+        detalle: 'Argumento: los servicios completos · Hero superpuesto + servicios en tabs filtrables por especialidad',
+        demos: [{ href: '/demo-odontocrea/', nombre: 'Odontocrea' }],
+      },
+      {
+        href: '/variantes-consultorio/v3/',
+        nombre: 'V3 "Vervedent"',
+        detalle: 'Argumento: la modernidad y el equipamiento · Hero minimalista + sección de tecnología integrada',
+        demos: [{ href: '/demo-esteticdent/', nombre: 'Estetic Dent' }],
+      },
+      {
+        href: '/variantes-consultorio/v4/',
+        nombre: 'V4 "Dentart"',
+        detalle: 'Argumento: la confianza y los testimonios primero · Rating sin scroll + testimonios antes de servicios',
+        demos: [],
+      },
+      {
+        href: '/variantes-consultorio/v5/',
+        nombre: 'V5 "Deentiva"',
+        detalle: 'Argumento: la accesibilidad y la facilidad de agendar · Proceso en 3 pasos + seguros y precio "Desde $X" sin scroll',
+        demos: [],
+      },
+    ],
   },
 ];
 ---
@@ -53,34 +88,38 @@ const variantes = [
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Vorka — Librería de variantes (restaurante)</title>
+    <title>Vorka — Librería de variantes por vertical</title>
     <meta name="robots" content="noindex, nofollow" />
   </head>
   <body>
     <main style="max-width: 640px; margin: 3rem auto; padding: 0 1.5rem; font-family: system-ui, sans-serif;">
-      <h1>Librería de variantes — Restaurante (Capa 2)</h1>
-      <p>Herramienta interna: cada link abre una variante completa con los datos de muestra de <code>restaurant.sample.ts</code>. `demo-personalizer` toma la variante asignada y la personaliza con los datos reales del cliente.</p>
-      <ul style="list-style: none; padding: 0; display: grid; gap: 1rem;">
-        {variantes.map((v) => (
-          <li style="border: 1px solid #ddd; border-radius: 8px; padding: 1rem;">
-            <a href={v.href} style="font-weight: 600; font-size: 1.1rem;">{v.nombre}</a>
-            <p style="margin: 0.5rem 0 0; font-size: 0.95rem; color: #555;">
-              Menú: {v.menu} · Hero: {v.hero} · Orden: {v.orden}
-            </p>
-            {v.demos.length > 0 && (
-              <p style="margin: 0.5rem 0 0; font-size: 0.9rem;">
-                Demos reales en esta variante:{' '}
-                {v.demos.map((d, i) => (
-                  <>
-                    <a href={d.href}>{d.nombre}</a>
-                    {i < v.demos.length - 1 ? ', ' : ''}
-                  </>
-                ))}
-              </p>
-            )}
-          </li>
-        ))}
-      </ul>
+      <h1>Librería de variantes por vertical (Capa 2)</h1>
+      <p>Herramienta interna: `demo-personalizer` toma la variante asignada y la personaliza con los datos reales del cliente. Los demos reales entregados aparecen junto a su variante de origen.</p>
+      {verticales.map((vert) => (
+        <section style="margin-top: 2.5rem;">
+          <h2 style="font-size: 1.25rem;">{vert.nombre}</h2>
+          <p style="font-size: 0.95rem; color: #555;">{vert.descripcion}</p>
+          <ul style="list-style: none; padding: 0; display: grid; gap: 1rem;">
+            {vert.variantes.map((v) => (
+              <li style="border: 1px solid #ddd; border-radius: 8px; padding: 1rem;">
+                <a href={v.href} style="font-weight: 600; font-size: 1.1rem;">{v.nombre}</a>
+                <p style="margin: 0.5rem 0 0; font-size: 0.95rem; color: #555;">{v.detalle}</p>
+                {v.demos.length > 0 && (
+                  <p style="margin: 0.5rem 0 0; font-size: 0.9rem;">
+                    Demos reales en esta variante:{' '}
+                    {v.demos.map((d, i) => (
+                      <>
+                        <a href={d.href}>{d.nombre}</a>
+                        {i < v.demos.length - 1 ? ', ' : ''}
+                      </>
+                    ))}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
     </main>
   </body>
 </html>
