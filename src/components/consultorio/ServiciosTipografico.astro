@@ -77,6 +77,7 @@ const precioDesdeCategoria = (cat: CategoriaServicios): number | null => {
               <img
                 class="servicios-tipografico__ancla-img"
                 src={imagen.src}
+                srcset={imagen.src2x ? `${imagen.src} 1x, ${imagen.src2x} 2x` : undefined}
                 alt={imagen.alt}
                 loading="lazy"
                 width="900"

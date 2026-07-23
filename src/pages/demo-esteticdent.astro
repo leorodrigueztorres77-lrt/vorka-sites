@@ -200,6 +200,9 @@ const schema = schemaConsultorio({
 
 <BaseLayout site={site} titulo={tituloPagina} ogImage={new URL(galeriaEsteticdent[0].src, 'https://vorka-sites.vercel.app').href}>
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(schema)} />
+  {/* La foto del hero es el LCP de la página y carga como background-image
+      (HeroEquipamiento) — el preload la descubre antes de parsear el CSS. */}
+  <link rel="preload" as="image" href={galeriaEsteticdent[0].src} slot="head" />
   <Header
     site={site}
     navItems={[

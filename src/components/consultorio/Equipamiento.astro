@@ -44,6 +44,7 @@ const mostrarBanner = Boolean(bannerTexto && phone && negocioSlug);
             <img
               class="equipamiento__card-foto"
               src={fotos[i].src}
+              srcset={fotos[i].src2x ? `${fotos[i].src} 1x, ${fotos[i].src2x} 2x` : undefined}
               alt={fotos[i].alt}
               loading="lazy"
               width="800"

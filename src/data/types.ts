@@ -154,6 +154,12 @@ export interface CategoriaMenu {
 export interface FotoGaleria {
   src: string;
   alt: string;
+  /**
+   * Rendition @2x opcional (pipeline de imágenes IA, scripts/optimize-images.mjs
+   * genera `<id>.webp` + `<id>@2x.webp`) — cuando está presente, los
+   * componentes emiten `srcset="src 1x, src2x 2x"`.
+   */
+  src2x?: string;
 }
 
 /**
