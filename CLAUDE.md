@@ -594,6 +594,28 @@ tocar cualquier variante:
    del punto 3, con los clips generados según Nivel 2.5 de "Manejo de
    imágenes".
 
+## Lecciones aprendidas — caso Estetic Dent (2026-07), aplican a Capa 1
+
+1. **Header transparente debe ser `position: fixed`, nunca `sticky`, sobre
+   un hero a pantalla completa.** Con `sticky` el header sigue reservando su
+   alto en el flujo del documento aunque tenga fondo transparente — eso
+   empuja el contenido del hero hacia abajo (deja una franja vacía arriba)
+   en vez de superponerse limpiamente a la foto/video. `fixed` saca el
+   header del flujo por completo, que es el comportamiento correcto para el
+   patrón "transparente → blur al hacer scroll" ya documentado arriba.
+   (Detectado: Estetic Dent, 2026-07-20 — el hero mostraba un espacio en
+   blanco superior hasta corregir esto en `Header.astro`, Capa 1.)
+2. **Verificar con `git ls-files <ruta>` que un asset de imagen
+   generado/recortado quedó realmente versionado, antes de dar por cerrada
+   cualquier tarea de imágenes.** El código (`site.<slug>.ts`,
+   `consultorio.<slug>.ts` / `menu.<slug>.ts`) puede referenciar una ruta de
+   imagen ya commiteada en un cambio anterior sin que el archivo binario
+   correspondiente se haya subido nunca — el sitio se ve bien en local (el
+   archivo existe en disco) pero se rompe al clonar el repo desde cero.
+   (Detectado: Estetic Dent, 2026-07-21 — `logo-estetic-dent.webp` y otras 3
+   imágenes llevaban commits enteros referenciadas en código sin estar en
+   git; se corrigieron recién al construir el srcset del logo del header.)
+
 ## Roadmap de innovación — features investigados, no todos implementables aún
 
 Estas son iniciativas identificadas por investigación de mercado (regiones fuera
