@@ -284,3 +284,38 @@ paciente**, o la sección "Sonrisas reales" se retira completa (pasar array
 vacío a `AntesDespues.astro` — la sección se omite sola). Publicar resultados
 de banco como si fueran propios es publicidad engañosa (CLAUDE.md, regla de
 autenticidad del vertical).
+
+## Cabeceras regeneradas con IA gratuita 2026-07-22 (Nivel 2.5 — SOLO demo de venta)
+
+⚠️ **PLACEHOLDER Nivel 2.5 — personas SINTÉTICAS, generadas con IA.**
+Pedido explícito de Leo: regenerar las cabeceras de cards con una IA
+gratuita (en vez de fal.ai de pago) manteniendo el hero intacto. Generadas
+con **Pollinations.ai** (modelo Flux, gratuito, sin API key), curadas
+manualmente entre varias semillas (se descartaron resultados con artefactos:
+instrumental deforme, texto ilegible en uniformes, pantallas con bocas
+irreales). JPG fuente en `originales/pollinations-flux-*-seed<N>.jpg` — el
+seed del nombre + el prompt permiten regenerar variantes coherentes.
+
+| Archivo | Seed | Contenido (sintético) |
+|---|---|---|
+| `servicio-limpieza-ia.webp` | 11 | Paciente sonriendo en sillón, clínica navy/naranja |
+| `servicio-diseno-sonrisa-ia.webp` | 7 | Retrato de sonrisa luminosa |
+| `servicio-urgencias-ia.webp` | 23 | Odontóloga con mascarilla atendiendo a paciente |
+| `tecnologia-rayosx-ia.webp` | 32 | Odontóloga señalando radiografía panorámica en monitor |
+| `tecnologia-camara-ia.webp` | 45 | Odontóloga y paciente mirando pantalla junto al sillón |
+| `tecnologia-esterilizacion-ia.webp` | 52 | Instrumental sellado en funda de esterilización |
+
+Ventaja sobre el stock retirado: las 6 comparten la paleta real de la marca
+(navy #122B54 + naranja #F2703C) — coherencia imposible con banco de fotos.
+Las 3 cabeceras de stock reemplazadas quedaron en `retirados-stock-cards/`
+(sus originales Pexels siguen en `originales/`).
+
+**Los pares antes/después de "Sonrisas reales" NO se regeneraron**: se
+intentó Flux Kontext (edición imagen-a-imagen) en Pollinations para producir
+pares de la misma persona sintética, pero no está disponible en el tier
+anónimo gratuito. Siguen siendo los pares de stock Pexels (misma persona
+real por par) documentados arriba — misma regla dura para la entrega final.
+
+Regla intacta: personas sintéticas presentadas como pacientes/equipo real en
+la ENTREGA FINAL publicada = prohibido (CLAUDE.md). Todo esto es material de
+demo de venta y debe reemplazarse por fotos reales con consentimiento.

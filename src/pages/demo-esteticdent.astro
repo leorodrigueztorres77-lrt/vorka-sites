@@ -143,6 +143,7 @@ import {
   testimoniosEsteticdent,
   profesionalesEsteticdent,
   imagenesAnclaEsteticdent,
+  fotosTecnologiaEsteticdent,
   sonrisasEsteticdent,
 } from '@/data/consultorio.esteticdent';
 import { validarConfigCliente } from '@/lib/validarConfigCliente';
@@ -168,16 +169,14 @@ const serviciosAnclaEsteticdent = NOMBRES_ANCLA.map((nombre) =>
 const categoriasRestantesEsteticdent = serviciosEsteticdent
   .map((cat) => ({ ...cat, servicios: cat.servicios.filter((s) => !NOMBRES_ANCLA.includes(s.nombre)) }))
   .filter((cat) => cat.servicios.length > 0);
-// AJUSTE 2026-07-21 (feedback directo de Leo): se quita la foto del sillón
-// dental ("equipo-destacado-ia.webp", índice 1) de ServiciosTipografico por
-// completo — ya no se muestra ni la imagen ni su caption. Se mantiene fuera
-// también de Equipamiento para no reintroducirla en la página por otra vía;
-// queda sin usarse hasta que Leo indique qué hacer con ella.
-// SPEC 2026-07-22: estas 3 fotos (clínica + 2 de equipos) vuelven a la
-// sección de tecnología como cabecera 16:9 de sus cards — emparejadas por
-// índice con tecnologiaEsteticdent (clínica→radiografía, equipo 1→cámara,
-// equipo 2→esterilización). Dejan de pasarse a Testimonials.
-const fotosEquipamiento = galeriaEsteticdent.filter((_, i) => i !== 1);
+// AJUSTE 2026-07-22 (vía gratuita de IA, pedido de Leo): las cards de
+// tecnología ya no reciclan las fotos ambientales de la galería — usan
+// fotosTecnologiaEsteticdent (Nivel 2.5, una imagen temática por ítem, ver
+// consultorio.esteticdent.ts). La galería (con el hero clinica-ia intacto,
+// confirmado por Leo como "perfecta") queda solo para hero/OG y la
+// validación de mínimo de imágenes; equipamiento-1/2 y
+// equipo-destacado-ia.webp quedan sin usarse en esta página hasta que Leo
+// indique qué hacer con ellas.
 
 validarConfigCliente({
   site,
@@ -246,7 +245,7 @@ const schema = schemaConsultorio({
 
   <Equipamiento
     items={tecnologiaEsteticdent}
-    fotos={fotosEquipamiento}
+    fotos={fotosTecnologiaEsteticdent}
     bannerTexto="Rayos X digital gratis en cada consulta"
     bannerMensaje={`Hola, quiero agendar mi consulta con rayos X digital gratis en ${site.nombre}`}
     phone={site.telefonoWhatsApp}

@@ -91,27 +91,53 @@ export const galeriaEsteticdent: FotoGaleria[] = [
   { src: '/images/esteticdent/equipamiento-2.webp', alt: 'Instrumental dental sobre bandeja en sala clara' },
 ];
 
-// TODO PLACEHOLDER Nivel 2 (spec de densidad visual de Leo, 2026-07-22) —
-// cabeceras 3:2 de las cards ancla de servicios: sonrisas/pacientes de banco
-// (Pexels, misma serie fotográfica para coherencia de color; ver README.md de
-// public/images/esteticdent/ con el origen exacto). Reemplazar por fotos
-// reales de pacientes de la clínica (con consentimiento) antes de la entrega
-// final. El alt describe la foto, nunca delata que es de relleno (spec SALUD,
-// "Fugas de placeholder").
+// TODO PLACEHOLDER Nivel 2.5 (generado con IA, SOLO demo de venta) —
+// cabeceras 3:2 de las cards ancla de servicios. Regeneradas 2026-07-22 con
+// Pollinations.ai (Flux, gratuito — pedido explícito de Leo de usar la vía
+// gratuita) reemplazando el stock de Pexels: la IA permite que las tres
+// compartan la paleta real de la marca (navy + naranja quemado), imposible
+// con banco de fotos. Las personas NO son reales (sintéticas) — ver README.md
+// de public/images/esteticdent/ con prompt y seed de cada una. Reemplazar por
+// fotos reales de pacientes de la clínica (con consentimiento) antes de la
+// entrega final. El alt describe la foto, nunca delata que es de relleno
+// (spec SALUD, "Fugas de placeholder").
 export const imagenesAnclaEsteticdent: Record<string, FotoGaleria> = {
   'Limpieza dental': {
-    src: '/images/esteticdent/servicio-limpieza.webp',
-    alt: 'Paciente sonriendo durante su limpieza dental',
+    src: '/images/esteticdent/servicio-limpieza-ia.webp',
+    alt: 'Paciente sonriendo en el sillón dental tras su limpieza',
   },
   'Diseño de sonrisa': {
-    src: '/images/esteticdent/servicio-diseno-sonrisa.webp',
+    src: '/images/esteticdent/servicio-diseno-sonrisa-ia.webp',
     alt: 'Sonrisa luminosa y alineada de una paciente',
   },
   'Urgencias con atención prioritaria': {
-    src: '/images/esteticdent/servicio-urgencias.webp',
-    alt: 'Odontóloga atendiendo a una paciente con microscopio clínico',
+    src: '/images/esteticdent/servicio-urgencias-ia.webp',
+    alt: 'Odontóloga atendiendo con prioridad a una paciente en el sillón dental',
   },
 };
+
+// TODO PLACEHOLDER Nivel 2.5 (generado con IA, SOLO demo de venta) —
+// cabeceras 16:9 de las cards de tecnología, una por ítem de
+// tecnologiaEsteticdent (mismo orden). Generadas 2026-07-22 con
+// Pollinations.ai (Flux) para que cada foto coincida con el TEMA de su card
+// (radiografía/cámara/esterilización) — las fotos ambientales anteriores
+// (equipamiento-1/2) no correspondían al equipo descrito. Ver README.md de
+// la carpeta. Reemplazar por fotos reales del equipamiento del consultorio
+// antes de la entrega final.
+export const fotosTecnologiaEsteticdent: FotoGaleria[] = [
+  {
+    src: '/images/esteticdent/tecnologia-rayosx-ia.webp',
+    alt: 'Odontóloga revisando una radiografía panorámica digital en pantalla',
+  },
+  {
+    src: '/images/esteticdent/tecnologia-camara-ia.webp',
+    alt: 'Odontóloga mostrando a la paciente su imagen intraoral en pantalla',
+  },
+  {
+    src: '/images/esteticdent/tecnologia-esterilizacion-ia.webp',
+    alt: 'Instrumental dental sellado en fundas de esterilización individuales',
+  },
+];
 
 // TODO PLACEHOLDER Nivel 2 (spec de densidad visual de Leo, 2026-07-22) —
 // pares antes/después de "Sonrisas reales", fotos de banco (Pexels) SOLO para
