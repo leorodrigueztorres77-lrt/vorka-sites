@@ -57,14 +57,17 @@ function extraerRetryDelayMs(cuerpoError) {
   return m ? Math.ceil(Number(m[1]) * 1000) + 500 : null;
 }
 
-async function llamarGemini({ apiKey, model, prompt, refImageB64, refMime }) {
+async function llamarGemini({ apiKey, model, prompt, aspect, refImageB64, refMime }) {
   const parts = [];
   if (refImageB64) parts.push({ inlineData: { mimeType: refMime, data: refImageB64 } });
   parts.push({ text: prompt });
 
   const body = {
     contents: [{ parts }],
-    generationConfig: { responseModalities: ['IMAGE'] },
+    // aspectRatio va en imageConfig — la instrucción textual sola se ignora
+    // (verificado 2026-07-23: todo salía 1024x1024). Valores soportados:
+    // 1:1, 2:3, 3:2, 3:4, 4:3, 4:5, 5:4, 9:16, 16:9, 21:9.
+    generationConfig: { responseModalities: ['IMAGE'], imageConfig: { aspectRatio: aspect } },
   };
 
   const res = await fetch(`${API_BASE}/${model}:generateContent`, {
@@ -100,13 +103,8 @@ async function llamarGemini({ apiKey, model, prompt, refImageB64, refMime }) {
   return { data: Buffer.from(img.inlineData.data, 'base64'), mime: img.inlineData.mimeType };
 }
 
-// El aspect ratio va DENTRO del prompt, no en generationConfig: los modelos
-// de imagen de Gemini respetan bien la instrucción textual y así el prompt
-// completo queda auditable en una sola pieza. (imageConfig.aspectRatio existe
-// pero no todos los modelos image-capable lo aceptan — la vía textual es la
-// portable.)
 function armarPrompt(base, shot) {
-  return `${base.trim()}\n\nSUJETO: ${shot.sujeto}\n\nRelación de aspecto de la imagen: ${shot.aspect}.`;
+  return `${base.trim()}\n\nSUJETO: ${shot.sujeto}`;
 }
 
 async function main() {
@@ -159,7 +157,7 @@ async function main() {
       for (let intento = 0; intento <= REINTENTOS; intento++) {
         try {
           if (intento > 0) await dormir(ultimoError?.retryDelayMs ?? 3000 * 3 ** (intento - 1));
-          const { data, mime } = await llamarGemini({ apiKey, model: args.model, prompt, refImageB64, refMime });
+          const { data, mime } = await llamarGemini({ apiKey, model: args.model, prompt, aspect: shot.aspect, refImageB64, refMime });
           const ext = mime === 'image/jpeg' ? 'jpg' : 'png';
           const destino = path.join(OUT_DIR, `${shot.id}-v${v}.${ext}`);
           await writeFile(destino, data);
