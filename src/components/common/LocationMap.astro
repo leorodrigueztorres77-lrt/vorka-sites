@@ -24,9 +24,7 @@ interface Props {
 const { site, horarios } = Astro.props;
 
 const tieneRating = Boolean(site.googleBusinessUrl && site.ratingGoogle != null);
-const tieneConfianza = Boolean(
-  tieneRating || site.instagramUrl || (site.sellosConfianza && site.sellosConfianza.length > 0),
-);
+const tieneConfianza = Boolean(tieneRating || (site.sellosConfianza && site.sellosConfianza.length > 0));
 const tieneMultiSede = Boolean(site.sedesAdicionales && site.sedesAdicionales.length > 0);
 ---
 
@@ -41,11 +39,6 @@ const tieneMultiSede = Boolean(site.sedesAdicionales && site.sedesAdicionales.le
             ⭐ {site.ratingGoogle?.toFixed(1)} en Google{site.totalResenasGoogle != null ? ` · ${site.totalResenasGoogle} reseñas` : ''}
           </a>
         )}
-        {site.instagramUrl && (
-          <a class="confianza-badge" href={site.instagramUrl} target="_blank" rel="noopener noreferrer">
-            Síguenos en Instagram
-          </a>
-        )}
         {site.sellosConfianza?.map((sello) => <span class="confianza-badge confianza-badge--sello">{sello}</span>)}
       </div>
     )}
@@ -53,9 +46,13 @@ const tieneMultiSede = Boolean(site.sedesAdicionales && site.sedesAdicionales.le
     <div class="ubicacion-grid">
       <div class="ubicacion-datos">
         {tieneMultiSede && <p class="ubicacion-sede-nombre">Sede principal</p>}
-        <p><strong>Dirección:</strong> {site.direccion}</p>
-        <p><strong>Ciudad:</strong> {site.ciudad}</p>
+        <p><strong>Dirección:</strong> {site.direccion} · {site.ciudad}</p>
         {horarios && horarios.length > 0 && <Hours horarios={horarios} />}
+        {site.instagramUrl && (
+          <a class="confianza-badge ubicacion-instagram" href={site.instagramUrl} target="_blank" rel="noopener noreferrer">
+            Síguenos en Instagram
+          </a>
+        )}
       </div>
       {site.mapaEmbedUrl && (
         <iframe
@@ -150,6 +147,13 @@ const tieneMultiSede = Boolean(site.sedesAdicionales && site.sedesAdicionales.le
   .ubicacion-datos {
     display: grid;
     gap: 1rem;
+  }
+
+  /* B4 (spec cierre demo 2026-07-23): el chip de Instagram vive junto al
+     horario en vez de la fila de confianza superior — ancho de contenido,
+     no ocupa todo el ancho de la columna de datos. */
+  .ubicacion-instagram {
+    justify-self: start;
   }
 
   .ubicacion-mapa {

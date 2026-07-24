@@ -5,6 +5,7 @@
 // golpe (para consultorios con oferta amplia). Cada tarjeta lleva foto
 // cuadrada + badge de tipo (si el servicio lo tiene) + duración.
 import type { CategoriaServicios } from '@/data/types';
+import { formatearPrecio } from '@/lib/precio';
 import AgendarBtn from './AgendarBtn.astro';
 
 interface Props {
@@ -48,7 +49,7 @@ const todosServicios = categorias.flatMap((cat) =>
               {s.descripcion && <p class="servicios-filtrable__descripcion">{s.descripcion}</p>}
               <div class="servicios-filtrable__fila">
                 <span class="servicios-filtrable__precio">
-                  {s.precioDesde != null ? `Desde $${s.precioDesde.toFixed(2)}` : 'Consultar'}
+                  {s.precioDesde != null ? `Desde ${formatearPrecio(s.precioDesde)}` : 'Consultar'}
                 </span>
                 <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={s.nombre} />
               </div>

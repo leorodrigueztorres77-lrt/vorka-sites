@@ -242,6 +242,10 @@ export interface PerfilProfesional {
   /** Sin foto real confirmada: dejar `undefined` — TeamSection muestra
    * iniciales en vez de sustituir con un genérico de stock (CLAUDE.md). */
   foto?: string;
+  /** CSS `object-position` para recortar el encuadre circular de `foto`, ej.
+   * "center 20%" — usar solo si el encuadre por defecto ("center") corta mal
+   * la cara en la foto real entregada (spec cierre demo 2026-07-23, B7). */
+  fotoPosicion?: string;
   /** Credenciales cortas en lista, ej. "Especialista en Ortodoncia", "Postgrado PUCE". */
   credenciales?: string[];
   /** Número de registro profesional (Senescyt/ACESS), si el cliente lo provee. */

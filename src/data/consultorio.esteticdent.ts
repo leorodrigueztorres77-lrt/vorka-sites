@@ -278,6 +278,12 @@ export const profesionalesEsteticdent: PerfilProfesional[] = [
     nombre: 'Dra. Rosa Reascos',
     tituloProfesional: 'Odontóloga',
     foto: '/images/esteticdent/rosa-reascos.webp',
+    // B7 (spec cierre demo 2026-07-23): la foto original es un plano abierto
+    // (gorro + mascarilla + hombros), con el rostro desplazado a la derecha y
+    // arriba del centro — object-position: center dejaba demasiado gorro y
+    // hombro visibles en el recorte circular. Este ajuste centra el óvalo del
+    // rostro (ojos/nariz) en el círculo de 120px.
+    fotoPosicion: '65% 30%',
     lineaExperiencia: 'Atención odontológica integral, cercana a cada paciente.',
   },
 ];

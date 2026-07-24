@@ -38,7 +38,15 @@ function iniciales(nombre: string): string {
         {profesionales.map((perfil) => (
           <article class="equipo-card reveal--scale">
             {perfil.foto ? (
-              <img class="equipo-card__foto" src={perfil.foto} alt={perfil.nombre} loading="lazy" width="240" height="240" />
+              <img
+                class="equipo-card__foto"
+                src={perfil.foto}
+                alt={perfil.nombre}
+                loading="lazy"
+                width="240"
+                height="240"
+                style={perfil.fotoPosicion ? `object-position: ${perfil.fotoPosicion};` : undefined}
+              />
             ) : (
               <div class="equipo-card__avatar" aria-hidden="true">{iniciales(perfil.nombre)}</div>
             )}

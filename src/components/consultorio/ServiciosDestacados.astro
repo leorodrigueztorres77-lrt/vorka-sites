@@ -4,6 +4,7 @@
 // `destacado` (con foto) se muestran como tarjetas grandes con badge; el
 // resto del catálogo va debajo en formato lista compacta.
 import type { CategoriaServicios } from '@/data/types';
+import { formatearPrecio } from '@/lib/precio';
 import AgendarBtn from './AgendarBtn.astro';
 
 interface Props {
@@ -36,7 +37,7 @@ const destacados = categorias.flatMap((cat) =>
               {s.descripcion && <p class="servicios-destacados-card__descripcion">{s.descripcion}</p>}
               <div class="servicios-destacados-card__fila">
                 <span class="servicios-destacados-card__precio">
-                  {s.precioDesde != null ? `Desde $${s.precioDesde.toFixed(2)}` : 'Consultar'}
+                  {s.precioDesde != null ? `Desde ${formatearPrecio(s.precioDesde)}` : 'Consultar'}
                 </span>
                 <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={s.nombre} />
               </div>
@@ -59,7 +60,7 @@ const destacados = categorias.flatMap((cat) =>
                 </div>
                 <div class="servicios-completo__accion">
                   <span class="servicios-completo__precio">
-                    {s.precioDesde != null ? `Desde $${s.precioDesde.toFixed(2)}` : 'Consultar'}
+                    {s.precioDesde != null ? `Desde ${formatearPrecio(s.precioDesde)}` : 'Consultar'}
                   </span>
                   <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={s.nombre} />
                 </div>

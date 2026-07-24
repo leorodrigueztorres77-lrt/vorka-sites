@@ -10,6 +10,7 @@
 // CLAUDE.md de mostrar el rango de precio para eliminar la fricción de
 // "¿y cuánto cobran?".
 import type { PasoProceso, SiteConfig } from '@/data/types';
+import { formatearPrecio } from '@/lib/precio';
 import SegurosAceptados from './SegurosAceptados.astro';
 
 interface Props {
@@ -30,7 +31,7 @@ const { site, titular, pasos, seguros = [], precioDesde } = Astro.props;
       <p class="hero-pasos__subtitulo reveal">{site.tagline}</p>
 
       {precioDesde !== undefined && (
-        <p class="hero-pasos__precio reveal">Consulta desde ${precioDesde.toFixed(2)}</p>
+        <p class="hero-pasos__precio reveal">Consulta desde {formatearPrecio(precioDesde)}</p>
       )}
 
       <div class="hero-pasos__cta reveal">

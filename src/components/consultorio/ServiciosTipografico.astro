@@ -14,6 +14,8 @@
 //   desktop se fuerza `open` vía script y la cabecera vuelve a verse como el
 //   h3 centrado de siempre — la lista completa, sin interacción.
 import type { CategoriaServicios, FotoGaleria, ServicioMedico } from '@/data/types';
+import { formatearPrecio } from '@/lib/precio';
+import { buildWhatsAppLink } from '@/lib/whatsapp';
 import AgendarBtn from './AgendarBtn.astro';
 
 interface ServicioAncla {
@@ -89,7 +91,7 @@ const precioDesdeCategoria = (cat: CategoriaServicios): number | null => {
               <p class="servicios-tipografico__ancla-nombre">{servicio.nombre}</p>
               {servicio.descripcion && <p class="servicios-tipografico__ancla-descripcion">{servicio.descripcion}</p>}
               <p class="servicios-tipografico__ancla-precio">
-                {servicio.precioDesde != null ? `Desde $${servicio.precioDesde.toFixed(2)}` : 'Consultar'}
+                {servicio.precioDesde != null ? `Desde ${formatearPrecio(servicio.precioDesde)}` : 'Consultar'}
               </p>
               <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={servicio.nombre} />
             </div>
@@ -105,7 +107,7 @@ const precioDesdeCategoria = (cat: CategoriaServicios): number | null => {
           <details class="servicios-tipografico__categoria reveal">
             <summary class="servicios-tipografico__cabecera">
               <h3>{cat.categoria}</h3>
-              {desde != null && <span class="servicios-tipografico__desde">desde ${desde}</span>}
+              {desde != null && <span class="servicios-tipografico__desde">desde {formatearPrecio(desde)}</span>}
               <svg class="servicios-tipografico__chevron" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="6 9 12 15 18 9" />
               </svg>
@@ -121,14 +123,21 @@ const precioDesdeCategoria = (cat: CategoriaServicios): number | null => {
                     </div>
                     <div class="servicios-tipografico__accion">
                       <span class="servicios-tipografico__precio">
-                        {s.precioDesde != null ? `Desde $${s.precioDesde.toFixed(2)}` : 'Consultar'}
+                        {s.precioDesde != null ? `Desde ${formatearPrecio(s.precioDesde)}` : 'Consultar'}
                       </span>
                     </div>
                   </li>
                 ))}
               </ul>
               <div class="servicios-tipografico__categoria-cta">
-                <AgendarBtn phone={phone} negocioSlug={negocioSlug} nombreServicio={cat.categoria} />
+                <a
+                  class="servicios-tipografico__categoria-link"
+                  href={buildWhatsAppLink({ phone, negocioSlug, message: `Hola, quiero agendar una cita para ${cat.categoria}` })}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Agendar {cat.categoria} →
+                </a>
               </div>
             </div>
           </details>
@@ -263,6 +272,13 @@ const precioDesdeCategoria = (cat: CategoriaServicios): number | null => {
     margin: 0;
   }
 
+  /* B1 (spec cierre demo 2026-07-23): botón Agendar anclado al fondo de la
+     card, sin importar cuánto texto tenga la descripción de cada servicio
+     ancla — así las 3 cards muestran el botón a la misma altura visual. */
+  .servicios-tipografico__ancla-cuerpo :global(.agendar-btn) {
+    margin-top: auto;
+  }
+
   .servicios-tipografico {
     max-width: 720px;
     margin: 0 auto;
@@ -365,9 +381,39 @@ const precioDesdeCategoria = (cat: CategoriaServicios): number | null => {
     color: var(--color-primario);
   }
 
+  /* B3 (spec cierre demo 2026-07-23): un solo link-botón alineado a la
+     derecha al cierre de cada categoría, en vez del botón centrado por
+     categoría — el CTA principal ya vive en cada servicio ancla y en el
+     header/hero (jerarquía de CTA, CLAUDE.md). */
   .servicios-tipografico__categoria-cta {
-    text-align: center;
+    text-align: right;
     margin-top: 1.75rem;
+  }
+
+  .servicios-tipografico__categoria-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 44px;
+    padding: 0.5rem 0.25rem;
+    font-family: var(--font-titulos);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--color-primario);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: border-color 200ms ease;
+  }
+
+  .servicios-tipografico__categoria-link:hover,
+  .servicios-tipografico__categoria-link:focus-visible {
+    border-color: var(--color-primario);
+  }
+
+  @media (max-width: 767px) {
+    .servicios-tipografico__categoria-cta {
+      text-align: left;
+    }
   }
 
   /* Acordeón móvil (<768px): cerrado por defecto, cabecera táctil de 48px+
