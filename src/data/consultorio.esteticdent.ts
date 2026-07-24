@@ -142,55 +142,59 @@ export const fotosTecnologiaEsteticdent: FotoGaleria[] = [
   },
 ];
 
-// TODO PLACEHOLDER Nivel 2 (spec de densidad visual de Leo, 2026-07-22) —
-// pares antes/después de "Sonrisas reales", fotos de banco (Pexels) SOLO para
-// el demo de venta. Cada par usa la MISMA persona (dos momentos de la misma
-// sesión fotográfica) para que el par sea plausible, pero NO son casos
-// clínicos reales: publicar esto en la entrega final sería publicidad
-// engañosa (CLAUDE.md, regla de autenticidad). Antes de publicar, reemplazar
-// por casos reales del consultorio con consentimiento escrito del paciente —
-// si el cliente no los tiene, la sección se quita completa (basta con pasar
-// un array vacío: AntesDespues.astro la omite sola).
-// RE-GRADE 2026-07-23 v3 (feedback de Leo: la v2 seguia desentonando del set
-// Gemini): el problema no era solo saturacion sino balance de blancos — las
-// fotos de stock estan iluminadas con flash frio (azulado) mientras el set
-// Gemini tiene luz ambiental calida. v3 corrige temperatura de color primero
-// (sharp .linear() sube rojo/baja azul) y despues aplica la misma reduccion
-// de saturacion/gamma que v2. NO se regeneraron con IA: la regla dura del
-// pipeline prohibe fabricar resultados clinicos antes/despues. Filename
-// nuevo = cache-busting (leccion El Fogon).
+// TODO PLACEHOLDER Nivel 2.5 (spec "CIERRE demo-esteticdent", 2026-07-23) —
+// pares antes/después de "Transformaciones que realizamos", generados con
+// Gemini en 2 pasos (scripts/generate-antes-despues.mjs: base + edición sobre
+// la misma imagen para que sea la MISMA persona en ambas fotos) — excepción
+// acotada a la regla dura de generate-images.mjs, autorizada por Leo porque
+// este demo todavía no tiene cliente real que pueda verse afectado por
+// publicidad engañosa. QC por imagen en assets/generated/review/QC-REPORT.md
+// (ronda 3). Mientras las fotos sean generadas, la sección se llama
+// "Transformaciones que realizamos" (nunca "resultados/casos/pacientes
+// reales") y cada card lleva el badge "Imagen ilustrativa" — ver comentario
+// de regla de autenticidad en AntesDespues.astro. Antes de vender a un
+// cliente real, reemplazar por casos propios del consultorio con
+// consentimiento escrito del paciente — si el cliente no los tiene, la
+// sección se quita completa (basta con pasar un array vacío: AntesDespues.astro
+// la omite sola).
 export const sonrisasEsteticdent: ParAntesDespues[] = [
   {
     tratamiento: 'Ortodoncia con alineadores',
     antes: {
-      src: '/images/esteticdent/sonrisa-ortodoncia-antes-v3.webp',
-      alt: 'Paciente revisando su alineador dental antes del tratamiento',
+      src: '/images/esteticdent/sonrisa-ortodoncia-antes.webp',
+      src2x: '/images/esteticdent/sonrisa-ortodoncia-antes@2x.webp',
+      alt: 'Ilustración de sonrisa con dientes frontales apiñados antes de un tratamiento de ortodoncia',
     },
     despues: {
-      src: '/images/esteticdent/sonrisa-ortodoncia-despues-v3.webp',
-      alt: 'Paciente riendo con su sonrisa alineada tras el tratamiento',
+      src: '/images/esteticdent/sonrisa-ortodoncia-despues.webp',
+      src2x: '/images/esteticdent/sonrisa-ortodoncia-despues@2x.webp',
+      alt: 'Ilustración de la misma sonrisa con dientes alineados tras un tratamiento de ortodoncia',
     },
   },
   {
     tratamiento: 'Blanqueamiento dental',
     antes: {
-      src: '/images/esteticdent/sonrisa-blanqueamiento-antes-v3.webp',
-      alt: 'Selección del tono dental de la paciente con guía de colores',
+      src: '/images/esteticdent/sonrisa-blanqueamiento-antes.webp',
+      src2x: '/images/esteticdent/sonrisa-blanqueamiento-antes@2x.webp',
+      alt: 'Ilustración de sonrisa con dientes amarillentos antes de un blanqueamiento dental',
     },
     despues: {
-      src: '/images/esteticdent/sonrisa-blanqueamiento-despues-v3.webp',
-      alt: 'Paciente mostrando su sonrisa más luminosa en el sillón dental',
+      src: '/images/esteticdent/sonrisa-blanqueamiento-despues.webp',
+      src2x: '/images/esteticdent/sonrisa-blanqueamiento-despues@2x.webp',
+      alt: 'Ilustración de la misma sonrisa notablemente más blanca tras un blanqueamiento dental',
     },
   },
   {
     tratamiento: 'Diseño de sonrisa',
     antes: {
-      src: '/images/esteticdent/sonrisa-diseno-antes-v3.webp',
-      alt: 'Paciente durante el tratamiento dental en consultorio',
+      src: '/images/esteticdent/sonrisa-diseno-antes.webp',
+      src2x: '/images/esteticdent/sonrisa-diseno-antes@2x.webp',
+      alt: 'Ilustración de sonrisa con un diente fracturado y un espacio visible antes de un diseño de sonrisa',
     },
     despues: {
-      src: '/images/esteticdent/sonrisa-diseno-despues-v3.webp',
-      alt: 'Paciente sonriendo en el sillón dental con su nueva sonrisa',
+      src: '/images/esteticdent/sonrisa-diseno-despues.webp',
+      src2x: '/images/esteticdent/sonrisa-diseno-despues@2x.webp',
+      alt: 'Ilustración de la misma sonrisa restaurada y armónica tras un diseño de sonrisa',
     },
   },
 ];

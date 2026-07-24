@@ -362,3 +362,39 @@ cache-busting (lección El Fogón).
 Regla intacta: reemplazar por casos reales del propio consultorio con
 consentimiento escrito del paciente antes de la entrega final, o retirar la
 sección completa si el cliente no los tiene.
+
+**Superseded por el set 2026-07-23 Ronda 3 (abajo) — los 6 archivos `-v3.webp`
+de este regrade se eliminaron del repo.**
+
+## Set 2026-07-23 Ronda 3 — antes/después con Gemini ("Transformaciones que realizamos")
+
+⚠️ **PLACEHOLDER Nivel 2.5 — personas sintéticas, SOLO demo de venta.**
+Reemplaza por completo el set de stock Pexels (v1/v2/v3) de la sección
+anterior. Excepción explícita y acotada a la regla dura de
+`generate-images.mjs` (`PATRONES_PROHIBIDOS`), autorizada por Leo el
+2026-07-23 específicamente para `demo-esteticdent` porque el demo todavía no
+tiene cliente real que pueda verse afectado por publicidad engañosa — NO usar
+este patrón para un cliente real sin volver a confirmar con Leo.
+
+Generado con `scripts/generate-antes-despues.mjs` (`gemini-2.5-flash-image`,
+`assets/prompts/pares-esteticdent.json`), técnica de 2 pasos por par (imagen
+"antes" por texto → edición de esa MISMA imagen para el "después", pidiendo
+mantener rostro/peinado/ropa/fondo/luz idénticos y cambiar solo la sonrisa) —
+así el par es la misma persona en ambas fotos, no dos sujetos distintos como
+en el set de stock anterior. QC por imagen, incluyendo los 2 pares que
+necesitaron un segundo intento por defecto dental poco visible, en
+`assets/generated/review/QC-REPORT.md` (Ronda 3).
+
+Archivos integrados (WebP 1x + `@2x`, `scripts/optimize-antes-despues.mjs`):
+`sonrisa-ortodoncia-antes/despues.webp`,
+`sonrisa-blanqueamiento-antes/despues.webp`,
+`sonrisa-diseno-antes/despues.webp`. Los masters PNG con todos los intentos
+(incluidos los 2 descartados de ortodoncia y diseño de sonrisa) quedan en
+`assets/generated/review/` para trazabilidad.
+
+Regla de honestidad obligatoria mientras estas fotos sigan siendo generadas:
+sección titulada "Transformaciones que realizamos" (nunca "resultados
+reales"/"casos reales"/"pacientes reales") + badge "Imagen ilustrativa" visible
+en cada card (`AntesDespues.astro`). Antes de vender a un cliente real,
+reemplazar por casos propios del consultorio con consentimiento escrito del
+paciente, o retirar la sección completa si el cliente no los tiene.

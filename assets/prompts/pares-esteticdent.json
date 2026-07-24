@@ -1,0 +1,23 @@
+{
+  "base": "assets/prompts/_base-antes-despues.md",
+  "pares": [
+    {
+      "id": "transformacion-ortodoncia",
+      "aspect": "3:4",
+      "sujetoAntes": "Mujer ecuatoriana de 25 a 35 años, sonriendo abiertamente a cámara mostrando CLARAMENTE dientes frontales superiores muy apiñados y montados unos sobre otros (los dos incisivos laterales claramente rotados y superpuestos al incisivo central, notorio a simple vista, no un detalle sutil), cabello suelto, top casual color neutro.",
+      "transformacion": "los dientes frontales superiores muy apiñados, rotados y montados unos sobre otros por dientes perfectamente alineados en una fila pareja y natural (no perfección artificial de porcelana) — el cambio de alineación debe ser CLARAMENTE notorio al comparar con la foto anterior, manteniendo tamaño y tono de diente realista"
+    },
+    {
+      "id": "transformacion-blanqueamiento",
+      "aspect": "3:4",
+      "sujetoAntes": "Hombre ecuatoriano de 30 a 45 años, sonriendo a cámara con los labios abiertos mostrando dientes visiblemente amarillentos/opacos, camisa casual azul oscuro, barba corta prolija.",
+      "transformacion": "el tono amarillento de los dientes por un blanco notablemente más claro pero NATURAL (no blanco porcelana artificial), sin alterar la forma ni alineación de los dientes"
+    },
+    {
+      "id": "transformacion-diseno-sonrisa",
+      "aspect": "3:4",
+      "sujetoAntes": "Mujer ecuatoriana de 35 a 50 años, sonriendo a cámara con los labios abiertos mostrando un diente frontal visiblemente fracturado en la esquina y un pequeño espacio entre dos dientes frontales, blusa formal color crema, cabello recogido.",
+      "transformacion": "el diente fracturado y el espacio visible por una sonrisa restaurada, armónica y natural, con dientes de forma y tamaño proporcionados al rostro"
+    }
+  ]
+}

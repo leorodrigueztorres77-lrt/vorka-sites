@@ -11,6 +11,11 @@
 // fotos como si fueran propios es publicidad engañosa. El componente es
 // agnóstico: la responsabilidad de qué fotos se pasan vive en los datos de
 // Capa 3 de cada cliente.
+//
+// Título/intro por defecto y badge "Imagen ilustrativa" (2026-07-23, spec de
+// cierre de demo): mientras las fotos sean generadas/de banco (Nivel 2/2.5),
+// el nombre de la sección y el badge por card son obligatorios — nunca
+// presentar estas imágenes como "reales" sin ese rótulo visible.
 import type { ParAntesDespues } from '@/data/types';
 
 interface Props {
@@ -20,7 +25,11 @@ interface Props {
   intro?: string;
 }
 
-const { pares, titulo = 'Sonrisas reales', intro } = Astro.props;
+const {
+  pares,
+  titulo = 'Transformaciones que realizamos',
+  intro = 'Ejemplos ilustrativos de nuestros tratamientos más solicitados.',
+} = Astro.props;
 ---
 
 {pares.length > 0 && (
@@ -34,13 +43,28 @@ const { pares, titulo = 'Sonrisas reales', intro } = Astro.props;
           <article class="antes-despues__card reveal--scale">
             <div class="antes-despues__fotos">
               <figure class="antes-despues__figura">
-                <img src={par.antes.src} alt={par.antes.alt} loading="lazy" width="640" height="640" />
+                <img
+                  src={par.antes.src}
+                  srcset={par.antes.src2x ? `${par.antes.src} 1x, ${par.antes.src2x} 2x` : undefined}
+                  alt={par.antes.alt}
+                  loading="lazy"
+                  width="640"
+                  height="640"
+                />
                 <figcaption class="antes-despues__etiqueta">Antes</figcaption>
               </figure>
               <figure class="antes-despues__figura">
-                <img src={par.despues.src} alt={par.despues.alt} loading="lazy" width="640" height="640" />
+                <img
+                  src={par.despues.src}
+                  srcset={par.despues.src2x ? `${par.despues.src} 1x, ${par.despues.src2x} 2x` : undefined}
+                  alt={par.despues.alt}
+                  loading="lazy"
+                  width="640"
+                  height="640"
+                />
                 <figcaption class="antes-despues__etiqueta antes-despues__etiqueta--despues">Después</figcaption>
               </figure>
+              <span class="antes-despues__badge">Imagen ilustrativa</span>
             </div>
             <p class="antes-despues__tratamiento">{par.tratamiento}</p>
           </article>
@@ -78,9 +102,24 @@ const { pares, titulo = 'Sonrisas reales', intro } = Astro.props;
   }
 
   .antes-despues__fotos {
+    position: relative;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 2px;
+  }
+
+  .antes-despues__badge {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    z-index: 1;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    padding: 0.35rem 0.6rem;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.45);
+    color: #fff;
   }
 
   .antes-despues__figura {

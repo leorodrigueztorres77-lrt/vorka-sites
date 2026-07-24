@@ -57,3 +57,37 @@ corrida completa (16 + 1 prueba + 6 regen + 16 de la tanda 1024 descartada):
 Recordatorio de reglas: personas sintéticas → SOLO demo de venta (Nivel 2.5,
 CLAUDE.md); "Sonrisas reales" mantiene sus placeholders actuales — este set
 no incluye (ni debe incluir) resultados clínicos.
+
+---
+
+## Ronda 3 — pares antes/después "Transformaciones que realizamos" (2026-07-23)
+
+Excepción acotada autorizada por Leo para demo-esteticdent (sin cliente real
+todavía): antes/después generados con Gemini en 2 pasos (base + edición sobre
+la misma imagen, ver `scripts/generate-antes-despues.mjs`). Sección renombrada
+a "Transformaciones que realizamos" + badge "Imagen ilustrativa" por card
+(A1, ya aplicado en `AntesDespues.astro`). Checklist A4: (a) misma persona en
+el par, (b) dientes/manos correctos, (c) sin texto fantasma, (d) colorimetría
+alineada al resto del sitio, (e) piel con textura real, (f) el defecto/cambio
+dental pedido se lee con claridad al comparar antes vs. después.
+
+| Imagen | Veredicto | Razón |
+|---|---|---|
+| transformacion-ortodoncia-intento1 | FALLA (f) | Misma persona ✓, anatomía ✓, sin texto ✓, colorimetría ✓ — pero el apiñamiento pedido en "antes" no se lee con claridad; antes/después casi indistinguibles. Regenerada con descripción de defecto más explícita. |
+| transformacion-ortodoncia-intento2 | APROBABLE | Misma persona, ropa, fondo y luz ✓. Apiñamiento/rotación del incisivo lateral visible en "antes"; línea de borde pareja y natural en "después". Cambio real pero moderado — consistente con un caso de ortodoncia leve, no exagerado. Dientes/manos correctos, sin texto, colorimetría acorde. **Usar esta versión.** |
+| transformacion-blanqueamiento-intento1 | APROBABLE | Misma persona, ropa y fondo ✓. Amarillamiento claro en "antes", blanco notable pero natural en "después" (no porcelana artificial) — el par más convincente de los tres. Nota menor: el fondo desenfocado del "antes" sugiere vagamente equipo de consultorio (contradice "NO sillón dental" de la guía base), pero está fuera de foco y no es identificable como tal — aceptable. Sin texto, anatomía correcta. **Usar esta versión, no requiere reintento.** |
+| transformacion-diseno-sonrisa-intento1 | FALLA (f) | Misma persona ✓ — pero la fractura/espacio pedido en "antes" no es visible; par no funciona como transformación. Regenerada con descripción de defecto más explícita. |
+| transformacion-diseno-sonrisa-intento2 | APROBABLE | Misma persona, blusa, fondo y peinado ✓. Espacio/fractura entre incisivos centrales claramente visible en "antes"; sonrisa pareja y armónica en "después", tono natural. Dientes/manos correctos, sin texto, colorimetría acorde. **Usar esta versión.** |
+
+### Resultado ronda 3
+
+3 de 3 pares aprobados dentro del límite de reintentos (máx. 3 por par según
+A2; ortodoncia y diseño de sonrisa necesitaron 2 intentos, blanqueamiento pasó
+al primero). Versiones finales a integrar:
+
+- `transformacion-blanqueamiento-antes-intento1.png` / `-despues-intento1.png`
+- `transformacion-ortodoncia-antes-intento2.png` / `-despues-intento2.png`
+- `transformacion-diseno-sonrisa-antes-intento2.png` / `-despues-intento2.png`
+
+Los archivos `-intento1` de ortodoncia y diseño de sonrisa (rechazados) se
+descartan — no se integran ni se referencian en el sitio.

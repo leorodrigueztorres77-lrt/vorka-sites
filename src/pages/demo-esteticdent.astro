@@ -109,8 +109,9 @@
 // - Cards de tecnología reincorporan las 3 fotos existentes (clínica/equipos)
 //   como cabecera 16:9 — se les quita a Testimonials para no duplicarlas en
 //   la misma página.
-// - Nueva sección "Sonrisas reales" (AntesDespues) entre Tecnología y Equipo,
-//   TODO placeholders — ver sonrisasEsteticdent y su regla de autenticidad.
+// - Sección "Transformaciones que realizamos" (AntesDespues, renombrada
+//   2026-07-23 para honestidad — badge "Imagen ilustrativa" por card) entre
+//   Tecnología y Equipo — ver sonrisasEsteticdent y su regla de autenticidad.
 // - Barra de acción fija inferior solo móvil (MobileActionBar): "Agendar por
 //   WhatsApp" + "Llamar"; se oculta cuando #contacto está en viewport.
 //   FloatingWhatsApp se oculta en <768px (la barra lo reemplaza ahí) y queda
@@ -255,10 +256,7 @@ const schema = schemaConsultorio({
     negocioSlug={site.negocioSlug}
   />
 
-  <AntesDespues
-    pares={sonrisasEsteticdent}
-    intro="Resultados de los tratamientos que más nos piden."
-  />
+  <AntesDespues pares={sonrisasEsteticdent} />
 
   <TeamSection profesionales={profesionalesEsteticdent} />
 
