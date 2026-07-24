@@ -186,5 +186,18 @@ const {
       flex: 0 0 85%;
       scroll-snap-align: center;
     }
+
+    /* Bug real detectado en verificación de Parte C (spec cierre demo
+       2026-07-23): el overflow-x del carrusel recorta las cards 2 y 3 antes
+       de que el IntersectionObserver de Capa 1 (threshold 0.12, ver
+       BaseLayout) alcance el umbral solo con el scroll vertical que trae la
+       sección a la vista — quedan en opacity:0 hasta que el usuario desliza
+       manualmente el carrusel. El swipe horizontal ya es la interacción de
+       "revelar" en un carrusel; se desactiva el fade/scale solo aquí.  */
+    :global(.js-reveal) .antes-despues__card.reveal--scale {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
 </style>
