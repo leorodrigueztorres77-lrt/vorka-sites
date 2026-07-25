@@ -43,16 +43,76 @@ export const preguntas = [
 <section class="faq section section--alterno" id="faq">
   <div class="container">
     <h2 class="section-title reveal">Preguntas frecuentes</h2>
-    <div class="faq__lista">
+    <div class="faq__lista" data-faq>
       {preguntas.map((item) => (
         <details class="faq__item reveal">
-          <summary class="faq__pregunta">{item.pregunta}</summary>
-          <p class="faq__respuesta" set:html={item.respuesta} />
+          <summary class="faq__pregunta">
+            <span class="faq__texto">{item.pregunta}</span>
+            <span class="faq__icono" aria-hidden="true"></span>
+          </summary>
+          <div class="faq__respuesta-wrap">
+            <p class="faq__respuesta" set:html={item.respuesta} />
+          </div>
         </details>
       ))}
     </div>
   </div>
 </section>
+
+<script>
+  // Sprint 2 T5 — enhancement del acordeón nativo <details>. Sin JS ya funciona
+  // (semántica y teclado gratis, el CSS rota el ícono +→× vía [open]); esto
+  // añade: (1) comportamiento de acordeón — al abrir uno se cierran los demás;
+  // (2) aria-expanded sincronizado en cada summary; (3) cierre animado — el
+  // navegador quita el contenido de <details> al instante, así que se
+  // intercepta el click, se reproduce el fade-out y recién ahí se quita el
+  // atributo open (apertura animada vía @starting-style, cierre rápido ~250ms).
+  // Respeta prefers-reduced-motion: sin animación, alterna al instante.
+  const lista = document.querySelector<HTMLElement>('[data-faq]');
+  if (lista) {
+    const items = Array.from(lista.querySelectorAll<HTMLDetailsElement>('.faq__item'));
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const CIERRE_MS = 250;
+
+    const sync = (item: HTMLDetailsElement) => {
+      const s = item.querySelector('summary');
+      s?.setAttribute('aria-expanded', String(item.open));
+    };
+    items.forEach(sync);
+
+    const cerrar = (item: HTMLDetailsElement, animar: boolean) => {
+      if (!item.open) return;
+      if (animar && !reduce) {
+        item.classList.add('is-closing');
+        window.setTimeout(() => {
+          item.open = false;
+          item.classList.remove('is-closing');
+          sync(item);
+        }, CIERRE_MS);
+      } else {
+        item.open = false;
+        sync(item);
+      }
+    };
+
+    items.forEach((item) => {
+      const summary = item.querySelector('summary');
+      summary?.addEventListener('click', (e) => {
+        if (item.open) {
+          // Cierre: frenar el toggle nativo (instantáneo) y animar la salida.
+          e.preventDefault();
+          cerrar(item, true);
+        } else {
+          // Apertura: cerrar los hermanos abiertos y dejar que el toggle
+          // nativo abra este (la entrada la anima @starting-style en el CSS).
+          items.forEach((otro) => otro !== item && cerrar(otro, true));
+        }
+      });
+      // Fuente de verdad final del estado (cubre togglear por teclado/programa).
+      item.addEventListener('toggle', () => sync(item));
+    });
+  }
+</script>
 
 <style>
   .faq__lista {
@@ -71,6 +131,10 @@ export const preguntas = [
   }
 
   .faq__pregunta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
     font-family: var(--font-titulos);
     font-weight: 700;
     font-size: var(--t-md);
@@ -83,15 +147,51 @@ export const preguntas = [
     display: none;
   }
 
-  .faq__pregunta::after {
-    content: '+';
-    float: right;
-    color: var(--color-primario);
-    font-weight: 700;
+  .faq__pregunta:focus-visible {
+    outline: 2px solid var(--color-primario);
+    outline-offset: 4px;
+    border-radius: var(--r-sm);
   }
 
-  .faq__item[open] .faq__pregunta::after {
-    content: '−';
+  /* Ícono +/× dibujado con dos barras: en reposo es un "+", al abrir gira 45°
+     y se convierte en "×" (solo transform — respeta la regla innegociable). */
+  .faq__icono {
+    position: relative;
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+  }
+
+  .faq__icono::before,
+  .faq__icono::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background: var(--color-primario);
+    border-radius: 1px;
+  }
+
+  .faq__icono::before {
+    width: 14px;
+    height: 2px;
+    transform: translate(-50%, -50%);
+  }
+
+  .faq__icono::after {
+    width: 2px;
+    height: 14px;
+    transform: translate(-50%, -50%);
+  }
+
+  .faq__item[open] .faq__icono {
+    transform: rotate(45deg);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .faq__icono {
+      transition: transform var(--duration-micro) var(--ease-out-expo);
+    }
   }
 
   .faq__respuesta {
@@ -100,6 +200,28 @@ export const preguntas = [
     font-size: var(--t-base);
     line-height: 1.7;
     color: var(--color-gris);
+  }
+
+  /* Entrada/salida del contenido: opacity + translateY (nunca height). La
+     apertura la dispara @starting-style (CSS puro, sin JS); el cierre lo anima
+     el JS añadiendo .is-closing antes de quitar el atributo open. */
+  @media (prefers-reduced-motion: no-preference) {
+    .faq__respuesta {
+      transition: opacity var(--duration-micro) var(--ease-out-expo),
+        transform var(--duration-micro) var(--ease-out-expo);
+    }
+
+    @starting-style {
+      .faq__item[open] .faq__respuesta {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+    }
+
+    .faq__item.is-closing .faq__respuesta {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
   }
 
   /* Links dentro de respuestas insertadas con set:html. */
