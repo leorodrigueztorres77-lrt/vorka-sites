@@ -38,14 +38,19 @@ const filas = [
   <div class="container comparativa__inner">
     <h2 class="section-title reveal">Seguir como estás vs. tener tu web con Vorka</h2>
 
-    <div class="comparativa__tabla reveal" role="table" aria-label={`Comparación entre ${COL_ACTUAL} y ${COL_VORKA}`}>
+    {/* Sprint 2 T1 (2026-07-24): antes la tabla entera llevaba un solo .reveal
+        (entraba como bloque). El spec pide que las FILAS entren escalonadas —
+        cada fila de datos lleva ahora su propio .reveal, así la cascada de
+        Capa 1 (agrupada por padre en BaseLayout) las anima una tras otra. La
+        fila de cabecera queda como marco estático, sin reveal. */}
+    <div class="comparativa__tabla" role="table" aria-label={`Comparación entre ${COL_ACTUAL} y ${COL_VORKA}`}>
       <div class="comparativa__fila comparativa__fila--cabecera" role="row">
         <span role="columnheader"></span>
         <span role="columnheader">{COL_ACTUAL}</span>
         <span role="columnheader" class="comparativa__col-vorka">{COL_VORKA}</span>
       </div>
       {filas.map((fila) => (
-        <div class="comparativa__fila" role="row">
+        <div class="comparativa__fila reveal" role="row">
           <span class="comparativa__concepto" role="rowheader">{fila.concepto}</span>
           <span class="comparativa__valor" role="cell">
             <span class="comparativa__etiqueta" aria-hidden="true">{COL_ACTUAL}</span>
