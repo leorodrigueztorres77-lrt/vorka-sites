@@ -5,13 +5,20 @@
 // como acción principal (misma jerarquía de CTA que el resto de Capa 1) +
 // link secundario de scroll a Portafolio, sin competir en peso visual.
 //
-// Fase 2 (rediseño 2026-07) — fix de animación: el badge y el <h1> NO llevan
-// la clase .reveal del estándar de Capa 1. Ese fade (opacity 0 → 1, gateado
-// por el IntersectionObserver de BaseLayout) retrasa el primer pintado del
-// texto más grande del hero — justo el candidato a LCP más probable de esta
-// página — hasta que JS corre y el observer dispara. El resto del contenido
-// (subtítulo, CTA, proof list) sí conserva el fade: no son candidatos a LCP
-// y el retraso ahí es puramente cosmético.
+// Fase 2 (rediseño 2026-07) — el badge y el <h1> NO usaban .reveal de Capa 1
+// para no retrasar el LCP (el fade opacity 0→1 esperaba al IntersectionObserver
+// de BaseLayout).
+//
+// Sprint 2 T6 (2026-07-24) — entrada orquestada del hero. En vez del observer
+// genérico, el hero corre su propia secuencia escalonada UNA vez al cargar
+// (badge → titulo → sub → mockup → cta → proof), gateada por .js-reveal (que
+// BaseLayout marca síncrono antes del primer pintado, así el estado inicial no
+// parpadea) y disparada al añadir .is-ready. Dos piezas NO bajan nunca su
+// opacity, solo se desplazan (translateY): el <h1> (candidato a LCP, debe
+// pintarse visible ya) y el bloque .hero__cta que contiene el botón de WhatsApp
+// (CTA sagrado: nunca oculto ni retrasado en visibilidad — se pinta clickeable
+// desde el primer frame y solo se acomoda en posición). Sin JS todo queda
+// visible; con prefers-reduced-motion no hay entrada.
 import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
 import type { SiteConfig } from '@/data/types';
 
@@ -30,11 +37,11 @@ const { site } = Astro.props;
         Tu negocio merece<br />
         <span class="hero__acento">una web que venda.</span>
       </h1>
-      <p class="hero__sub reveal">
+      <p class="hero__sub">
         La construimos en días, no en meses, y la conectamos con
         automatización de ventas por WhatsApp.
       </p>
-      <div class="hero__cta reveal">
+      <div class="hero__cta">
         <WhatsAppButton
           phone={site.telefonoWhatsApp}
           message="Hola Vorka, quiero información"
@@ -44,7 +51,7 @@ const { site } = Astro.props;
         />
         <a class="hero__cta-secundario" href="#portafolio">Ver ejemplos →</a>
       </div>
-      <ul class="hero__proof reveal" aria-label="Garantías de servicio">
+      <ul class="hero__proof" aria-label="Garantías de servicio">
         <li><span class="hero__proof-check" aria-hidden="true">✓</span> Respuesta en menos de 2 horas</li>
         <li><span class="hero__proof-check" aria-hidden="true">✓</span> Web lista en 5–7 días</li>
         <li><span class="hero__proof-check" aria-hidden="true">✓</span> Sin contratos largos</li>
@@ -90,12 +97,78 @@ const { site } = Astro.props;
   </div>
 </section>
 
+<script>
+  // Dispara la entrada orquestada tras el primer pintado. El doble rAF asegura
+  // que el navegador pinte el estado inicial (gateado por .js-reveal) antes de
+  // añadir .is-ready, para que las transiciones corran sin flash. Primer load
+  // únicamente — no se re-observa nada.
+  const hero = document.querySelector('.hero');
+  if (hero) {
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => hero.classList.add('is-ready')),
+    );
+  }
+</script>
+
 <style>
   .hero {
     padding-top: 96px;
     padding-bottom: 96px;
     background: linear-gradient(180deg, var(--color-fondo) 0%, var(--color-fondo-alterno) 100%);
     text-align: center;
+  }
+
+  /* Sprint 2 T6 — entrada orquestada. Estado inicial gateado por .js-reveal +
+     :not(.is-ready): se aplica antes del primer pintado (sin flash) y deja de
+     aplicar en cuanto el JS añade .is-ready, disparando la transición hacia el
+     estado natural con un retardo escalonado por elemento. Solo transform/
+     opacity → sin reflujo ni CLS. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js-reveal) .hero:not(.is-ready) .hero__badge,
+    :global(.js-reveal) .hero:not(.is-ready) .hero__sub,
+    :global(.js-reveal) .hero:not(.is-ready) .hero__proof,
+    :global(.js-reveal) .hero:not(.is-ready) .hero__mockup {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+
+    /* El titulo (candidato a LCP) y el .hero__cta (botón de WhatsApp, CTA
+       sagrado) NUNCA bajan opacity: se pintan visibles desde el primer frame y
+       solo se desplazan. */
+    :global(.js-reveal) .hero:not(.is-ready) .hero__titulo,
+    :global(.js-reveal) .hero:not(.is-ready) .hero__cta {
+      transform: translateY(16px);
+    }
+
+    .hero__badge,
+    .hero__titulo,
+    .hero__sub,
+    .hero__cta,
+    .hero__proof,
+    .hero__mockup {
+      transition: opacity var(--duration-reveal) var(--ease-out-expo),
+        transform var(--duration-reveal) var(--ease-out-expo);
+    }
+
+    /* Secuencia: badge → titulo → sub → mockup → cta → proof. */
+    .hero.is-ready .hero__badge {
+      transition-delay: 80ms;
+    }
+    .hero.is-ready .hero__titulo {
+      transition-delay: 160ms;
+    }
+    .hero.is-ready .hero__sub {
+      transition-delay: 240ms;
+    }
+    .hero.is-ready .hero__mockup {
+      transition-delay: 280ms;
+    }
+    .hero.is-ready .hero__cta {
+      transition-delay: 320ms;
+    }
+    .hero.is-ready .hero__proof {
+      transition-delay: 400ms;
+    }
   }
 
   .hero__inner {

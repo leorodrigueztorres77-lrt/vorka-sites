@@ -62,6 +62,14 @@ const navItems = [
     };
     alActualizar();
     window.addEventListener('scroll', alActualizar, { passive: true });
+
+    // Sprint 2 T6 — primer paso de la entrada orquestada del hero: el nav baja
+    // suave (solo translateY, la opacity queda en 1 para no ocultar nunca el
+    // botón de WhatsApp del header). Doble rAF para pintar el estado inicial
+    // antes de disparar la transición.
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => navs.forEach((nav) => nav.classList.add('is-ready'))),
+    );
   }
 
   // Menú hamburguesa en mobile.
@@ -95,6 +103,19 @@ const navItems = [
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     box-shadow: var(--shadow-elevar);
+  }
+
+  /* T6 — entrada del nav: solo desplazamiento (la opacity nunca baja → el CTA
+     de WhatsApp del header queda siempre visible). Estado inicial gateado por
+     .js-reveal + :not(.is-ready), pre-pintado sin flash. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js-reveal) .nav:not(.is-ready) .nav__inner {
+      transform: translateY(-10px);
+    }
+
+    .nav__inner {
+      transition: transform var(--duration-reveal) var(--ease-out-expo);
+    }
   }
 
   .nav__inner {
