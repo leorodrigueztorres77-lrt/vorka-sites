@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Sitemap escrito a mano (Sprint 3 T3). El build compila en un dist/ compartido
+  las demos de varios clientes; aquí se listan solo las URLs entregables
+  públicas — la web de Vorka y las demos vivas — excluyendo las páginas
+  internas de variantes (ya bloqueadas también en robots.txt). Al publicar cada
+  cliente como sitio independiente en Hostinger, cada uno llevará su propio
+  sitemap de una sola entrada.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://vorka-sites.vercel.app/vorka/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://vorka-sites.vercel.app/demo-el-fogon-ecuatoriano/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://vorka-sites.vercel.app/demo-shangrila/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://vorka-sites.vercel.app/demo-esteticdent/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://vorka-sites.vercel.app/demo-odontocrea/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>

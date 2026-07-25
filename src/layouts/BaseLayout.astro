@@ -33,9 +33,17 @@ const ogDescripcionPagina = ogDescripcion ?? descripcionPagina;
 
     <!-- SEO local -->
     <meta property="og:type" content="business.business" />
+    <meta property="og:site_name" content={site.nombre} />
     <meta property="og:title" content={ogTituloPagina} />
     <meta property="og:description" content={ogDescripcionPagina} />
     {ogImage && <meta property="og:image" content={ogImage} />}
+
+    <!-- Twitter Cards — reflejan el OG; con imagen usan el card grande. -->
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={ogTituloPagina} />
+    <meta name="twitter:description" content={ogDescripcionPagina} />
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+
     <meta name="robots" content="index, follow" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

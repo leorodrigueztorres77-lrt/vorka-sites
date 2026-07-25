@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Páginas internas de revisión (librería de variantes de Capa 2) — no son
+# entregables públicos, no deben indexarse.
+Disallow: /variantes/
+Disallow: /variantes-consultorio/
+
+Sitemap: https://vorka-sites.vercel.app/sitemap.xml

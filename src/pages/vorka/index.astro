@@ -28,15 +28,24 @@ import { siteConfigVorka } from '@/data/site.vorka';
 
 const site = siteConfigVorka;
 
-// Schema LocalBusiness (spec GTM, SEO técnico).
+const SITE_ORIGIN = 'https://vorka-sites.vercel.app';
+const ogImageUrl = `${SITE_ORIGIN}/og/vorka-og.png`;
+
+// Schema LocalBusiness (spec GTM, SEO técnico). Sprint 3 T3: enriquecido con
+// logo, image (og), priceRange, slogan y ciudad — señales que Google usa para
+// el panel de conocimiento y para validar en Rich Results.
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
   name: 'Vorka',
   description:
-    'Agencia digital en Ecuador. Webs profesionales para negocios locales con automatización de ventas por WhatsApp y facturación SRI con Ordercash.',
-  areaServed: 'Ecuador',
+    'Agencia digital en Ecuador. Diseño de páginas web para negocios locales con automatización de ventas por WhatsApp y facturación SRI con Ordercash.',
+  areaServed: ['Quito', 'Ecuador'],
   url: 'https://vorka-sites.vercel.app/vorka/',
+  logo: `${SITE_ORIGIN}/vorka-favicon.svg`,
+  image: ogImageUrl,
+  priceRange: '$350–$750+',
+  slogan: 'Piensa rápido. Ejecuta más rápido.',
   contactPoint: {
     '@type': 'ContactPoint',
     contactType: 'sales',
@@ -95,11 +104,17 @@ const canonicalUrl = 'https://vorka-sites.vercel.app/vorka/';
   site={site}
   ogTitulo="Vorka — Webs que venden en Ecuador"
   ogDescripcion="Web lista en días. Ventas por WhatsApp. Factura SRI automática. Para cualquier negocio local."
+  ogImage={ogImageUrl}
 >
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(schema)} />
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(faqSchema)} />
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(serviceSchema)} />
   <link rel="canonical" href={canonicalUrl} slot="head" />
+  {/* Favicon propio de Vorka (verde de marca). Va en el head slot, que se
+      renderiza DESPUÉS del favicon genérico de Capa 1 en BaseLayout, así que
+      lo sobreescribe solo aquí — las demos de clientes conservan el genérico y
+      nunca heredan la identidad de Vorka. */}
+  <link rel="icon" type="image/svg+xml" href="/vorka-favicon.svg" slot="head" />
   <link
     rel="preload"
     href="/fonts/vorka/plus-jakarta-sans-var.woff2"
@@ -274,6 +289,13 @@ const canonicalUrl = 'https://vorka-sites.vercel.app/vorka/';
     --r-md: 16px;
     --r-full: 999px;
 
+    /* Escala tipográfica de razón 1.25 (tercera menor). El estándar
+       recomienda ~6 pasos de cuerpo/título; aquí hay 6 de ese rango
+       (--t-sm a --t-2xl). --t-xs y --t-display son casos de borde
+       justificados fuera de la razón: --t-xs solo para metadatos/labels
+       (stats, ayudas del analizador) y --t-display es un titular de hero
+       fluido (clamp), no un paso más de la escala. Ambos se usan de forma
+       aislada, no se intercalan en el cuerpo del texto. */
     --t-xs: 0.8rem;
     --t-sm: 0.9rem;
     --t-base: 1rem;

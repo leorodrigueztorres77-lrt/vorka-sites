@@ -1,16 +1,24 @@
 ---
-// 404 genérico (spec SALUD 2026-07-20, "Calidad general"). Este repo compila
-// las demos de TODOS los clientes en un solo dist/ compartido (ver
-// src/pages/index.astro, herramienta interna de revisión) — una página 404
-// aquí no puede saber a qué negocio quería llegar el visitante, así que no
-// lleva el WhatsApp de ningún cliente en particular ni su identidad visual.
+// 404 del dominio compartido de revisión (vorka-sites.vercel.app). Sprint 3
+// T3: se le da identidad de VORKA con CTA de WhatsApp — Vorka es la marca
+// paraguas de este dominio, así que un visitante que cae en un enlace roto
+// aterriza en la marca correcta (no en la de un cliente, cuya web todavía no
+// sabemos cuál buscaba).
 //
 // IMPORTANTE para una entrega final real: cada cliente se publica como un
 // sitio independiente (ver CLAUDE.md, "Hosting: Hostinger" — un build estático
 // por cliente). Antes de publicar la entrega final de un cliente concreto,
-// reemplazar este 404 genérico por uno personalizado con su BaseLayout,
-// identidad visual y botón de WhatsApp — este archivo es el fallback correcto
-// solo para el entorno compartido de revisión (vorka-sites.vercel.app).
+// reemplazar este 404 por uno con su BaseLayout, identidad visual y WhatsApp
+// propios — este archivo es el fallback correcto solo para el entorno
+// compartido de revisión.
+import { buildWhatsAppLink } from '@/lib/whatsapp';
+import { siteConfigVorka } from '@/data/site.vorka';
+
+const waLink = buildWhatsAppLink({
+  phone: siteConfigVorka.telefonoWhatsApp,
+  message: 'Hola Vorka, llegué a un enlace roto en su sitio y quiero información',
+  negocioSlug: 'vorka',
+});
 ---
 
 <!doctype html>
@@ -20,15 +28,115 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Página no encontrada — Vorka</title>
     <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href="/vorka-favicon.svg" />
   </head>
   <body>
-    <main style="max-width: 480px; margin: 4rem auto; padding: 0 1.5rem; font-family: system-ui, sans-serif; text-align: center;">
-      <h1 style="font-size: 1.5rem;">Página no encontrada</h1>
-      <p style="color: #555; line-height: 1.6;">
-        El link que seguiste no corresponde a ninguna página de este sitio. Si veniste buscando el sitio de un
-        negocio específico, revisa que el link esté completo.
+    <main class="e404">
+      <p class="e404__marca">VORKA</p>
+      <p class="e404__codigo">404</p>
+      <h1 class="e404__titulo">Esta página no existe</h1>
+      <p class="e404__texto">
+        El enlace que seguiste no corresponde a ninguna página. Si buscabas el sitio de un negocio
+        específico, revisa que la dirección esté completa — o escríbenos y te ayudamos.
       </p>
-      <p><a href="/">← Volver al inicio</a></p>
+      <div class="e404__acciones">
+        <a class="e404__wa" href={waLink} target="_blank" rel="noopener noreferrer">
+          Hablemos por WhatsApp <span aria-hidden="true">→</span>
+        </a>
+        <a class="e404__volver" href="/vorka/">Ir al inicio de Vorka</a>
+      </div>
     </main>
+
+    <style is:global>
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        background: #1a1a1a;
+      }
+    </style>
+    <style>
+      .e404 {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 48px 24px;
+        color: #ffffff;
+        font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      }
+
+      .e404__marca {
+        font-weight: 800;
+        font-size: 20px;
+        letter-spacing: 0.08em;
+        color: #39d353;
+        margin: 0 0 32px;
+      }
+
+      .e404__codigo {
+        font-weight: 800;
+        font-size: clamp(72px, 18vw, 128px);
+        line-height: 1;
+        color: #39d353;
+        margin: 0;
+      }
+
+      .e404__titulo {
+        font-weight: 700;
+        font-size: clamp(24px, 5vw, 32px);
+        margin: 16px 0 0;
+      }
+
+      .e404__texto {
+        max-width: 440px;
+        font-size: 16px;
+        line-height: 1.6;
+        color: #a1a1aa;
+        margin: 16px 0 32px;
+      }
+
+      .e404__acciones {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .e404__wa {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 48px;
+        padding: 0 24px;
+        border-radius: 999px;
+        background: #39d353;
+        color: #0b2b13;
+        font-weight: 700;
+        font-size: 16px;
+        text-decoration: none;
+      }
+
+      .e404__volver {
+        color: #a1a1aa;
+        font-size: 16px;
+        text-decoration: none;
+      }
+
+      .e404__volver:hover {
+        color: #ffffff;
+      }
+
+      .e404__wa:focus-visible,
+      .e404__volver:focus-visible {
+        outline: 2px solid #39d353;
+        outline-offset: 2px;
+      }
+    </style>
   </body>
 </html>

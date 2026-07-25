@@ -30,10 +30,13 @@ export const siteConfigVorka: SiteConfig = {
     texto: "'Inter', sans-serif",
   },
   seo: {
-    // SEO GTM (spec de Leo 2026-07): mensaje amplio para negocios locales.
-    tituloDefault: 'Vorka — Webs profesionales para negocios locales en Ecuador',
+    // SEO técnico (Sprint 3 T3): title + description orientados a las
+    // búsquedas objetivo "diseño web Ecuador" y "páginas web para negocios
+    // Quito", sin keyword stuffing — la keyword abre el título y la primera
+    // frase de la descripción, que es lo que Google pondera.
+    tituloDefault: 'Diseño web en Ecuador — Páginas web para negocios en Quito | Vorka',
     descripcionDefault:
-      'Creamos la web de tu negocio en 5–7 días y la conectamos con ventas por WhatsApp y facturación electrónica SRI automática con Ordercash. Para cualquier negocio local en Ecuador.',
+      'Diseño de páginas web para negocios locales en Quito y todo Ecuador: listas en 5–7 días, optimizadas para móvil, con ventas por WhatsApp y factura SRI automática con Ordercash.',
   },
   webhookContactoUrl: '',
 };
