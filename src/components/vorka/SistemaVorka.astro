@@ -19,24 +19,40 @@
     <h2 class="section-title reveal">El sistema Vorka, de principio a fin</h2>
   </div>
 
-  <div class="seq" id="seq-construccion">
+  <div class="seq" id="seq-construccion" data-seq>
     <canvas aria-hidden="true"></canvas>
     <div class="seq-overlay">
-      <h3 class="seq-titulo">Tu negocio, convertido en una web que vende</h3>
-      <p class="seq-texto">
-        Estructura, diseño y contenido reales de tu negocio — listos en 5–7 días, no en meses.
-      </p>
+      {/* Sprint 3 T1 — un beat cubre toda la escena de construcción (0→1). */}
+      <div class="seq-beat is-active" data-beat data-from="0">
+        <h3 class="seq-titulo">Tu negocio, convertido en una web que vende</h3>
+        <p class="seq-texto">
+          Estructura, diseño y contenido reales de tu negocio — listos en 5–7 días, no en meses.
+        </p>
+      </div>
     </div>
   </div>
 
-  <div class="seq" id="seq-conversion">
+  <div class="seq" id="seq-conversion" data-seq>
     <canvas aria-hidden="true"></canvas>
     <div class="seq-overlay">
-      <h3 class="seq-titulo">De un mensaje de WhatsApp a un pedido confirmado</h3>
-      <p class="seq-texto">
-        Cada visita a tu web se conecta directo con tu WhatsApp — sin apps que instalar, sin
-        fricción para tu cliente.
-      </p>
+      {/* Sprint 3 T1 — la escena de conversión lleva DOS beats que se cruzan a
+          mitad de su progreso: WhatsApp→pedido (0→0.5) y el cierre Ordercash
+          (0.5→1). El engine (scrollSequence.ts) ya expone onProgress; el script
+          de abajo enciende el beat correcto según ese progreso. */}
+      <div class="seq-beat is-active" data-beat data-from="0">
+        <h3 class="seq-titulo">De un mensaje de WhatsApp a un pedido confirmado</h3>
+        <p class="seq-texto">
+          Cada visita a tu web se conecta directo con tu WhatsApp — sin apps que instalar, sin
+          fricción para tu cliente.
+        </p>
+      </div>
+      <div class="seq-beat" data-beat data-from="0.5">
+        <h3 class="seq-titulo">Cobrado y facturado, automático con Ordercash</h3>
+        <p class="seq-texto">
+          Tú confirmas y Ordercash cobra y emite la factura SRI. Tu web queda lista para dar el
+          salto apenas Ordercash esté disponible para tu negocio.
+        </p>
+      </div>
     </div>
   </div>
 </section>
@@ -58,6 +74,20 @@
     { id: 'seq-construccion', name: 'construccion' },
     { id: 'seq-conversion', name: 'conversion' },
   ];
+
+  // Sprint 3 T1 — sincroniza el texto del overlay con el progreso del scroll:
+  // enciende el ÚLTIMO beat cuyo data-from ya alcanzó el progreso actual. Los
+  // beats se solapan en el mismo punto del overlay y hacen crossfade por CSS
+  // (solo opacity/transform). En móvil y reduced-motion no se llama nunca —
+  // el CSS de .seq-static deja los beats como lista estática legible.
+  const sincronizarBeats = (section: HTMLElement, progress: number) => {
+    const beats = Array.from(section.querySelectorAll<HTMLElement>('[data-beat]'));
+    let activo = 0;
+    beats.forEach((beat, i) => {
+      if (progress >= Number(beat.dataset.from)) activo = i;
+    });
+    beats.forEach((beat, i) => beat.classList.toggle('is-active', i === activo));
+  };
 
   for (const { id, name } of escenas) {
     const section = document.getElementById(id);
@@ -84,6 +114,7 @@
       mode: 'scrub',
       pinVh: 120,
       posterSrc,
+      onProgress: (progress) => sincronizarBeats(section, progress),
     });
   }
 </script>
@@ -165,6 +196,60 @@
     margin: 0;
   }
 
+  /* Sprint 3 T1 — beats del overlay. En modo scrub (desktop) se apilan en el
+     mismo punto inferior del overlay y hacen crossfade según el progreso: el
+     activo entra, el resto sale. Solo opacity/transform (regla innegociable).
+     El estado base oculto lo controla is-active desde el script; el primer
+     beat de cada escena nace con is-active en el HTML para no dejar el overlay
+     en blanco antes del primer onProgress. */
+  .seq-beat {
+    position: absolute;
+    left: var(--section-pad);
+    right: var(--section-pad);
+    bottom: var(--section-pad);
+    opacity: 0;
+  }
+
+  .seq-beat.is-active {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .seq-beat {
+      transform: translateY(14px);
+      transition: opacity var(--duration-reveal) var(--ease-out-expo),
+        transform var(--duration-reveal) var(--ease-out-expo);
+    }
+
+    .seq-beat.is-active {
+      transform: translateY(0);
+    }
+  }
+
+  /* Estado estático (móvil + prefers-reduced-motion): el engine añade
+     .seq-static y NO hay scrubbing. El overlay pasa a flujo normal y los beats
+     se muestran TODOS como una lista legible sobre el poster — así los 3
+     textos quedan visibles sin animación, como exige la spec para
+     reduced-motion. */
+  .seq-static {
+    height: auto;
+    min-height: 60vh;
+    overflow: visible;
+  }
+
+  .seq-static .seq-overlay {
+    position: relative;
+    justify-content: flex-end;
+    gap: 20px;
+    padding-block: 56px;
+  }
+
+  .seq-static .seq-beat {
+    position: static;
+    opacity: 1;
+    transform: none;
+  }
+
   .seq-hud {
     position: absolute;
     top: 16px;
@@ -183,11 +268,12 @@
     }
 
     /* Sprint 1 T2: en móvil la escena es un poster estático, no un scroll
-       anclado — no necesita ocupar toda la pantalla. Alto compacto para que
-       las dos escenas juntas no sumen dos viewports enteros. */
+       anclado — no necesita ocupar toda la pantalla. Sprint 3 T1: alto
+       automático (min 46svh) para que la escena de conversión, que ahora lista
+       DOS beats, no recorte el segundo contra el borde inferior. */
     .seq-static {
-      height: 46svh;
-      min-height: 320px;
+      height: auto;
+      min-height: 46svh;
     }
 
     .seq-overlay {
