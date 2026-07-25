@@ -161,13 +161,19 @@ select:focus-visible,
    cascada de 80ms entre hermanos — ver script en BaseLayout). Inerte en
    cualquier sitio hasta que un elemento reciba la clase .reveal. El gate
    .js-reveal (marcado por BaseLayout solo cuando JS corre) evita que el
-   contenido quede oculto para usuarios sin JavaScript o para buscadores. */
+   contenido quede oculto para usuarios sin JavaScript o para buscadores.
+
+   Sprint 2 T0 (Vorka, 2026-07-24): duración y easing salen de var() con
+   fallback a los valores originales. Una página que defina --reveal-duration /
+   --reveal-ease en su :root (hoy solo Vorka, ver index.astro) adopta el motion
+   nuevo; cualquier otro sitio que NO los defina conserva exactamente los 650ms
+   cubic-bezier(0.25,0.1,0.25,1) de siempre — los demos entregados no cambian. */
 .js-reveal .reveal,
 .js-reveal .reveal--scale {
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 650ms cubic-bezier(0.25, 0.1, 0.25, 1),
-    transform 650ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition: opacity var(--reveal-duration, 650ms) var(--reveal-ease, cubic-bezier(0.25, 0.1, 0.25, 1)),
+    transform var(--reveal-duration, 650ms) var(--reveal-ease, cubic-bezier(0.25, 0.1, 0.25, 1));
 }
 
 /* Variante para tarjetas y elementos visuales (regla de profundidad visual,

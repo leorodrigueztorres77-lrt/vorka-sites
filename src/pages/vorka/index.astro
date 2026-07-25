@@ -216,5 +216,24 @@ const canonicalUrl = 'https://vorka-sites.vercel.app/vorka/';
     --t-display: clamp(2.75rem, 5vw + 1rem, 4rem);
 
     --section-pad: clamp(2.5rem, 5vw, 3.5rem);
+
+    /* Sprint 2 T0 (2026-07-24) — Sistema de motion, definido una sola vez y
+       consumido por todo el sitio (nada hardcodeado). --ease-out-expo es el
+       easing "premium" del PROMPT MAESTRO; las duraciones respetan los rangos
+       de los PRINCIPIOS INNEGOCIABLES (micro 200–400ms, reveals 600–800ms).
+       --stagger es el retraso entre hermanos que anima en cascada.
+         · --reveal-duration / --reveal-ease alimentan la utilidad .reveal de
+           Capa 1 (global.css) vía var() con fallback: al vivir estos tokens
+           SOLO en el :root de la página de Vorka, únicamente Vorka adopta el
+           easing/duración nuevos; los demos de cliente ya entregados (El Fogón,
+           Estetic Dent, Shangrila) no definen los tokens y conservan sus 650ms
+           originales — su motion no se mueve. */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-micro: 250ms;
+    --duration-reveal: 700ms;
+    --stagger: 90ms;
+
+    --reveal-duration: var(--duration-reveal);
+    --reveal-ease: var(--ease-out-expo);
   }
 </style>
