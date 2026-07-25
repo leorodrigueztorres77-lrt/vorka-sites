@@ -113,11 +113,16 @@ const canonicalUrl = 'https://vorka-sites.vercel.app/vorka/';
   <main id="inicio">
     <Hero site={site} />
     <Ticker />
+    {/* Sprint 1 T1 (2026-07-23): la prueba (demos reales) va antes que el
+        precio; "Cómo funciona" (Servicios) + "El sistema Vorka" quedan
+        contiguos; el analizador precede a Nosotros. Testimonios (T6) se
+        construyó como componente pero NO se renderiza aquí hasta tener citas
+        reales — regla dura de CLAUDE.md contra placeholders en producción. */}
+    <Portafolio />
     <Servicios site={site} />
+    <SistemaVorka />
     <Precios site={site} />
     <ComparativaValor site={site} />
-    <SistemaVorka />
-    <Portafolio />
     <AnalizadorWeb site={site} />
     <Nosotros />
     <Stats />
