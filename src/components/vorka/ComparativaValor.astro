@@ -1,8 +1,12 @@
 ---
-// Vorka — Anchor de valor (spec GTM de Leo 2026-07, Fase 6): comparativa
-// freelance vs Vorka que ancla el precio como inversión. En mobile la tabla
-// colapsa a cards apiladas (NUNCA tabla horizontal con scroll, regla de la
-// spec). Ordercash mantiene el framing del sistema, no promesa de fecha.
+// Vorka — Anchor de valor (spec GTM de Leo 2026-07, Fase 6; reencuadrado en
+// Sprint 1 T5, 2026-07-23). Antes comparaba "freelance vs Vorka"; ahora
+// contrasta el status quo del prospecto — seguir solo con redes sociales / sin
+// web — contra tener su web con Vorka. Habla del dolor actual del dueño (no
+// aparece en Google, pierde pedidos en DMs), que es lo que de verdad mueve la
+// decisión. En mobile la tabla colapsa a cards apiladas (NUNCA tabla
+// horizontal con scroll, regla de la spec). Ordercash mantiene el framing del
+// sistema, no promesa de fecha.
 import { buildWhatsAppLink } from '@/lib/whatsapp';
 import type { SiteConfig } from '@/data/types';
 
@@ -18,35 +22,37 @@ const href = buildWhatsAppLink({
   negocioSlug: site.negocioSlug,
 });
 
+const COL_ACTUAL = 'Solo redes / sin web';
+const COL_VORKA = 'Con Vorka';
+
 const filas = [
-  { concepto: 'Tiempo de entrega', freelance: 'semanas o meses, según disponibilidad', vorka: '5–7 días' },
-  { concepto: 'Precio', freelance: 'presupuestos variables, a menudo sin mantenimiento incluido', vorka: 'Desde $350' },
-  { concepto: 'Facturación SRI', freelance: 'No incluida', vorka: 'Automatizada con Ordercash' },
-  { concepto: 'Soporte post lanzamiento', freelance: 'Paga extra', vorka: 'Incluido en mantenimiento' },
-  { concepto: 'WhatsApp integrado', freelance: 'Configuración manual', vorka: 'Nativo en cada proyecto' },
-  { concepto: 'Válido para cualquier negocio', freelance: 'Depende del freelance', vorka: 'Sí' },
+  { concepto: 'Te encuentran en Google', actual: 'No apareces', vorka: 'Apareces con SEO local' },
+  { concepto: 'Pedidos', actual: 'Se pierden en los DMs', vorka: 'Llegan directo a tu WhatsApp' },
+  { concepto: 'Facturación SRI', actual: 'Manual, uno por uno', vorka: 'Automatizada con Ordercash' },
+  { concepto: 'Imagen profesional', actual: 'Dependes del feed', vorka: 'Web propia que vende 24/7' },
+  { concepto: 'Costo de empezar', actual: '"Gratis", pero te cuesta ventas', vorka: 'Desde $350, fijo' },
 ];
 ---
 
 <section class="comparativa section" id="comparativa">
   <div class="container comparativa__inner">
-    <h2 class="section-title reveal">¿Por qué no contratar a un freelance?</h2>
+    <h2 class="section-title reveal">Seguir como estás vs. tener tu web con Vorka</h2>
 
-    <div class="comparativa__tabla reveal" role="table" aria-label="Comparación entre un freelance típico y Vorka">
+    <div class="comparativa__tabla reveal" role="table" aria-label={`Comparación entre ${COL_ACTUAL} y ${COL_VORKA}`}>
       <div class="comparativa__fila comparativa__fila--cabecera" role="row">
         <span role="columnheader"></span>
-        <span role="columnheader">Freelance típico</span>
-        <span role="columnheader" class="comparativa__col-vorka">Vorka</span>
+        <span role="columnheader">{COL_ACTUAL}</span>
+        <span role="columnheader" class="comparativa__col-vorka">{COL_VORKA}</span>
       </div>
       {filas.map((fila) => (
         <div class="comparativa__fila" role="row">
           <span class="comparativa__concepto" role="rowheader">{fila.concepto}</span>
           <span class="comparativa__valor" role="cell">
-            <span class="comparativa__etiqueta" aria-hidden="true">Freelance típico</span>
-            {fila.freelance}
+            <span class="comparativa__etiqueta" aria-hidden="true">{COL_ACTUAL}</span>
+            {fila.actual}
           </span>
           <span class="comparativa__valor comparativa__valor--vorka" role="cell">
-            <span class="comparativa__etiqueta" aria-hidden="true">Vorka</span>
+            <span class="comparativa__etiqueta" aria-hidden="true">{COL_VORKA}</span>
             {fila.vorka} <span class="comparativa__check" aria-hidden="true">✓</span>
           </span>
         </div>
