@@ -68,7 +68,10 @@ const proyectos = [
               <span class="proyecto__dot proyecto__dot--rojo"></span>
               <span class="proyecto__dot proyecto__dot--amarillo"></span>
               <span class="proyecto__dot proyecto__dot--verde"></span>
-              <span class="proyecto__navegador-url">vorka.ec{proyecto.href}</span>
+              {/* Sprint 1 T3c (2026-07-23): antes mostraba "vorka.ec/…", un
+                  dominio que aún no resuelve — engañoso en el chrome del
+                  navegador simulado. Ruta relativa hasta que exista vorka.ec. */}
+              <span class="proyecto__navegador-url">{proyecto.href}</span>
             </div>
             <div class="proyecto__viewport">
               <img

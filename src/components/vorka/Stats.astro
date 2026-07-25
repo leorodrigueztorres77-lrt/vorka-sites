@@ -8,7 +8,10 @@ const stats = [
   { valor: '5–7 días', label: 'Entrega garantizada' },
   { valor: 'Desde $350', label: 'Sin costos ocultos' },
   { valor: 'A tu medida', label: 'Cualquier negocio, cualquier rubro' },
-  { valor: '100% WhatsApp', label: 'CTA principal en cada web' },
+  // Sprint 1 T3b (2026-07-23): "100% WhatsApp" envolvía a 2 líneas y rompía la
+  // línea base de la fila; la cifra pasa a "100%" y el label absorbe "WhatsApp
+  // como CTA principal".
+  { valor: '100%', label: 'WhatsApp como CTA principal' },
 ];
 ---
 
@@ -51,6 +54,10 @@ const stats = [
     font-weight: 700;
     font-size: var(--t-2xl);
     color: var(--color-primario);
+    /* T3b: cifras con ancho tabular — misma línea base entre columnas y sin
+       salto de layout cuando el count-up del Sprint 2 anime los dígitos. */
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
   }
 
   .stats__label {

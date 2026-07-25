@@ -16,7 +16,11 @@ export const siteConfigVorka: SiteConfig = {
     texto: '#FFFFFF',
     fondo: '#1A1A1A',
     fondoAlterno: '#333333',
-    gris: '#666666',
+    // Sprint 1 T3a (2026-07-23): #666 sobre el fondo #1A1A1A daba ~3:1 —
+    // falla AA para texto normal (mín. 4.5:1). #A1A1AA da ~6.7:1. Este token
+    // alimenta labels de stats, valores de la comparativa y textos del
+    // portafolio, todos sobre fondo oscuro.
+    gris: '#A1A1AA',
   },
   // Fase 1 (rediseño 2026-07): Plus Jakarta Sans + Inter, auto-hospedadas en
   // public/fonts/vorka/ (ver Vorka/index.astro) — sin googleFontsUrl a
