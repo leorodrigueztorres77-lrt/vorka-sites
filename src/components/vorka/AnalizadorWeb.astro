@@ -5,6 +5,11 @@
 // (misma métrica del "Radar de Competencia", CLAUDE.md — el gatillo de
 // cierre más fuerte). 100% client-side: sin backend, sin API key, sin costo.
 // Si Google limita la cuota por IP, el widget degrada a un CTA de WhatsApp.
+//
+// Sprint 3 T2 (2026-07): deja de ser un formulario plano y pasa a ser una
+// "experiencia" — secuencia de pasos de carga, gauge circular animado (solo
+// stroke-dashoffset/opacity/transform) y 3 tarjetas de hallazgo pobladas con
+// datos REALES del propio JSON de PSI (LCP, CLS, TBT), no mock.
 import { buildWhatsAppLink } from '@/lib/whatsapp';
 import type { SiteConfig } from '@/data/types';
 
@@ -14,7 +19,7 @@ interface Props {
 
 const { site } = Astro.props;
 
-// Base del link de WhatsApp; el script le inyecta la nota obtenida.
+// Base del link de WhatsApp; el script le inyecta la URL y la nota obtenidas.
 const waBase = buildWhatsAppLink({
   phone: site.telefonoWhatsApp,
   message: 'Hola Vorka, analicé mi web con su herramienta y quiero mejorarla',
@@ -46,22 +51,45 @@ const waBase = buildWhatsAppLink({
       </button>
     </form>
 
-    <div class="analizador__estado" id="analizador-estado" role="status" aria-live="polite"></div>
+    <!-- Errores/avisos accesibles. -->
+    <p class="analizador__error" id="analizador-error" role="status" aria-live="polite"></p>
+
+    <!-- Secuencia de pasos mientras Google analiza. Cada paso pasa por
+         pendiente → activo (spinner) → hecho (check). Solo opacity/transform. -->
+    <ol class="analizador__pasos" id="analizador-pasos" hidden>
+      <li class="paso" data-paso><span class="paso__icono" aria-hidden="true"></span>Analizando velocidad en móvil…</li>
+      <li class="paso" data-paso><span class="paso__icono" aria-hidden="true"></span>Revisando SEO local…</li>
+      <li class="paso" data-paso><span class="paso__icono" aria-hidden="true"></span>Midiendo Core Web Vitals…</li>
+    </ol>
+    <span class="sr-only" id="analizador-sr" role="status" aria-live="polite"></span>
 
     <div class="analizador__resultado" id="analizador-resultado" hidden>
-      <div class="analizador__nota">
-        <span class="analizador__nota-num" id="analizador-nota">–</span>
-        <span class="analizador__nota-label">/ 100 en móvil</span>
+      <!-- Gauge circular: el aro de progreso se rellena animando
+           stroke-dashoffset; el color lo fija data-nivel (rojo/ámbar/verde). -->
+      <div class="gauge" id="analizador-gauge" data-nivel="">
+        <svg class="gauge__svg" viewBox="0 0 120 120" role="img" aria-label="Nota de tu web en móvil">
+          <circle class="gauge__track" cx="60" cy="60" r="54"></circle>
+          <circle class="gauge__aro" id="analizador-aro" cx="60" cy="60" r="54"></circle>
+        </svg>
+        <div class="gauge__centro">
+          <span class="gauge__num" id="analizador-nota">0</span>
+          <span class="gauge__den">/ 100</span>
+        </div>
       </div>
+
       <p class="analizador__veredicto" id="analizador-veredicto"></p>
+
+      <ul class="analizador__hallazgos" id="analizador-hallazgos"></ul>
+
+      <p class="analizador__cierre" id="analizador-cierre"></p>
       <a
-        class="btn btn--primario"
+        class="btn btn--primario analizador__cta"
         id="analizador-cta"
         href={waBase}
         target="_blank"
         rel="noopener noreferrer"
       >
-        Quiero mejorar mi nota →
+        Hablemos por WhatsApp →
       </a>
       <p class="analizador__fuente">Fuente: Google PageSpeed Insights, en tiempo real.</p>
     </div>
@@ -74,35 +102,158 @@ const waBase = buildWhatsAppLink({
   // VISITANTE — suficiente para tráfico normal; la key elimina el riesgo de
   // 429 en redes compartidas (oficinas). Restringirla por referrer vorka.io
   // antes de publicarla aquí.
+  // TODO (Leo): pegar la key si aparecen 429 en oficinas con IP compartida.
   const PSI_KEY = '';
 
   const form = document.getElementById('analizador-form') as HTMLFormElement;
   const input = document.getElementById('analizador-url') as HTMLInputElement;
   const btn = document.getElementById('analizador-btn') as HTMLButtonElement;
-  const estado = document.getElementById('analizador-estado') as HTMLElement;
+  const errorEl = document.getElementById('analizador-error') as HTMLElement;
+  const pasosEl = document.getElementById('analizador-pasos') as HTMLElement;
+  const srEl = document.getElementById('analizador-sr') as HTMLElement;
   const resultado = document.getElementById('analizador-resultado') as HTMLElement;
+  const gauge = document.getElementById('analizador-gauge') as HTMLElement;
+  const aro = document.getElementById('analizador-aro') as unknown as SVGCircleElement;
   const notaEl = document.getElementById('analizador-nota') as HTMLElement;
   const veredictoEl = document.getElementById('analizador-veredicto') as HTMLElement;
+  const hallazgosEl = document.getElementById('analizador-hallazgos') as HTMLElement;
+  const cierreEl = document.getElementById('analizador-cierre') as HTMLElement;
   const cta = document.getElementById('analizador-cta') as HTMLAnchorElement;
-  const waBase = cta.href;
 
-  const veredicto = (score: number): { texto: string; clase: string } => {
+  const waBase = cta.href;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Circunferencia del aro (r=54) — el dash cubre toda la vuelta y el offset
+  // la va "descubriendo" hasta la fracción de la nota.
+  const C = 2 * Math.PI * 54;
+  aro.style.strokeDasharray = String(C);
+  aro.style.strokeDashoffset = String(C);
+
+  const nivelDe = (score: number) => (score >= 90 ? 'ok' : score >= 50 ? 'medio' : 'mal');
+
+  const veredicto = (score: number) => {
     if (score >= 90)
-      return {
-        texto: 'Excelente: tu web vuela. Si aún no vende por WhatsApp, hablemos de automatización.',
-        clase: 'ok',
-      };
+      return 'Excelente: tu web vuela. Si aún no vende por WhatsApp, hablemos de automatización.';
     if (score >= 50)
-      return {
-        texto:
-          'Regular: tu web carga lento en móvil y eso te cuesta clientes. La mayoría abandona a los 3 segundos.',
-        clase: 'medio',
-      };
-    return {
-      texto:
-        'Crítica: Google está penalizando tu sitio y tus visitantes lo abandonan antes de verlo. Esto tiene arreglo.',
-      clase: 'mal',
+      return 'Regular: tu web carga lento en móvil y eso te cuesta clientes. La mayoría abandona a los 3 segundos.';
+    return 'Crítica: Google penaliza tu sitio y tus visitantes lo abandonan antes de verlo. Esto tiene arreglo.';
+  };
+
+  // Métricas reales que se muestran como tarjetas de hallazgo. Cada id existe
+  // en lighthouseResult.audits; se usa su displayValue ("2.4 s", "0.05") y su
+  // score (0–1) para el semáforo.
+  const METRICAS = [
+    {
+      id: 'largest-contentful-paint',
+      label: 'Velocidad de carga',
+      ayuda: 'Cuánto tarda en aparecer tu contenido principal.',
+    },
+    {
+      id: 'cumulative-layout-shift',
+      label: 'Estabilidad visual',
+      ayuda: 'Si los elementos saltan mientras la página carga.',
+    },
+    {
+      id: 'total-blocking-time',
+      label: 'Reacción al tocar',
+      ayuda: 'Qué tan rápido responde cuando alguien interactúa.',
+    },
+  ];
+
+  const nivelAudit = (s: number | null | undefined) =>
+    s == null ? 'medio' : s >= 0.9 ? 'ok' : s >= 0.5 ? 'medio' : 'mal';
+  const etiquetaNivel = (n: string) => (n === 'ok' ? 'Bien' : n === 'medio' ? 'Regular' : 'Crítico');
+
+  // ----- pasos de carga -----
+  const pasos = Array.from(pasosEl.querySelectorAll<HTMLElement>('[data-paso]'));
+  let timers: number[] = [];
+
+  const avanzar = (i: number) => {
+    pasos[i].classList.remove('is-active');
+    pasos[i].classList.add('is-done');
+    const sig = pasos[i + 1];
+    if (sig) {
+      sig.classList.add('is-active');
+      srEl.textContent = sig.textContent;
+    }
+  };
+
+  const iniciarPasos = () => {
+    pasosEl.hidden = false;
+    pasos.forEach((p) => p.classList.remove('is-active', 'is-done'));
+    pasos[0].classList.add('is-active');
+    srEl.textContent = pasos[0].textContent;
+    // Avance perceptual (desacoplado del fetch real, que tarda 30–90 s): cada
+    // paso se marca hecho y enciende el siguiente; el último queda girando
+    // hasta que llega la respuesta.
+    timers.push(
+      window.setTimeout(() => avanzar(0), 2600),
+      window.setTimeout(() => avanzar(1), 5600),
+    );
+  };
+
+  const terminarPasos = () => {
+    timers.forEach(clearTimeout);
+    timers = [];
+    pasos.forEach((p) => {
+      p.classList.remove('is-active');
+      p.classList.add('is-done');
+    });
+  };
+
+  const ocultarPasos = () => {
+    timers.forEach(clearTimeout);
+    timers = [];
+    pasosEl.hidden = true;
+    pasos.forEach((p) => p.classList.remove('is-active', 'is-done'));
+  };
+
+  // ----- animación del gauge -----
+  const animarGauge = (score: number) => {
+    const nivel = nivelDe(score);
+    gauge.dataset.nivel = nivel;
+    const objetivo = C * (1 - score / 100);
+    if (reduce) {
+      aro.style.transition = 'none';
+      aro.style.strokeDashoffset = String(objetivo);
+      notaEl.textContent = String(score);
+      return;
+    }
+    // El aro anima por CSS (transition en stroke-dashoffset); el número por rAF
+    // para que suba en sincronía con el llenado.
+    requestAnimationFrame(() => {
+      aro.style.strokeDashoffset = String(objetivo);
+    });
+    const dur = 1100;
+    const t0 = performance.now();
+    const ease = (t: number) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t));
+    const paso = (now: number) => {
+      const t = Math.min((now - t0) / dur, 1);
+      notaEl.textContent = String(Math.round(ease(t) * score));
+      if (t < 1) requestAnimationFrame(paso);
+      else notaEl.textContent = String(score);
     };
+    requestAnimationFrame(paso);
+  };
+
+  const pintarHallazgos = (audits: Record<string, any>) => {
+    hallazgosEl.innerHTML = '';
+    for (const m of METRICAS) {
+      const a = audits?.[m.id];
+      const valor = a?.displayValue ?? '—';
+      const nivel = nivelAudit(a?.score);
+      const li = document.createElement('li');
+      li.className = 'hallazgo';
+      li.dataset.nivel = nivel;
+      li.innerHTML =
+        `<span class="hallazgo__dot" aria-hidden="true"></span>` +
+        `<div class="hallazgo__cuerpo">` +
+        `<p class="hallazgo__label">${m.label}<span class="hallazgo__valor">${valor}</span></p>` +
+        `<p class="hallazgo__ayuda">${m.ayuda}</p>` +
+        `</div>` +
+        `<span class="hallazgo__estado">${etiquetaNivel(nivel)}</span>`;
+      hallazgosEl.appendChild(li);
+    }
   };
 
   form.addEventListener('submit', async (e) => {
@@ -113,37 +264,42 @@ const waBase = buildWhatsAppLink({
     try {
       new URL(url);
     } catch {
-      estado.textContent = 'Esa dirección no parece válida — revísala (ej. tunegocio.com).';
+      errorEl.textContent = 'Esa dirección no parece válida — revísala (ej. tunegocio.com).';
       return;
     }
 
+    errorEl.textContent = '';
     btn.disabled = true;
     resultado.hidden = true;
-    estado.textContent = 'Google está analizando tu web… esto toma unos 30 segundos.';
+    iniciarPasos();
 
     try {
       const api = new URL('https://www.googleapis.com/pagespeedonline/v5/runPagespeed');
       api.searchParams.set('url', url);
       api.searchParams.set('strategy', 'mobile');
-      api.searchParams.set('category', 'performance');
+      api.searchParams.append('category', 'performance');
       if (PSI_KEY) api.searchParams.set('key', PSI_KEY);
       const res = await fetch(api, { signal: AbortSignal.timeout(90000) });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      const score = Math.round(
-        (data.lighthouseResult?.categories?.performance?.score ?? 0) * 100,
-      );
+      const lhr = data.lighthouseResult;
+      const score = Math.round((lhr?.categories?.performance?.score ?? 0) * 100);
 
-      const v = veredicto(score);
-      notaEl.textContent = String(score);
-      notaEl.dataset.nivel = v.clase;
-      veredictoEl.textContent = v.texto;
-      cta.href = `${waBase}${encodeURIComponent(` — mi nota fue ${score}/100`)}`;
-      estado.textContent = '';
+      terminarPasos();
+      pintarHallazgos(lhr?.audits ?? {});
+      veredictoEl.textContent = veredicto(score);
+      cierreEl.textContent = `Tu web saca ${score}/100. Podemos arreglarlo esta semana.`;
+      cta.href = `${waBase}${encodeURIComponent(`\n\nMi web: ${url}\nNota Google (móvil): ${score}/100`)}`;
+
+      // Revelar resultado y recién ahí animar el gauge (para que el llenado se
+      // vea, no que ocurra mientras está oculto).
+      ocultarPasos();
       resultado.hidden = false;
-      resultado.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      requestAnimationFrame(() => animarGauge(score));
+      resultado.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
     } catch {
-      estado.textContent =
+      ocultarPasos();
+      errorEl.textContent =
         'No pudimos analizarla automáticamente (el sitio bloquea el análisis o Google está saturado). Escríbenos por WhatsApp y lo revisamos gratis por ti.';
     } finally {
       btn.disabled = false;
@@ -199,59 +355,202 @@ const waBase = buildWhatsAppLink({
     outline-offset: 2px;
   }
 
-  .analizador__estado {
+  .analizador__error {
     font-family: var(--font-texto);
     font-size: var(--t-sm);
-    color: var(--color-gris);
+    color: #ff5f56;
     min-height: 24px;
-    margin-top: 20px;
+    margin-top: 16px;
     max-width: 520px;
   }
+  .analizador__error:empty {
+    min-height: 0;
+    margin-top: 0;
+  }
 
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ---- pasos de carga ---- */
+  .analizador__pasos {
+    list-style: none;
+    margin: 24px 0 0;
+    padding: 20px 24px;
+    width: 100%;
+    max-width: 420px;
+    text-align: left;
+    background: var(--bg-1);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--r-md);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .paso {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-texto);
+    font-size: var(--t-base);
+    color: var(--color-gris);
+    opacity: 0.5;
+  }
+
+  .paso.is-active,
+  .paso.is-done {
+    color: var(--color-texto);
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .paso {
+      transition: opacity var(--duration-micro) var(--ease-out-expo),
+        color var(--duration-micro) var(--ease-out-expo);
+    }
+  }
+
+  .paso__icono {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: var(--r-full);
+    border: 2px solid var(--border-default);
+    position: relative;
+  }
+
+  /* Activo: spinner (borde superior de color girando). */
+  .paso.is-active .paso__icono {
+    border-color: var(--border-subtle);
+    border-top-color: var(--color-primario);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .paso.is-active .paso__icono {
+      animation: paso-spin 0.7s linear infinite;
+    }
+  }
+
+  /* Hecho: círculo lleno con check. */
+  .paso.is-done .paso__icono {
+    border-color: var(--color-primario);
+    background: var(--color-primario);
+  }
+  .paso.is-done .paso__icono::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    width: 5px;
+    height: 9px;
+    border: solid #0b2b13;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  @keyframes paso-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* ---- resultado ---- */
   .analizador__resultado {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
-    margin-top: 24px;
+    gap: 20px;
+    margin-top: 32px;
+    width: 100%;
+    max-width: 560px;
   }
-
-  /* El display:flex de arriba le ganaría al atributo hidden del HTML. */
   .analizador__resultado[hidden] {
     display: none;
   }
 
-  .analizador__nota {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
+  /* ---- gauge circular ---- */
+  .gauge {
+    position: relative;
+    width: 180px;
+    height: 180px;
   }
 
-  .analizador__nota-num {
+  .gauge__svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg); /* empezar el aro arriba */
+  }
+
+  .gauge__track {
+    fill: none;
+    stroke: var(--border-subtle);
+    stroke-width: 10;
+  }
+
+  .gauge__aro {
+    fill: none;
+    stroke: var(--color-gris);
+    stroke-width: 10;
+    stroke-linecap: round;
+  }
+
+  .gauge[data-nivel='ok'] .gauge__aro {
+    stroke: var(--color-primario);
+  }
+  .gauge[data-nivel='medio'] .gauge__aro {
+    stroke: #f5a623;
+  }
+  .gauge[data-nivel='mal'] .gauge__aro {
+    stroke: #ff5f56;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .gauge__aro {
+      transition: stroke-dashoffset 1.1s var(--ease-out-expo);
+    }
+  }
+
+  .gauge__centro {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+
+  .gauge__num {
     font-family: var(--font-titulos);
     font-weight: 700;
-    /* 5rem: numeral de nota gigante, un caso único fuera de la escala de
-       encabezados/cuerpo (t-display topa en 4rem) — excepción documentada,
-       igual que el bisel del teléfono en Hero.astro. */
-    font-size: 5rem;
+    font-size: 3rem;
     line-height: 1;
+    color: var(--color-texto);
+    font-variant-numeric: tabular-nums;
   }
 
-  .analizador__nota-num[data-nivel='ok'] {
+  .gauge[data-nivel='ok'] .gauge__num {
     color: var(--color-primario);
   }
-
-  .analizador__nota-num[data-nivel='medio'] {
+  .gauge[data-nivel='medio'] .gauge__num {
     color: #f5a623;
   }
-
-  .analizador__nota-num[data-nivel='mal'] {
+  .gauge[data-nivel='mal'] .gauge__num {
     color: #ff5f56;
   }
 
-  .analizador__nota-label {
+  .gauge__den {
     font-family: var(--font-texto);
-    font-size: var(--t-base);
+    font-size: var(--t-sm);
     color: var(--color-gris);
   }
 
@@ -264,10 +563,117 @@ const waBase = buildWhatsAppLink({
     margin: 0;
   }
 
+  /* ---- tarjetas de hallazgo ---- */
+  .analizador__hallazgos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .hallazgo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: var(--bg-1);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--r-md);
+    text-align: left;
+  }
+
+  .hallazgo__dot {
+    flex-shrink: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: var(--r-full);
+    background: var(--color-gris);
+  }
+  .hallazgo[data-nivel='ok'] .hallazgo__dot {
+    background: var(--color-primario);
+  }
+  .hallazgo[data-nivel='medio'] .hallazgo__dot {
+    background: #f5a623;
+  }
+  .hallazgo[data-nivel='mal'] .hallazgo__dot {
+    background: #ff5f56;
+  }
+
+  .hallazgo__cuerpo {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .hallazgo__label {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    font-family: var(--font-titulos);
+    font-weight: 600;
+    font-size: var(--t-base);
+    color: var(--color-texto);
+    margin: 0 0 2px;
+  }
+
+  .hallazgo__valor {
+    font-family: var(--font-texto);
+    font-weight: 400;
+    font-size: var(--t-sm);
+    color: var(--color-gris);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hallazgo__ayuda {
+    font-family: var(--font-texto);
+    font-size: var(--t-sm);
+    line-height: 1.5;
+    color: var(--color-gris);
+    margin: 0;
+  }
+
+  .hallazgo__estado {
+    flex-shrink: 0;
+    font-family: var(--font-texto);
+    font-weight: 600;
+    font-size: var(--t-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .hallazgo[data-nivel='ok'] .hallazgo__estado {
+    color: var(--color-primario);
+  }
+  .hallazgo[data-nivel='medio'] .hallazgo__estado {
+    color: #f5a623;
+  }
+  .hallazgo[data-nivel='mal'] .hallazgo__estado {
+    color: #ff5f56;
+  }
+
+  .analizador__cierre {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: var(--t-md);
+    line-height: 1.4;
+    color: var(--color-texto);
+    max-width: 480px;
+    margin: 8px 0 0;
+  }
+
   .analizador__fuente {
     font-family: var(--font-texto);
     font-size: var(--t-xs);
     color: var(--color-gris);
     margin: 0;
+  }
+
+  @media (max-width: 520px) {
+    .hallazgo__label {
+      flex-direction: column;
+      gap: 0;
+    }
   }
 </style>
