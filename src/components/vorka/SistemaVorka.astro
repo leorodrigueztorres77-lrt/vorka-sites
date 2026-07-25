@@ -46,23 +46,46 @@
 
   const BASE = import.meta.env.BASE_URL;
 
-  new ScrollSequence({
-    section: document.getElementById('seq-construccion')!,
-    seqName: 'construccion',
-    frameCount: 100,
-    mode: 'scrub',
-    pinVh: 250,
-    posterSrc: `${BASE}frames/construccion/desktop/frame-0001.webp`,
-  });
+  // Sprint 1 T2 (2026-07-23): antes eran 2 secuencias de pinVh 250 (~500vh de
+  // scroll anclado en total) — la sección ocupaba demasiados viewports. Ahora:
+  //  · desktop: pinVh 120 por escena (~240vh total, la mitad y algo menos);
+  //  · móvil: NO se ejecuta el scroll-scrubbing (pin + scroll táctil es jankoso
+  //    y descargaría 100 frames por escena). Solo el poster estático; el copy
+  //    del overlay ya es server-rendered, así que queda visible e indexable.
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
 
-  new ScrollSequence({
-    section: document.getElementById('seq-conversion')!,
-    seqName: 'conversion',
-    frameCount: 100,
-    mode: 'scrub',
-    pinVh: 250,
-    posterSrc: `${BASE}frames/conversion/desktop/frame-0001.webp`,
-  });
+  const escenas = [
+    { id: 'seq-construccion', name: 'construccion' },
+    { id: 'seq-conversion', name: 'conversion' },
+  ];
+
+  for (const { id, name } of escenas) {
+    const section = document.getElementById(id);
+    if (!section) continue;
+    const variant = isMobile ? 'mobile' : 'desktop';
+    const posterSrc = `${BASE}frames/${name}/${variant}/frame-0001.webp`;
+
+    if (isMobile) {
+      section.querySelector('canvas')?.remove();
+      const img = new Image();
+      img.src = posterSrc;
+      img.alt = '';
+      img.loading = 'lazy';
+      img.className = 'seq-fallback';
+      section.prepend(img);
+      section.classList.add('seq-static');
+      continue;
+    }
+
+    new ScrollSequence({
+      section,
+      seqName: name,
+      frameCount: 100,
+      mode: 'scrub',
+      pinVh: 120,
+      posterSrc,
+    });
+  }
 </script>
 
 <style>
@@ -154,9 +177,17 @@
     z-index: 10;
   }
 
-  @media (max-width: 720px) {
+  @media (max-width: 768px) {
     .seq {
       height: 100svh;
+    }
+
+    /* Sprint 1 T2: en móvil la escena es un poster estático, no un scroll
+       anclado — no necesita ocupar toda la pantalla. Alto compacto para que
+       las dos escenas juntas no sumen dos viewports enteros. */
+    .seq-static {
+      height: 46svh;
+      min-height: 320px;
     }
 
     .seq-overlay {
