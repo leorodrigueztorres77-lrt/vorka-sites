@@ -20,6 +20,16 @@ const {
 } = Astro.props;
 
 const href = buildWhatsAppLink({ phone, message, negocioSlug });
+
+// Sprint 2 T2 (Vorka, 2026-07-24): si el label termina en una flecha, se
+// separa en un <span class="btn__flecha"> para que sea animable (desplazarla
+// en hover). Cambio aditivo y puramente estructural de Capa 1: el render es
+// idéntico en todos los sitios; el MOVIMIENTO de la flecha lo activa cada
+// página por su cuenta (hoy solo Vorka lo scopea), así que los demos de
+// cliente entregados no se mueven.
+const flechaMatch = label.match(/^(.*?)\s*(→)\s*$/);
+const textoLabel = flechaMatch ? flechaMatch[1] : label;
+const flecha = flechaMatch ? flechaMatch[2] : null;
 ---
 
 <a
@@ -28,5 +38,5 @@ const href = buildWhatsAppLink({ phone, message, negocioSlug });
   target="_blank"
   rel="noopener noreferrer"
 >
-  {label}
+  {textoLabel}{flecha && <span class="btn__flecha" aria-hidden="true">{flecha}</span>}
 </a>

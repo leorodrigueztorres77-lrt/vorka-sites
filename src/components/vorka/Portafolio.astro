@@ -88,7 +88,7 @@ const proyectos = [
             <span class="proyecto__vertical">{proyecto.vertical} · {proyecto.ciudad}</span>
             <h3 class="proyecto__titulo">{proyecto.nombre}</h3>
             <p class="proyecto__desc">{proyecto.descripcion}</p>
-            <span class="proyecto__cta">Ver demo →</span>
+            <span class="proyecto__cta">Ver demo <span class="proyecto__cta-flecha" aria-hidden="true">→</span></span>
           </div>
         </a>
       ))}
@@ -140,13 +140,32 @@ const proyectos = [
     border-radius: var(--r-md);
     overflow: hidden;
     background: var(--color-fondo);
+    /* Sprint 2 T2b: borde transparente en reposo → verde 40% en hover, sin
+       cambiar el layout (border-box). */
+    border: 1px solid transparent;
     box-shadow: var(--shadow-elevar);
     text-decoration: none;
-    transition: transform 250ms ease;
   }
 
-  .proyecto:hover {
-    transform: translateY(-4px);
+  /* T2b — card hover: glow verde + borde verde 40%. El color/sombra cambian
+     siempre; el translateY va detrás de prefers-reduced-motion. */
+  .proyecto:hover,
+  .proyecto:focus-visible {
+    box-shadow: var(--shadow-elevar), var(--accent-glow);
+    border-color: rgba(57, 211, 83, 0.4);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .proyecto {
+      transition: transform 250ms var(--ease-out-expo),
+        box-shadow 250ms var(--ease-out-expo),
+        border-color 250ms var(--ease-out-expo);
+    }
+
+    .proyecto:hover,
+    .proyecto:focus-visible {
+      transform: translateY(-4px);
+    }
   }
 
   .proyecto__navegador {

@@ -147,6 +147,74 @@ const canonicalUrl = 'https://vorka-sites.vercel.app/vorka/';
     font-weight: 700;
   }
 
+  /* Sprint 2 T2 (2026-07-24) — Microinteracciones, scopeadas a /vorka/.
+     Todo el MOVIMIENTO va detrás de prefers-reduced-motion:no-preference:
+     con motion reducido, los estados hover/active se quedan en cambios
+     instantáneos (color/sombra) sin transform, según los PRINCIPIOS
+     INNEGOCIABLES. Solo se anima transform/opacity/box-shadow. */
+
+  /* Flecha de los CTA: se separa en <span class="btn__flecha"> (WhatsAppButton
+     y los .btn con flecha de esta página). En reposo, inerte. */
+  :global(.btn__flecha),
+  :global(.proyecto__cta-flecha) {
+    display: inline-block;
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    /* T2a — botones CTA: eleva scale(1.02) + glow verde en hover, hunde
+       scale(0.98) en active. Sobrescribe el translateY(-2px)/opacity de la
+       .btn de Capa 1 (esta hoja de página carga después, gana en orden). */
+    :global(.btn) {
+      transition: transform var(--duration-micro) var(--ease-out-expo),
+        box-shadow var(--duration-micro) var(--ease-out-expo);
+    }
+
+    :global(.btn:hover) {
+      transform: scale(1.02);
+      box-shadow: var(--accent-glow);
+      opacity: 1;
+    }
+
+    :global(.btn:active) {
+      transform: scale(0.98);
+    }
+
+    :global(.btn__flecha),
+    :global(.proyecto__cta-flecha) {
+      transition: transform var(--duration-micro) var(--ease-out-expo);
+    }
+
+    /* La flecha se desplaza 4px al pasar por el botón, o por toda la card en
+       el caso del "Ver demo →" del portafolio (T2b). El selector descendiente
+       va COMPLETO dentro de :global(): la flecha vive en componentes hijos
+       (WhatsAppButton, Portafolio) con otro data-astro-cid — si el ".btn__flecha"
+       quedara fuera del :global(), Astro lo scopea al cid de esta página y no
+       matchea nunca (bug detectado en verificación T2). */
+    :global(.btn:hover .btn__flecha),
+    :global(.btn:focus-visible .btn__flecha) {
+      transform: translateX(4px);
+    }
+
+    :global(.proyecto:hover .proyecto__cta-flecha),
+    :global(.proyecto:focus-visible .proyecto__cta-flecha) {
+      transform: translateX(4px);
+    }
+  }
+
+  /* T2d — foco visible unificado en verde de marca (2px, offset 2px). En
+     /vorka/ sobrescribe el outline azul-acento de Capa 1 (global.css), que
+     aquí resultaría en el #1DA1F2 de acento en vez del verde primario. */
+  :global(a:focus-visible),
+  :global(button:focus-visible),
+  :global(input:focus-visible),
+  :global(textarea:focus-visible),
+  :global(select:focus-visible),
+  :global([tabindex]:focus-visible) {
+    outline: 2px solid var(--color-primario);
+    outline-offset: 2px;
+  }
+
   /* Fase 1 (rediseño 2026-07): tipografía auto-hospedada de Vorka. Archivos
      variables (un solo .woff2 cubre todo el rango de pesos vía el eje
      `wght`) descargados de Google Fonts y servidos desde public/fonts/vorka/

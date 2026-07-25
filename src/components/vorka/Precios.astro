@@ -105,7 +105,10 @@ export const planes = [
             target="_blank"
             rel="noopener noreferrer"
           >
-            {plan.cta}
+            {/* Sprint 2 T2: flecha separada para animarla en hover (ver
+                index.astro global y estilos de abajo para el plan secundario). */}
+            {plan.cta.replace(/\s*→\s*$/, '')}
+            {plan.cta.includes('→') && <span class="btn__flecha" aria-hidden="true">→</span>}
           </a>
         </article>
       ))}
@@ -144,6 +147,38 @@ export const planes = [
     background: var(--color-fondo);
     border: 1px solid var(--border-default);
     box-shadow: var(--shadow-elevar);
+  }
+
+  /* Sprint 2 T2b — card de precio: glow verde en hover/focus-within. En los
+     planes no destacados el borde pasa a verde 40%; el destacado conserva su
+     borde verde sólido de 2px (su ancla visual). El translateY va detrás de
+     prefers-reduced-motion; el color/sombra cambian siempre. */
+  .plan:hover,
+  .plan:focus-within {
+    box-shadow: var(--shadow-elevar), var(--accent-glow);
+  }
+
+  .plan:not(.plan--destacado):hover,
+  .plan:not(.plan--destacado):focus-within {
+    border-color: rgba(57, 211, 83, 0.4);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .plan {
+      transition: transform 250ms var(--ease-out-expo),
+        box-shadow 250ms var(--ease-out-expo),
+        border-color 250ms var(--ease-out-expo);
+    }
+
+    .plan:hover,
+    .plan:focus-within {
+      transform: translateY(-4px);
+    }
+
+    .plan__cta-secundario:hover .btn__flecha,
+    .plan__cta-secundario:focus-visible .btn__flecha {
+      transform: translateX(4px);
+    }
   }
 
   .plan--destacado {

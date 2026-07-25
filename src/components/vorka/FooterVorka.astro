@@ -92,6 +92,39 @@ const anioActual = new Date().getFullYear();
     opacity: 1;
   }
 
+  /* Sprint 2 T2c — underline animado en los enlaces de texto del footer. Se
+     excluye .btn (el botón de WhatsApp, que tiene su propia microinteracción de
+     escala). width: fit-content acota el pseudo al ancho del texto — sin esto,
+     al ser flex items en columna (align-items: stretch) el subrayado ocuparía
+     toda la columna. */
+  .footer-vorka__col a:not(.btn) {
+    position: relative;
+    width: fit-content;
+  }
+
+  .footer-vorka__col a:not(.btn)::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 2px;
+    background: var(--color-primario);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .footer-vorka__col a:not(.btn):hover::after,
+  .footer-vorka__col a:not(.btn):focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .footer-vorka__col a:not(.btn)::after {
+      transition: transform var(--duration-micro) var(--ease-out-expo);
+    }
+  }
+
   .footer-vorka__marca {
     font-family: var(--font-titulos);
     font-weight: 700;
