@@ -13,20 +13,92 @@ const stats = [
   // como CTA principal".
   { valor: '100%', label: 'WhatsApp como CTA principal' },
 ];
+
+// Sprint 2 T3 — count-up. Se descompone cada cifra en prefijo + número + sufijo
+// para animar SOLO el último entero (7, 350, 100) dejando fijo el texto que lo
+// rodea ("5–", " días", "Desde $", "%"). "A tu medida" no tiene dígitos → queda
+// estática (regla de Leo: animar texto no-numérico se ve forzado). El número
+// final se renderiza tal cual en el HTML: es el valor real sin JS y el que ven
+// prefers-reduced-motion y los lectores de pantalla; el count-up solo lo
+// sobrescribe visualmente al entrar en viewport.
+const parseValor = (valor: string) => {
+  const m = valor.match(/^(.*?)(\d+)(\D*)$/);
+  if (!m) return { estatico: valor };
+  return { prefijo: m[1], objetivo: Number(m[2]), sufijo: m[3] };
+};
+
+const statsParsed = stats.map((s) => ({ ...s, num: parseValor(s.valor) }));
 ---
 
 <section class="stats section">
   <div class="container">
-    <ul class="stats__grid">
-      {stats.map((stat) => (
+    <ul class="stats__grid" data-stats>
+      {statsParsed.map((stat) => (
         <li class="stats__item reveal--scale">
-          <span class="stats__valor">{stat.valor}</span>
+          <span class="stats__valor">
+            {'estatico' in stat.num ? (
+              stat.num.estatico
+            ) : (
+              <>
+                {stat.num.prefijo}<span
+                  class="stats__num"
+                  data-count-to={stat.num.objetivo}
+                >{stat.num.objetivo}</span>{stat.num.sufijo}
+              </>
+            )}
+          </span>
           <span class="stats__label">{stat.label}</span>
         </li>
       ))}
     </ul>
   </div>
 </section>
+
+<script>
+  // Count-up progresivo: se dispara UNA vez cuando la fila entra en viewport.
+  // Duración 700ms (bajo el techo de 800ms del sprint), easing out-expo, y
+  // respeta prefers-reduced-motion (si el usuario lo pide, no anima: el HTML ya
+  // trae el número final). Solo toca textContent de un <span> con
+  // font-variant-numeric: tabular-nums, así el ancho por dígito es fijo y no hay
+  // reflujo de los hermanos.
+  const grid = document.querySelector<HTMLElement>('[data-stats]');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (grid && !reduce && 'IntersectionObserver' in window) {
+    const nums = Array.from(grid.querySelectorAll<HTMLElement>('.stats__num'));
+
+    const animar = (el: HTMLElement) => {
+      const objetivo = Number(el.dataset.countTo);
+      if (!Number.isFinite(objetivo)) return;
+      const duracion = 700;
+      const inicio = performance.now();
+      // easeOutExpo — mismo perfil que --ease-out-expo de la página.
+      const ease = (t: number) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t));
+      const paso = (ahora: number) => {
+        const t = Math.min((ahora - inicio) / duracion, 1);
+        el.textContent = String(Math.round(ease(t) * objetivo));
+        if (t < 1) requestAnimationFrame(paso);
+        else el.textContent = String(objetivo);
+      };
+      el.textContent = '0';
+      requestAnimationFrame(paso);
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            animar(entry.target as HTMLElement);
+            io.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.6 },
+    );
+
+    nums.forEach((n) => io.observe(n));
+  }
+</script>
 
 <style>
   .stats {
