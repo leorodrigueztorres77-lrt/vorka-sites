@@ -115,9 +115,11 @@ const canonicalUrl = 'https://vorka-sites.vercel.app/vorka/';
     <Ticker />
     {/* Sprint 1 T1 (2026-07-23): la prueba (demos reales) va antes que el
         precio; "Cómo funciona" (Servicios) + "El sistema Vorka" quedan
-        contiguos; el analizador precede a Nosotros. Testimonios (T6) se
-        construyó como componente pero NO se renderiza aquí hasta tener citas
-        reales — regla dura de CLAUDE.md contra placeholders en producción. */}
+        contiguos; el analizador precede a Nosotros. Testimonios (T6): el
+        componente existe (TestimoniosVorka.astro) pero a propósito NO se
+        importa/renderiza aquí hasta tener citas reales — regla dura de
+        CLAUDE.md contra placeholders en producción. Al activarlo, va después
+        de <Portafolio /> (prueba social junto a prueba de producto). */}
     <Portafolio />
     <Servicios site={site} />
     <SistemaVorka />

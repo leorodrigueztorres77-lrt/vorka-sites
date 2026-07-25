@@ -1,0 +1,163 @@
+---
+// Vorka — Testimonios (Sprint 1 T6, 2026-07-23).
+//
+// El componente está CONSTRUIDO y listo, pero deliberadamente NO se renderiza
+// en la página publicada todavía: no está importado en src/pages/vorka/index.astro.
+// Regla dura de CLAUDE.md — nunca inventar reseñas/testimonios ni dejar
+// placeholders de cara al usuario. Se activa recién cuando Leo tenga citas
+// reales de clientes.
+//
+// Cómo activarlo cuando existan testimonios reales:
+//   1. Llenar el array `testimonios` de abajo con las citas reales (2–3).
+//   2. Colocar el avatar real de cada cliente en public/images/vorka/testimonios/
+//      y apuntar `avatar` a esa ruta (opcional; sin avatar se muestra la inicial).
+//   3. Importar y renderizar <TestimoniosVorka /> en index.astro, idealmente
+//      justo después de <Portafolio /> (prueba social junto a la prueba de
+//      producto).
+//
+// Mientras `testimonios` esté vacío el componente no emite NADA (guard de
+// length abajo), así que es seguro incluso si se importa por error: no rompe
+// el gate de verificar-placeholders ni deja huecos visibles.
+
+interface Testimonio {
+  cita: string;
+  nombre: string;
+  negocio: string;
+  ciudad: string;
+  avatar?: string;
+}
+
+// Vacío a propósito. NO rellenar con ejemplos inventados — solo citas reales.
+// Forma esperada de cada entrada (referencia, no dato):
+//   { cita: '…', nombre: 'Nombre Apellido', negocio: 'Nombre del negocio',
+//     ciudad: 'Ciudad', avatar: '/images/vorka/testimonios/archivo.webp' }
+const testimonios: Testimonio[] = [];
+
+const inicial = (nombre: string) => nombre.trim().charAt(0).toUpperCase();
+---
+
+{testimonios.length > 0 && (
+  <section class="testimonios section section--alterno" id="testimonios">
+    <div class="container">
+      <p class="testimonios__eyebrow reveal">Clientes reales</p>
+      <h2 class="section-title reveal">Negocios que ya venden con su web</h2>
+      <div class="testimonios__grid">
+        {testimonios.map((t) => (
+          <figure class="testimonio reveal--scale">
+            <blockquote class="testimonio__cita">“{t.cita}”</blockquote>
+            <figcaption class="testimonio__pie">
+              <span class="testimonio__avatar" aria-hidden="true">
+                {t.avatar
+                  ? <img src={t.avatar} alt="" width="48" height="48" loading="lazy" decoding="async" />
+                  : <span class="testimonio__inicial">{inicial(t.nombre)}</span>}
+              </span>
+              <span class="testimonio__datos">
+                <span class="testimonio__nombre">{t.nombre}</span>
+                <span class="testimonio__negocio">{t.negocio} · {t.ciudad}</span>
+              </span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .testimonios__eyebrow {
+    font-family: var(--font-texto);
+    font-weight: 600;
+    font-size: var(--t-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-primario);
+    margin: 0 0 12px;
+  }
+
+  .testimonios__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-top: 8px;
+  }
+
+  .testimonio {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin: 0;
+    padding: 32px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--r-md);
+    background: var(--color-fondo);
+    box-shadow: var(--shadow-elevar);
+  }
+
+  .testimonio__cita {
+    font-family: var(--font-texto);
+    font-size: var(--t-md);
+    line-height: 1.6;
+    color: var(--color-texto);
+    margin: 0;
+  }
+
+  .testimonio__pie {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: auto;
+  }
+
+  .testimonio__avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--color-fondo-alterno);
+  }
+
+  .testimonio__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .testimonio__inicial {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: var(--t-md);
+    color: var(--color-primario);
+  }
+
+  .testimonio__datos {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .testimonio__nombre {
+    font-family: var(--font-texto);
+    font-weight: 600;
+    font-size: var(--t-sm);
+    color: var(--color-texto);
+  }
+
+  .testimonio__negocio {
+    font-family: var(--font-texto);
+    font-size: var(--t-xs);
+    color: var(--color-gris);
+  }
+
+  @media (max-width: 960px) {
+    .testimonios__grid {
+      grid-template-columns: 1fr;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+</style>
