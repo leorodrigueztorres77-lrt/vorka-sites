@@ -32,6 +32,24 @@ const frases = [
     border-bottom: 1px solid var(--border-subtle);
     padding: 24px 0;
     overflow: hidden;
+    /* Sprint 2 T4 — degradado de borde: las frases se desvanecen en los
+       extremos en vez de cortarse en seco contra el borde del contenedor. Es
+       una máscara estática (no anima nada, sin costo de rendimiento) — el
+       toque que distingue un marquee pulido de uno que "recorta". */
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 8%,
+      #000 92%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 8%,
+      #000 92%,
+      transparent
+    );
   }
 
   .ticker__track {
