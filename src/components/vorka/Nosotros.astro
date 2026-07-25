@@ -1,9 +1,13 @@
 ---
-// Vorka — Nosotros. Bloque de color sólido (regla de profundidad visual #2,
-// CLAUDE.md) usando --color-primario a pantalla completa — la única sección
-// de la página con este tratamiento, para que tenga peso propio. Los 5
-// pills usan la iconografía declarada en CLAUDE.md ("Identidad de marca —
-// VORKA": inteligencia, agilidad, innovación, confianza, resultados).
+// Vorka — Nosotros. Sprint 1 T4 (2026-07-23): antes era un bloque verde
+// sólido full-bleed (--color-primario a pantalla completa). Se quitó — el
+// verde sólido como fondo queda reservado exclusivamente para un posible
+// acento del CTA final. Ahora es fondo oscuro como el resto del sitio, con
+// el contenido dentro de una tarjeta de borde verde sutil (1px al ~25%) y un
+// glow verde muy suave (--accent-glow), para que la sección conserve peso
+// propio sin el bloque sólido. Los 5 pills usan la iconografía declarada en
+// CLAUDE.md ("Identidad de marca — VORKA": inteligencia, agilidad,
+// innovación, confianza, resultados).
 // Fase 1 (rediseño 2026-07): emojis reemplazados por SVG inline estilo
 // Lucide (stroke 1.5, 24px, var(--color-acento)) — misma convención de
 // íconos ya aplicada en Servicios.astro.
@@ -31,7 +35,7 @@ const valores = [
 ];
 ---
 
-<section class="nosotros section section--solido" id="nosotros">
+<section class="nosotros section" id="nosotros">
   <div class="container nosotros__inner">
     <h2 class="section-title reveal">Nosotros</h2>
     <p class="nosotros__mision reveal">
@@ -63,6 +67,19 @@ const valores = [
     align-items: center;
     text-align: center;
     gap: 32px;
+    /* T4: tarjeta sobre fondo oscuro — borde verde sutil (~25%) + glow suave,
+       en lugar del antiguo bloque verde sólido full-bleed. */
+    padding: 48px 32px;
+    border: 1px solid rgba(57, 211, 83, 0.25);
+    border-radius: var(--r-md);
+    background: var(--bg-1);
+    box-shadow: var(--accent-glow);
+  }
+
+  @media (max-width: 720px) {
+    .nosotros__inner {
+      padding: 32px 24px;
+    }
   }
 
   .nosotros__mision {
