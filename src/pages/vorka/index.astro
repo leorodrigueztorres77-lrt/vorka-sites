@@ -15,6 +15,7 @@ import Ticker from '@/components/vorka/Ticker.astro';
 import Servicios from '@/components/vorka/Servicios.astro';
 import Precios, { planes } from '@/components/vorka/Precios.astro';
 import Portafolio from '@/components/vorka/Portafolio.astro';
+import TestimoniosVorka from '@/components/vorka/TestimoniosVorka.astro';
 import AnalizadorWeb from '@/components/vorka/AnalizadorWeb.astro';
 import Nosotros from '@/components/vorka/Nosotros.astro';
 import Stats from '@/components/vorka/Stats.astro';
@@ -130,12 +131,14 @@ const canonicalUrl = 'https://vorka-sites.vercel.app/vorka/';
     <Ticker />
     {/* Sprint 1 T1 (2026-07-23): la prueba (demos reales) va antes que el
         precio; "Cómo funciona" (Servicios) + "El sistema Vorka" quedan
-        contiguos; el analizador precede a Nosotros. Testimonios (T6): el
-        componente existe (TestimoniosVorka.astro) pero a propósito NO se
-        importa/renderiza aquí hasta tener citas reales — regla dura de
-        CLAUDE.md contra placeholders en producción. Al activarlo, va después
-        de <Portafolio /> (prueba social junto a prueba de producto). */}
+        contiguos; el analizador precede a Nosotros.
+        Sprint 3.1 T2: TestimoniosVorka ya se renderiza aquí (después de
+        Portafolio: prueba social junto a prueba de producto). En producción
+        solo emite algo cuando el array `testimonios` tenga citas reales; en
+        `npm run dev` muestra cards de ejemplo marcadas para validar el layout
+        (import.meta.env.DEV). No rompe el gate de placeholders. */}
     <Portafolio />
+    <TestimoniosVorka />
     <Servicios site={site} />
     <SistemaVorka />
     <Precios site={site} />

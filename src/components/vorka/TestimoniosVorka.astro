@@ -33,16 +33,37 @@ interface Testimonio {
 //     ciudad: 'Ciudad', avatar: '/images/vorka/testimonios/archivo.webp' }
 const testimonios: Testimonio[] = [];
 
+// Placeholders SOLO para desarrollo (npm run dev). Sirven para que Leo valide
+// el layout de la sección sin tener aún citas reales. Contenido obviamente
+// ficticio y marcado TODO. En el build de producción `import.meta.env.DEV` es
+// false, así que NO se emite nada — no viola la regla de CLAUDE.md ni el gate
+// de verificar-placeholders (que corre sobre dist/).
+const placeholdersDev: Testimonio[] = [
+  { cita: 'TODO — cita real del cliente (1–2 líneas).', nombre: 'Cliente de ejemplo', negocio: 'Negocio de ejemplo', ciudad: 'Quito' },
+  { cita: 'TODO — cita real del cliente (1–2 líneas).', nombre: 'Cliente de ejemplo', negocio: 'Negocio de ejemplo', ciudad: 'Guayaquil' },
+  { cita: 'TODO — cita real del cliente (1–2 líneas).', nombre: 'Cliente de ejemplo', negocio: 'Negocio de ejemplo', ciudad: 'Cuenca' },
+];
+
+// En producción solo se muestran testimonios reales. En dev, si aún no hay
+// reales, se cae a los placeholders para previsualizar el layout.
+const esPreviewDev = testimonios.length === 0 && import.meta.env.DEV;
+const items: Testimonio[] = testimonios.length > 0 ? testimonios : (esPreviewDev ? placeholdersDev : []);
+
 const inicial = (nombre: string) => nombre.trim().charAt(0).toUpperCase();
 ---
 
-{testimonios.length > 0 && (
+{items.length > 0 && (
   <section class="testimonios section section--alterno" id="testimonios">
     <div class="container">
+      {esPreviewDev && (
+        <p class="testimonios__dev-nota" role="note">
+          Vista previa (solo dev) — testimonios de ejemplo, no reales.
+        </p>
+      )}
       <p class="testimonios__eyebrow reveal">Clientes reales</p>
       <h2 class="section-title reveal">Negocios que ya venden con su web</h2>
       <div class="testimonios__grid">
-        {testimonios.map((t) => (
+        {items.map((t) => (
           <figure class="testimonio reveal--scale">
             <blockquote class="testimonio__cita">“{t.cita}”</blockquote>
             <figcaption class="testimonio__pie">
@@ -64,6 +85,19 @@ const inicial = (nombre: string) => nombre.trim().charAt(0).toUpperCase();
 )}
 
 <style>
+  /* Solo visible en dev (ver esPreviewDev). Marca claramente que las cards son
+     de ejemplo mientras no haya testimonios reales. */
+  .testimonios__dev-nota {
+    display: inline-block;
+    margin: 0 0 16px;
+    padding: 4px 12px;
+    border: 1px dashed var(--color-accent-secondary);
+    border-radius: var(--r-full);
+    font-family: var(--font-texto);
+    font-size: var(--t-xs);
+    color: var(--color-accent-secondary);
+  }
+
   .testimonios__eyebrow {
     font-family: var(--font-texto);
     font-weight: 600;
