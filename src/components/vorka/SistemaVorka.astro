@@ -125,7 +125,11 @@
   }
 
   .sistema__intro {
-    padding: var(--section-pad) 0;
+    /* Sprint 3.1 T4: solo padding inferior. La sección anterior (Servicios,
+       .section) ya aporta su padding inferior; sumar aquí el padding superior
+       apilaba dos ritmos de sección (~80–112px) y dejaba un gap excesivo antes
+       del video. Un solo gap de sección estándar, alineado a 8px. */
+    padding: 0 0 var(--section-pad);
     text-align: center;
   }
 
