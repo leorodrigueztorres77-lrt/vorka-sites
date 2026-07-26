@@ -47,6 +47,19 @@ const schema = {
   image: ogImageUrl,
   priceRange: '$350–$750+',
   slogan: 'Piensa rápido. Ejecuta más rápido.',
+  // GEO G2: señales de entidad para motores generativos. `sameAs` desambigua
+  // la marca enlazándola a su presencia social (el mismo Instagram del footer);
+  // `knowsAbout` declara las áreas de expertise que un motor de IA usa para
+  // decidir a quién citar ante una consulta de ese tema.
+  sameAs: ['https://instagram.com/vorka.ecu'],
+  knowsAbout: [
+    'Diseño de páginas web para negocios locales',
+    'Desarrollo web mobile first',
+    'SEO local en Ecuador',
+    'Ventas y atención por WhatsApp',
+    'Facturación electrónica SRI',
+    'Automatización de ventas con Ordercash',
+  ],
   contactPoint: {
     '@type': 'ContactPoint',
     contactType: 'sales',
