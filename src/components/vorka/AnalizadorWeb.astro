@@ -396,6 +396,13 @@ const waBase = buildWhatsAppLink({
     gap: 12px;
   }
 
+  /* Estado idle: sin este guard, el `display:flex` de arriba pisa el
+     `display:none` del atributo [hidden] y los 3 pasos quedan visibles con
+     círculos vacíos antes del submit. Mismo patrón que .analizador__resultado. */
+  .analizador__pasos[hidden] {
+    display: none;
+  }
+
   .paso {
     display: flex;
     align-items: center;
