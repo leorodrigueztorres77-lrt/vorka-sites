@@ -6,4 +6,22 @@ Allow: /
 Disallow: /variantes/
 Disallow: /variantes-consultorio/
 
+# Crawlers de motores generativos (GEO). El comodín de arriba ya los permite;
+# los declaramos de forma explícita como señal intencional de que este sitio
+# SÍ puede citarse en respuestas de IA. Ver /llms.txt para el resumen curado.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
 Sitemap: https://vorka-sites.vercel.app/sitemap.xml

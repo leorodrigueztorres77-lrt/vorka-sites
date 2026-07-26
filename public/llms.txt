@@ -1,0 +1,60 @@
+# Vorka
+
+> Vorka es una agencia digital de Ecuador que diseña páginas web para negocios
+> locales (restaurantes, consultorios médicos y dentales, y comercios en
+> general) en Quito y todo el país. Cada web se entrega en 5 a 7 días, es
+> mobile first, usa WhatsApp como acción principal de contacto y venta, e
+> incluye SEO local. Vorka también desarrolla Ordercash, su producto de
+> automatización de ventas (pedidos y reservas por WhatsApp, cobro integrado y
+> factura electrónica SRI), al que cada web queda preparada para conectarse.
+
+## Qué ofrece Vorka
+
+- **Diseño y desarrollo de páginas web** para negocios locales en Ecuador,
+  optimizadas para móvil y para convertir visitas en clientes por WhatsApp.
+- **Entrega rápida:** una web lista en 5 a 7 días hábiles, no en meses.
+- **SEO local:** cada web se optimiza para aparecer en Google cuando alguien
+  busca ese tipo de negocio en su ciudad.
+- **Ordercash (producto hermano):** automatización de ventas por WhatsApp con
+  cobro integrado y facturación electrónica SRI. El negocio confirma antes de
+  emitir; la web Vorka queda lista para conectarse cuando Ordercash esté
+  disponible para su rubro.
+- **Mantenimiento mensual:** cambios de contenido, reportes de tráfico y
+  soporte por WhatsApp.
+
+## Precios (USD)
+
+- **Plan Básica — desde $350:** web lista en días, mobile first, WhatsApp como
+  acción principal, SEO local.
+- **Plan Profesional — $500:** suma galería optimizada, reseñas y Google Maps.
+- **Plan Premium — desde $750:** suma formulario de pedidos, sección de
+  producto en movimiento y sesión fotográfica.
+- **Mantenimiento — $40 a $80 al mes:** cambios de contenido, reportes y
+  soporte real (no es solo hosting).
+
+## Zona de servicio
+
+- Quito y todo Ecuador (atención remota).
+
+## Contacto
+
+- WhatsApp: +593 99 710 9978
+- Sitio web: https://vorka-sites.vercel.app/vorka/
+
+## Ejemplos de trabajo (demos reales)
+
+- El Fogón Ecuatoriano (restaurante): https://vorka-sites.vercel.app/demo-el-fogon-ecuatoriano/
+- Shangrila (restaurante): https://vorka-sites.vercel.app/demo-shangrila/
+- Estetic Dent (consultorio dental): https://vorka-sites.vercel.app/demo-esteticdent/
+- OdontoCrea (consultorio dental): https://vorka-sites.vercel.app/demo-odontocrea/
+
+## Preguntas frecuentes
+
+- **¿Cuánto tarda una web?** Entre 2 y 7 días hábiles según el plan, desde que
+  el negocio entrega logo, fotos y contenido. Si no tiene fotos o logo, Vorka
+  ayuda a mejorarlos y a crear una identidad básica de marca.
+- **¿Cuánto cuesta?** Desde $350, con planes de $500 y desde $750. El
+  mantenimiento va de $40 a $80 al mes.
+- **¿Ya tengo Instagram, necesito una web?** Sí: una web propia aparece en
+  Google, no depende de un algoritmo ajeno, y con Ordercash conecta directo con
+  pedidos, cobro y factura SRI.
