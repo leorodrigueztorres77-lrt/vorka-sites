@@ -285,6 +285,19 @@ const canonicalUrl = 'https://vorka-sites.vercel.app/vorka/';
     --accent-glow: 0 8px 28px -8px rgba(57, 211, 83, 0.4);
     --accent-glow-sm: 0 4px 14px -4px rgba(57, 211, 83, 0.32);
 
+    /* Color secundario oficial de la marca Vorka (Sprint 3.1). Cian extraído
+       del rim light del video del sistema. Contraste verificado: 13.3:1 sobre
+       #0A0A0A y 11.7:1 sobre #1A1A1A — pasa AA/AAA holgado.
+
+       REGLA DE USO (obligatoria):
+         Verde (--color-primario) = acción y conversión — CTAs, links de
+           acción, checks, precios, glow de hover en cards, focus rings.
+         Cian (--color-accent-secondary) = ilustración e información — íconos
+           decorativos e informativos, acentos gráficos NO clicables.
+       El cian NUNCA aparece en un elemento clicable. Token exclusivo de
+       Vorka; no toca la Capa 1 ni la identidad de ningún cliente. */
+    --color-accent-secondary: #7ae4ed;
+
     --r-sm: 8px;
     --r-md: 16px;
     --r-full: 999px;
