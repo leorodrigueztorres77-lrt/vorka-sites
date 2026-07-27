@@ -1,0 +1,73 @@
+---
+// Capa 3 — Brasas del Valle (restaurante, Valle de los Chillos, Quito).
+// CLON DE DEMO con marca ficticia, derivado de Shangrila: existe para mostrar
+// el trabajo de Vorka sin usar la marca real de un negocio con cuyo dueño aún
+// no se ha hablado. El demo original (demo-shangrila.astro) se mantiene
+// intacto; aquí solo cambia la identidad de Capa 3, no la maqueta. No es un
+// cliente real.
+// Variante Capa 2: V2 "Restroo" — menú completo con tabs, la misma del demo
+// original. Usa el hero superpuesto y el menú con portada dramática de Capa
+// 1/2 — esta página solo aporta los datos de Capa 3.
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/common/Header.astro';
+import HeroSplit from '@/components/common/HeroSplit.astro';
+import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
+import Testimonials from '@/components/common/Testimonials.astro';
+import LocationMap from '@/components/common/LocationMap.astro';
+import ContactForm from '@/components/common/ContactForm.astro';
+import Footer from '@/components/common/Footer.astro';
+import FloatingWhatsApp from '@/components/common/FloatingWhatsApp.astro';
+
+import Historia from '@/components/restaurant/Historia.astro';
+import MenuTabs from '@/components/restaurant/MenuTabs.astro';
+import CartBar from '@/components/restaurant/CartBar.astro';
+
+import { siteConfigBrasasValle } from '@/data/site.brasas-del-valle';
+import {
+  menuBrasasValle,
+  horariosBrasasValle,
+  testimoniosBrasasValle,
+  historiaBrasasValle,
+  heroFotoBrasasValle,
+} from '@/data/restaurant.brasas-del-valle';
+
+const site = siteConfigBrasasValle;
+---
+
+<BaseLayout site={site}>
+  <Header site={site} />
+
+  <HeroSplit site={site} imagen={heroFotoBrasasValle} imagenAlt="Parrillada de Brasas del Valle recién servida" estilo="superpuesto">
+    <Fragment slot="cta">
+      <a class="btn btn--primario" href="#menu">Ver el menú completo</a>
+      <WhatsAppButton
+        phone={site.telefonoWhatsApp}
+        message={`Hola, quiero hacer un pedido en ${site.nombre}`}
+        negocioSlug={site.negocioSlug}
+        label="Pedir por WhatsApp"
+        variante="acento"
+      />
+    </Fragment>
+  </HeroSplit>
+
+  <Historia historia={historiaBrasasValle} nombreNegocio={site.nombre} fondoAlterno revealFoto="escala" />
+
+  <MenuTabs categorias={menuBrasasValle} phone={site.telefonoWhatsApp} negocioSlug={site.negocioSlug} />
+
+  <Testimonials testimonios={testimoniosBrasasValle} carrusel fondoSolido />
+
+  <LocationMap site={site} horarios={horariosBrasasValle} />
+
+  <ContactForm site={site} productoLabel="Plato de interés" />
+
+  <Footer site={site} />
+
+  <CartBar phone={site.telefonoWhatsApp} negocioSlug={site.negocioSlug} nombreNegocio={site.nombre} />
+
+  <FloatingWhatsApp
+    phone={site.telefonoWhatsApp}
+    message={`Hola, quiero hacer un pedido en ${site.nombre}`}
+    negocioSlug={site.negocioSlug}
+    bottomOffset="88px"
+  />
+</BaseLayout>
