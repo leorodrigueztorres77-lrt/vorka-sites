@@ -14,9 +14,14 @@ if (!baseUrl) {
   process.exit(1);
 }
 
+// El portafolio público de Vorka muestra los CLONES de marca ficticia de los
+// dos demos de restaurante (Sabor de los Andes, Brasas del Valle), no las
+// marcas reales de El Fogón / Shangrila — esos demos siguen vivos por URL
+// directa, pero no se exhiben en el showcase mientras no se hable con sus
+// dueños. Este script captura exactamente lo que el portafolio referencia.
 const DEMOS = [
-  { slug: 'el-fogon-ecuatoriano', ruta: '/demo-el-fogon-ecuatoriano/' },
-  { slug: 'shangrila', ruta: '/demo-shangrila/' },
+  { slug: 'sabor-de-los-andes', ruta: '/demo-sabor-de-los-andes/' },
+  { slug: 'brasas-del-valle', ruta: '/demo-brasas-del-valle/' },
   { slug: 'esteticdent', ruta: '/demo-esteticdent/' },
 ];
 

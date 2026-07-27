@@ -43,8 +43,8 @@
 
 ## Ejemplos de trabajo (demos reales)
 
-- El Fogón Ecuatoriano (restaurante): https://vorka-sites.vercel.app/demo-el-fogon-ecuatoriano/
-- Shangrila (restaurante): https://vorka-sites.vercel.app/demo-shangrila/
+- Sabor de los Andes (restaurante): https://vorka-sites.vercel.app/demo-sabor-de-los-andes/
+- Brasas del Valle (restaurante): https://vorka-sites.vercel.app/demo-brasas-del-valle/
 - Estetic Dent (consultorio dental): https://vorka-sites.vercel.app/demo-esteticdent/
 - OdontoCrea (consultorio dental): https://vorka-sites.vercel.app/demo-odontocrea/
 
