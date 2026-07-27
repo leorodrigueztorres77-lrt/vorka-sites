@@ -97,13 +97,16 @@ const waBase = buildWhatsAppLink({
 </section>
 
 <script>
-  // Opcional: API key de PageSpeed (Google Cloud Console → PageSpeed Insights
-  // API, gratis, 25k/día). Sin key funciona con cuota anónima POR IP DEL
-  // VISITANTE — suficiente para tráfico normal; la key elimina el riesgo de
-  // 429 en redes compartidas (oficinas). Restringirla por referrer vorka.io
-  // antes de publicarla aquí.
-  // TODO (Leo): pegar la key si aparecen 429 en oficinas con IP compartida.
-  const PSI_KEY = '';
+  // API key de PageSpeed Insights (Google Cloud → proyecto vorka-psi, plan
+  // gratis 25k/día). Sin key se cae a la cuota anónima compartida de Google,
+  // que ya venía dando 429 RESOURCE_EXHAUSTED (quota_limit_value 0) — con lo
+  // que el analizador fallaba para CUALQUIER URL, no solo la del prospecto.
+  // Esta key es CLIENT-SIDE (queda visible en el HTML a propósito): está
+  // restringida por referrer HTTP a vorka-sites.vercel.app/* y limitada a la
+  // PageSpeed Insights API en la consola de Google, así que aunque alguien la
+  // copie no puede usarla desde otro dominio ni tocar otros servicios.
+  // Al mudar a dominio propio (vorka.ec), agregar ese referrer en la consola.
+  const PSI_KEY = 'AIzaSyBhFCj7Cmk3L2h86dB8kYMXLbnP2Xe8x2s';
 
   const form = document.getElementById('analizador-form') as HTMLFormElement;
   const input = document.getElementById('analizador-url') as HTMLInputElement;
@@ -280,9 +283,24 @@ const waBase = buildWhatsAppLink({
       api.searchParams.append('category', 'performance');
       if (PSI_KEY) api.searchParams.set('key', PSI_KEY);
       const res = await fetch(api, { signal: AbortSignal.timeout(90000) });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        // Adjuntamos el status para que el catch distinga 429 (saturación /
+        // cuota) de un error del sitio y no muestre el mensaje equivocado.
+        const err: any = new Error(`HTTP ${res.status}`);
+        err.status = res.status;
+        throw err;
+      }
       const data = await res.json();
       const lhr = data.lighthouseResult;
+      // PSI puede responder 200 pero con un runtimeError adentro cuando NO logró
+      // cargar el sitio (DNS, timeout del propio Lighthouse, sitio caído). Ese
+      // sí es un problema del sitio analizado — se trata aparte del 429 nuestro.
+      const runtimeError = lhr?.runtimeError;
+      if (runtimeError && runtimeError.code && runtimeError.code !== 'NO_ERROR') {
+        const err: any = new Error(runtimeError.code);
+        err.lighthouse = runtimeError.code;
+        throw err;
+      }
       const score = Math.round((lhr?.categories?.performance?.score ?? 0) * 100);
 
       terminarPasos();
@@ -297,10 +315,29 @@ const waBase = buildWhatsAppLink({
       resultado.hidden = false;
       requestAnimationFrame(() => animarGauge(score));
       resultado.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
-    } catch {
+    } catch (e: any) {
       ocultarPasos();
-      errorEl.textContent =
-        'No pudimos analizarla automáticamente (el sitio bloquea el análisis o Google está saturado). Escríbenos por WhatsApp y lo revisamos gratis por ti.';
+      // Mensaje según la causa real — nunca culpar al sitio del prospecto por un
+      // límite nuestro (era el bug: un 429 de cuota mostraba "el sitio bloquea
+      // el análisis", justo lo que no debe leer un cliente potencial).
+      const esTimeout = e?.name === 'TimeoutError' || e?.name === 'AbortError';
+      if (e?.status === 429) {
+        // Saturación / cuota de Google, no es culpa de la web analizada.
+        errorEl.textContent =
+          'Estamos con muchos análisis en este momento. Escríbenos por WhatsApp y revisamos tu web gratis contigo al instante.';
+      } else if (esTimeout) {
+        // 90 s sin respuesta: la web es tan lenta que ni se pudo medir — es un
+        // gancho de venta honesto, no un fallo del analizador.
+        errorEl.textContent =
+          'Tu web tardó más de 90 segundos en responder — eso ya es señal de que carga demasiado lento. Escríbenos por WhatsApp y lo revisamos contigo.';
+      } else if (e?.lighthouse) {
+        // Lighthouse no pudo abrir el sitio (dirección mal escrita, sitio caído).
+        errorEl.textContent =
+          'No pudimos abrir esa dirección. Revisa que esté bien escrita y que el sitio esté en línea, o escríbenos por WhatsApp y lo vemos juntos.';
+      } else {
+        errorEl.textContent =
+          'No pudimos analizarla automáticamente. Escríbenos por WhatsApp y la revisamos gratis por ti.';
+      }
     } finally {
       btn.disabled = false;
     }
