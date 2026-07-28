@@ -237,9 +237,13 @@ const chatDemoInicial = siteConfigSaborAndes;
   }
 
   .hero__chat {
+    /* Flota sobre la FOTO (zona media-baja del teléfono), no sobre el pie:
+       desde TAREA 1 la pantalla muestra el hero real del demo con su tagline +
+       CTA abajo, así que la tarjeta se sube para no taparlos (antes el fondo
+       era un wireframe gris sin contenido que tapar). */
     position: absolute;
     right: -20px;
-    bottom: 56px;
+    bottom: 150px;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -324,7 +328,7 @@ const chatDemoInicial = siteConfigSaborAndes;
     .hero__chat {
       width: 144px;
       right: -12px;
-      bottom: 40px;
+      bottom: 132px;
     }
   }
 
