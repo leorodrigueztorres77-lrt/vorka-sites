@@ -1,0 +1,258 @@
+---
+// Vorka — HeroPhonePreview (TAREA 1, 2026-07): reemplaza los bloques grises
+// placeholder del mockup del hero por una versión CODIFICADA y fiel del hero
+// móvil de cada demo, rotando Sabor de los Andes → Brasas del Valle → Estetic
+// Dent cada ~4.5s con microcoreografía (foto → nombre → tagline → botón).
+//
+// FUENTE DE VERDAD = los brandkits/site configs de cada demo. Nombre, tagline,
+// colores y tipografía se leen EN VIVO de siteConfig* (nada hardcodeado). Lo
+// único propio de esta vista son:
+//   1. la imagen reducida auto-hospedada de cada hero — ver
+//      public/images/vorka/hero-preview/README.md (regla de origen: es la MISMA
+//      foto del demo, solo reescalada a 480×340 para no cargar la full-size
+//      dentro de un mockup de ~216px), y
+//   2. el CTA, que refleja el CTA real del hero de cada demo (restaurante →
+//      "Pedir por WhatsApp", consultorio → "Agendar cita").
+// Si un demo cambia su nombre/tagline/paleta/tipografía, esto se actualiza
+// solo; si cambia su foto de hero, regenerar la preview (ver ese README).
+//
+// Rendimiento: contenedor de dimensiones fijas (lo da .hero__pantalla del padre)
+// + slides en position:absolute → CLS 0. Solo la primera imagen carga eager (y
+// con fetchpriority=low para no disputarle el LCP al <h1>); las otras dos, lazy.
+// Animación: solo transform/opacity, con los tokens de motion existentes; con
+// prefers-reduced-motion no hay rotación (queda fijo Sabor de los Andes).
+import { siteConfigSaborAndes } from '@/data/site.sabor-de-los-andes';
+import { siteConfigBrasasValle } from '@/data/site.brasas-del-valle';
+import { siteConfigEsteticdent } from '@/data/site.esteticdent';
+
+const demos = [
+  { site: siteConfigSaborAndes, img: '/images/vorka/hero-preview/sabor.webp', cta: 'Pedir por WhatsApp' },
+  { site: siteConfigBrasasValle, img: '/images/vorka/hero-preview/brasas.webp', cta: 'Pedir por WhatsApp' },
+  { site: siteConfigEsteticdent, img: '/images/vorka/hero-preview/esteticdent.webp', cta: 'Agendar cita' },
+];
+---
+
+{/* Subset mínimo (&text=) de la tipografía de titulares de cada demo: SOLO los
+    caracteres de su NOMBRE (el wordmark), cargado async (media=print → onload).
+    Así cada archivo pesa ~2-4KB en vez de ~20-30KB de la fuente completa. La
+    tagline NO usa esta fuente (usaría caracteres fuera del subset y caería a un
+    fallback distinto) — va en la tipografía de cuerpo de Vorka, ya cargada.
+    Pesos alineados a la "nota" de cada brandkit: Cormorant 700 itálica, Fredoka
+    700, Manrope 800. Si un demo cambia de nombre o tipografía, actualizar el
+    &text= / la familia aquí. */}
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,700&text=Sabor%20de%20los%20Andes&display=swap"
+  media="print"
+  onload="this.media='all'"
+/>
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Fredoka:wght@700&text=Brasas%20del%20Valle&display=swap"
+  media="print"
+  onload="this.media='all'"
+/>
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Manrope:wght@800&text=Estetic%20Dent&display=swap"
+  media="print"
+  onload="this.media='all'"
+/>
+
+<div class="hpp" data-hpp>
+  {demos.map((d, i) => (
+    <article
+      class:list={['hpp__slide', { 'is-active': i === 0 }]}
+      data-nombre={d.site.nombre}
+      data-primario={d.site.colores.primario}
+      style={`--d-primario:${d.site.colores.primario};--d-acento:${d.site.colores.acento};--d-fuente:${d.site.fuentes.titulos};`}
+    >
+      <img
+        class="hpp__foto"
+        src={d.img}
+        alt=""
+        width="480"
+        height="340"
+        loading={i === 0 ? 'eager' : 'lazy'}
+        fetchpriority={i === 0 ? 'low' : undefined}
+        decoding="async"
+      />
+      <div class="hpp__grad"></div>
+      <span class="hpp__marca">{d.site.nombre}</span>
+      <div class="hpp__pie">
+        <p class="hpp__tagline">{d.site.tagline}</p>
+        <span class="hpp__cta">{d.cta}</span>
+      </div>
+    </article>
+  ))}
+</div>
+
+<script>
+  // Rotación coreografiada. La activación de cada slide dispara su propia
+  // microcoreografía vía CSS (transition-delay escalonado). Con
+  // prefers-reduced-motion no rota: queda fijo el primer demo (Sabor). Además
+  // sincroniza la tarjeta de chat de WhatsApp del hero (nombre + color del
+  // avatar) con el demo activo — decisión (b) de la tarea.
+  const root = document.querySelector<HTMLElement>('[data-hpp]');
+  if (root) {
+    const slides = Array.from(root.querySelectorAll<HTMLElement>('.hpp__slide'));
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const chatNombre = document.querySelector<HTMLElement>('.hero__chat-nombre');
+    const chatAvatar = document.querySelector<HTMLElement>('.hero__chat-avatar');
+
+    const syncChat = (slide: HTMLElement) => {
+      if (chatNombre && slide.dataset.nombre) chatNombre.textContent = slide.dataset.nombre;
+      if (chatAvatar && slide.dataset.primario) chatAvatar.style.background = slide.dataset.primario;
+    };
+
+    if (!reduce && slides.length > 1) {
+      let i = 0;
+      window.setInterval(() => {
+        slides[i].classList.remove('is-active');
+        i = (i + 1) % slides.length;
+        slides[i].classList.add('is-active');
+        syncChat(slides[i]);
+      }, 4500);
+    }
+  }
+</script>
+
+<style>
+  .hpp {
+    position: absolute;
+    inset: 0;
+  }
+
+  .hpp__slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    /* Mismo redondeo interior que .hero__pantalla del padre. */
+    border-radius: 28px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .hpp__slide.is-active {
+    opacity: 1;
+  }
+
+  .hpp__foto {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Arranca un pelo escalada; al activarse se asienta (solo transform). */
+    transform: scale(1.06);
+  }
+
+  /* Degradado para legibilidad del texto blanco sobre la foto: oscurece arriba
+     (wordmark) y abajo (tagline + CTA), transparente al centro. */
+  .hpp__grad {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.42) 0%,
+      rgba(0, 0, 0, 0) 26%,
+      rgba(0, 0, 0, 0) 44%,
+      rgba(0, 0, 0, 0.78) 100%
+    );
+  }
+
+  .hpp__marca {
+    position: relative;
+    z-index: 1;
+    padding: 14px 14px 0;
+    font-family: var(--d-fuente);
+    font-weight: 700;
+    /* 16px: wordmark a escala de mockup de teléfono — geometría de dispositivo,
+       fuera de la escala tipográfica temática. */
+    font-size: 16px;
+    line-height: 1.1;
+    color: #ffffff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+  }
+
+  .hpp__pie {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .hpp__tagline {
+    margin: 0;
+    /* Tipografía de cuerpo de Vorka (ya cargada), no la display del demo: el
+       subset del wordmark no cubre los caracteres de la tagline. */
+    font-family: var(--font-texto);
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1.25;
+    color: #ffffff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .hpp__cta {
+    padding: 8px 16px;
+    border-radius: var(--r-full);
+    background: var(--d-primario);
+    color: #ffffff;
+    /* 11px: rótulo de botón en miniatura dentro del wireframe del teléfono. */
+    font-family: var(--font-texto);
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* Microcoreografía por activación: la foto se asienta y el nombre → tagline →
+     botón entran escalonados. Solo transform/opacity. */
+  @media (prefers-reduced-motion: no-preference) {
+    .hpp__slide {
+      transition: opacity var(--duration-reveal) var(--ease-out-expo);
+    }
+
+    .hpp__foto {
+      transition: transform var(--duration-macro, 900ms) var(--ease-out-expo);
+    }
+    .hpp__slide.is-active .hpp__foto {
+      transform: scale(1);
+    }
+
+    .hpp__marca,
+    .hpp__tagline,
+    .hpp__cta {
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity var(--duration-reveal) var(--ease-out-expo),
+        transform var(--duration-reveal) var(--ease-out-expo);
+    }
+
+    .hpp__slide.is-active .hpp__marca {
+      opacity: 1;
+      transform: none;
+      transition-delay: 120ms;
+    }
+    .hpp__slide.is-active .hpp__tagline {
+      opacity: 1;
+      transform: none;
+      transition-delay: 220ms;
+    }
+    .hpp__slide.is-active .hpp__cta {
+      opacity: 1;
+      transform: none;
+      transition-delay: 320ms;
+    }
+  }
+</style>

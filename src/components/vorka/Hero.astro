@@ -20,6 +20,8 @@
 // desde el primer frame y solo se acomoda en posición). Sin JS todo queda
 // visible; con prefers-reduced-motion no hay entrada.
 import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
+import HeroPhonePreview from '@/components/vorka/HeroPhonePreview.astro';
+import { siteConfigSaborAndes } from '@/data/site.sabor-de-los-andes';
 import type { SiteConfig } from '@/data/types';
 
 interface Props {
@@ -27,6 +29,12 @@ interface Props {
 }
 
 const { site } = Astro.props;
+
+// La tarjeta de chat arranca sincronizada con el primer demo del preview (Sabor
+// de los Andes) para que el SSR calce con el slide activo inicial; HeroPhonePreview
+// la re-sincroniza por JS en cada rotación (decisión b de TAREA 1). Fuente de
+// verdad = el site config del demo, no valores sueltos.
+const chatDemoInicial = siteConfigSaborAndes;
 ---
 
 <section class="hero">
@@ -58,35 +66,29 @@ const { site } = Astro.props;
       </ul>
     </div>
 
-    <!-- Composición de 2 dispositivos, 100% HTML/CSS (Fase 2 del rediseño
-         2026-07): sustituye el mockup generado con IA (frágil, no
-         reproducible — el script fal-mockup-vorka.mjs nunca llegó a existir
-         en el repo) por un wireframe neutro de web mobile-first (sin rubro
-         específico, misma decisión de Leo de no encasillar a Vorka) más una
-         tarjeta de chat de WhatsApp simulada superpuesta. Al ser DOM/CSS
-         puro (cero bytes de imagen, cero decode) es el candidato a LCP más
-         liviano posible para el hero — por eso NO lleva `reveal--scale`:
-         envolverlo en el fade/scale de Capa 1 retrasaría su primer pintado
-         hasta que el IntersectionObserver corra, justo el error que tenía
-         la versión anterior con la imagen. -->
+    <!-- Composición de 2 dispositivos (rediseño 2026-07; TAREA 1 2026-07-27):
+         el teléfono ya no muestra un wireframe gris neutro — muestra una versión
+         CODIFICADA y fiel del hero móvil de los 3 demos reales, rotando (ver
+         HeroPhonePreview.astro). El frame + notch + la tarjeta de chat de
+         WhatsApp superpuesta siguen siendo de Capa 1. La tarjeta de chat se
+         sincroniza con el demo activo (nombre + color del avatar) desde
+         HeroPhonePreview. NO lleva `reveal--scale`: el fade/scale de Capa 1
+         retrasaría el pintado hasta el IntersectionObserver; la entrada del
+         mockup ya la orquesta la secuencia .is-ready del propio hero, y el <h1>
+         sigue siendo el candidato a LCP (las previews son livianas y diferidas). -->
     <div class="hero__mockup" aria-hidden="true">
       <div class="hero__telefono">
         <span class="hero__telefono-notch"></span>
         <div class="hero__pantalla">
-          <div class="hero__pantalla-nav"></div>
-          <div class="hero__pantalla-hero"></div>
-          <span class="hero__pantalla-cta">Pedir por WhatsApp</span>
-          <div class="hero__pantalla-fila"></div>
-          <div class="hero__pantalla-fila"></div>
-          <div class="hero__pantalla-fila hero__pantalla-fila--corta"></div>
+          <HeroPhonePreview />
         </div>
       </div>
 
       <div class="hero__chat">
         <div class="hero__chat-cabecera">
-          <span class="hero__chat-avatar"></span>
+          <span class="hero__chat-avatar" style={`background:${chatDemoInicial.colores.primario};`}></span>
           <div class="hero__chat-info">
-            <span class="hero__chat-nombre">Tu negocio</span>
+            <span class="hero__chat-nombre">{chatDemoInicial.nombre}</span>
             <span class="hero__chat-estado">en línea</span>
           </div>
         </div>
@@ -222,55 +224,16 @@ const { site } = Astro.props;
   .hero__pantalla {
     /* 28px: bezel interior de la pantalla, misma excepción documentada que
        .hero__telefono arriba — geometría de dispositivo, no forma parte de
-       la escala r-sm/r-md/r-full. Fondo blanco a propósito: representa una
-       web de cliente (tema claro), en contraste con el fondo oscuro de
-       Vorka alrededor. */
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+       la escala r-sm/r-md/r-full. Fondo blanco a propósito (visible mientras
+       carga la primera preview). position:relative + aspect-ratio fijo →
+       contexto y dimensiones reservadas para los slides absolutos de
+       HeroPhonePreview (CLS 0). */
+    position: relative;
     width: 100%;
     aspect-ratio: 240 / 430;
-    padding: 16px 12px;
     border-radius: 28px;
     background: #ffffff;
     overflow: hidden;
-  }
-
-  .hero__pantalla-nav {
-    width: 56px;
-    height: 10px;
-    border-radius: 4px;
-    background: #e5e5e5;
-  }
-
-  .hero__pantalla-hero {
-    height: 96px;
-    border-radius: var(--r-sm);
-    background: linear-gradient(135deg, #e9e9e9, #d6d6d6);
-  }
-
-  .hero__pantalla-cta {
-    align-self: flex-start;
-    padding: 8px 20px;
-    border-radius: var(--r-full);
-    background: var(--color-primario);
-    color: #ffffff;
-    /* 11px: texto decorativo en miniatura dentro de un wireframe a escala
-       de teléfono — no es contenido real, cae fuera de la escala t-xs..t-2xl. */
-    font-family: var(--font-texto);
-    font-size: 11px;
-    font-weight: 600;
-  }
-
-  .hero__pantalla-fila {
-    height: 14px;
-    width: 100%;
-    border-radius: 4px;
-    background: #eeeeee;
-  }
-
-  .hero__pantalla-fila--corta {
-    width: 60%;
   }
 
   .hero__chat {
@@ -299,8 +262,16 @@ const { site } = Astro.props;
     width: 24px;
     height: 24px;
     border-radius: 50%;
+    /* Color inicial en el markup (SSR = demo activo); HeroPhonePreview lo
+       cambia por JS en cada rotación, aquí solo se anima la transición. */
     background: var(--color-primario);
     flex-shrink: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__chat-avatar {
+      transition: background-color var(--duration-reveal) var(--ease-out-expo);
+    }
   }
 
   .hero__chat-info {
