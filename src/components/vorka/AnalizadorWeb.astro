@@ -259,6 +259,41 @@ const waBase = buildWhatsAppLink({
     }
   };
 
+  // PSI/Lighthouse a veces devuelve un 5xx transitorio ("Something went wrong")
+  // o corta la conexión —sobre todo con sitios pesados— y al reintentar responde
+  // 200 normal (caso real: idealalambrec.somosgrupoag.com daba 500 y al reintentar
+  // sacaba 63/100). Reintentamos hasta 3 veces ante 5xx o error de red, con backoff
+  // corto. NO reintentamos el 429 (cuota, no se arregla reintentando) ni el timeout
+  // (ya es señal honesta de sitio lento) — esos se propagan tal cual.
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+  const fetchPSI = async (api: URL): Promise<Response> => {
+    const backoffs = [1200, 2500]; // ms de espera antes del 2º y 3er intento
+    let ultimo: any;
+    for (let intento = 0; intento < 3; intento++) {
+      try {
+        const res = await fetch(api, { signal: AbortSignal.timeout(90000) });
+        if (res.status >= 500 && intento < 2) {
+          ultimo = Object.assign(new Error(`HTTP ${res.status}`), { status: res.status });
+          await sleep(backoffs[intento]);
+          continue;
+        }
+        return res;
+      } catch (err: any) {
+        // Timeout/abort: no reintentar (el sitio es genuinamente lento).
+        if (err?.name === 'TimeoutError' || err?.name === 'AbortError') throw err;
+        // Error de red transitorio: reintentar si quedan intentos.
+        ultimo = err;
+        if (intento < 2) {
+          await sleep(backoffs[intento]);
+          continue;
+        }
+        throw err;
+      }
+    }
+    throw ultimo;
+  };
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     let url = input.value.trim();
@@ -282,7 +317,7 @@ const waBase = buildWhatsAppLink({
       api.searchParams.set('strategy', 'mobile');
       api.searchParams.append('category', 'performance');
       if (PSI_KEY) api.searchParams.set('key', PSI_KEY);
-      const res = await fetch(api, { signal: AbortSignal.timeout(90000) });
+      const res = await fetchPSI(api);
       if (!res.ok) {
         // Adjuntamos el status para que el catch distinga 429 (saturación /
         // cuota) de un error del sitio y no muestre el mensaje equivocado.
@@ -325,6 +360,11 @@ const waBase = buildWhatsAppLink({
         // Saturación / cuota de Google, no es culpa de la web analizada.
         errorEl.textContent =
           'Estamos con muchos análisis en este momento. Escríbenos por WhatsApp y revisamos tu web gratis contigo al instante.';
+      } else if (e?.status >= 500) {
+        // 5xx que sobrevivió los reintentos: fallo temporal de Google/Lighthouse,
+        // NO del sitio del prospecto (que suele analizar bien al reintentar).
+        errorEl.textContent =
+          'El medidor de Google falló por un momento (no es tu web). Vuelve a intentarlo en un minuto, o escríbenos por WhatsApp y la revisamos gratis contigo.';
       } else if (esTimeout) {
         // 90 s sin respuesta: la web es tan lenta que ni se pudo medir — es un
         // gancho de venta honesto, no un fallo del analizador.
