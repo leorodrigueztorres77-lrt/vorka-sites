@@ -25,10 +25,32 @@ import { siteConfigSaborAndes } from '@/data/site.sabor-de-los-andes';
 import { siteConfigBrasasValle } from '@/data/site.brasas-del-valle';
 import { siteConfigEsteticdent } from '@/data/site.esteticdent';
 
+// cta + chat = copy ilustrativa de Vorka acorde al rubro de cada demo
+// (restaurante → pedido, consultorio → cita), para que la tarjeta de chat no
+// diga "pedido" en una clínica. El resto (nombre/tagline/paleta/tipografía)
+// sale del site config del demo.
 const demos = [
-  { site: siteConfigSaborAndes, img: '/images/vorka/hero-preview/sabor.webp', cta: 'Pedir por WhatsApp' },
-  { site: siteConfigBrasasValle, img: '/images/vorka/hero-preview/brasas.webp', cta: 'Pedir por WhatsApp' },
-  { site: siteConfigEsteticdent, img: '/images/vorka/hero-preview/esteticdent.webp', cta: 'Agendar cita' },
+  {
+    site: siteConfigSaborAndes,
+    img: '/images/vorka/hero-preview/sabor.webp',
+    cta: 'Pedir por WhatsApp',
+    chatIn: 'Hola! Vi tu web, quiero hacer un pedido',
+    chatOut: '¡Con gusto! Dime qué necesitas y lo confirmamos ✅',
+  },
+  {
+    site: siteConfigBrasasValle,
+    img: '/images/vorka/hero-preview/brasas.webp',
+    cta: 'Pedir por WhatsApp',
+    chatIn: 'Hola! Vi tu web, quiero hacer un pedido',
+    chatOut: '¡Con gusto! Dime qué necesitas y lo confirmamos ✅',
+  },
+  {
+    site: siteConfigEsteticdent,
+    img: '/images/vorka/hero-preview/esteticdent.webp',
+    cta: 'Agendar cita',
+    chatIn: 'Hola! Vi tu web, quiero agendar una cita',
+    chatOut: '¡Claro! Dime qué día te queda mejor y la confirmamos ✅',
+  },
 ];
 ---
 
@@ -65,6 +87,8 @@ const demos = [
       class:list={['hpp__slide', { 'is-active': i === 0 }]}
       data-nombre={d.site.nombre}
       data-primario={d.site.colores.primario}
+      data-chat-in={d.chatIn}
+      data-chat-out={d.chatOut}
       style={`--d-primario:${d.site.colores.primario};--d-acento:${d.site.colores.acento};--d-fuente:${d.site.fuentes.titulos};`}
     >
       <img
@@ -99,10 +123,14 @@ const demos = [
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const chatNombre = document.querySelector<HTMLElement>('.hero__chat-nombre');
     const chatAvatar = document.querySelector<HTMLElement>('.hero__chat-avatar');
+    const chatIn = document.querySelector<HTMLElement>('.hero__chat-burbuja--entrante');
+    const chatOut = document.querySelector<HTMLElement>('.hero__chat-burbuja--saliente');
 
     const syncChat = (slide: HTMLElement) => {
       if (chatNombre && slide.dataset.nombre) chatNombre.textContent = slide.dataset.nombre;
       if (chatAvatar && slide.dataset.primario) chatAvatar.style.background = slide.dataset.primario;
+      if (chatIn && slide.dataset.chatIn) chatIn.textContent = slide.dataset.chatIn;
+      if (chatOut && slide.dataset.chatOut) chatOut.textContent = slide.dataset.chatOut;
     };
 
     if (!reduce && slides.length > 1) {
