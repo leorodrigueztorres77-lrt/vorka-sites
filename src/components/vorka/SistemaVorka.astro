@@ -157,6 +157,14 @@
   .seq canvas {
     position: absolute;
     inset: 0;
+    /* Contención (2026-07-29): la fuente de video es 720p (1280×810 real). A
+       pantalla completa se estiraba 1.5–3x y se veía pixelada. Se centra el
+       canvas en una banda de máx. 1440px (= ancho de los frames → 1:1 en
+       monitores DPR-1, sin upscale del navegador); el fondo #0d0d0d de .seq
+       hace de letterbox a los lados. La nitidez total edge-to-edge requiere
+       regenerar la fuente a ≥1080p (ver docs/vorka-backlog.md). */
+    max-width: 1440px;
+    margin-inline: auto;
     width: 100%;
     height: 100%;
     display: block;
@@ -173,6 +181,11 @@
   .seq-overlay {
     position: absolute;
     inset: 0;
+    /* Alineado a la misma banda de 1440px que el canvas (ver .seq canvas): así
+       el texto y el degradado quedan sobre el video, no sobre el letterbox. */
+    width: 100%;
+    max-width: 1440px;
+    margin-inline: auto;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
