@@ -29,7 +29,10 @@ const proyectos = [
     descripcion: 'Comida ecuatoriana tradicional en Conocoto, Quito.',
     href: '/demo-sabor-de-los-andes/',
     captura: '/images/vorka/portafolio/sabor-de-los-andes.webp',
-    capturaAlto: 11478,
+    // Dims reales del WebP recapturado a 2x (Sprint 3.3 T2). El alto tope en
+    // 16000px por el límite de WebP, de ahí el ancho 544 (aspecto preservado).
+    capturaAncho: 544,
+    capturaAlto: 16000,
   },
   {
     // Clon de marca ficticia (deriva del demo Shangrila, ídem arriba).
@@ -39,7 +42,8 @@ const proyectos = [
     descripcion: 'Parrilla casual y enérgica.',
     href: '/demo-brasas-del-valle/',
     captura: '/images/vorka/portafolio/brasas-del-valle.webp',
-    capturaAlto: 4070,
+    capturaAncho: 780,
+    capturaAlto: 8140,
   },
   {
     nombre: 'Estetic Dent',
@@ -48,7 +52,8 @@ const proyectos = [
     descripcion: 'Consultorio odontológico moderno en el sur de Quito.',
     href: '/demo-esteticdent/',
     captura: '/images/vorka/portafolio/esteticdent.webp',
-    capturaAlto: 8999,
+    capturaAncho: 692,
+    capturaAlto: 16000,
   },
 ];
 ---
@@ -81,7 +86,7 @@ const proyectos = [
               <img
                 src={proyecto.captura}
                 alt={`Captura real de la web de ${proyecto.nombre}`}
-                width="390"
+                width={proyecto.capturaAncho}
                 height={proyecto.capturaAlto}
                 loading="lazy"
                 decoding="async"
@@ -255,7 +260,10 @@ const proyectos = [
        translateY de hover se calcula 100% en JS-free CSS puro a partir del
        alto real de la captura vs. el alto fijo de este viewport. */
     container-type: size;
-    height: 360px;
+    /* 440px (antes 360): a 360 la ventana cortaba el subtítulo del hero en
+       Brasas y Estetic Dent; a 440 las 3 caen en zona limpia con el subtítulo
+       completo (Sprint 3.3 T2). */
+    height: 440px;
     overflow: hidden;
     background: var(--bg-1);
   }
