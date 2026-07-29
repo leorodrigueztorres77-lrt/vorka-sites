@@ -151,12 +151,22 @@ const proyectos = [
     text-decoration: none;
   }
 
-  /* T2b — card hover: glow verde + borde verde 40%. El color/sombra cambian
-     siempre; el translateY va detrás de prefers-reduced-motion. */
-  .proyecto:hover,
+  /* Card destacada: glow verde + borde verde 40% + lift. El :focus-visible
+     (teclado) lo activa siempre. El :hover va SOLO tras @media (hover: hover)
+     — dispositivos con puntero real — porque en táctil el :hover se queda
+     "pegado" tras tocar y dejaba el glow fijo en la última card tocada, que
+     era justo lo que hacía ver a Estetic Dent destacada sin estarlo (Sprint
+     3.3 T1). El translateY, además, detrás de prefers-reduced-motion. */
   .proyecto:focus-visible {
     box-shadow: var(--shadow-elevar), var(--accent-glow);
     border-color: rgba(57, 211, 83, 0.4);
+  }
+
+  @media (hover: hover) {
+    .proyecto:hover {
+      box-shadow: var(--shadow-elevar), var(--accent-glow);
+      border-color: rgba(57, 211, 83, 0.4);
+    }
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -166,8 +176,13 @@ const proyectos = [
         border-color 250ms var(--ease-out-expo);
     }
 
-    .proyecto:hover,
     .proyecto:focus-visible {
+      transform: translateY(-4px);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) and (hover: hover) {
+    .proyecto:hover {
       transform: translateY(-4px);
     }
   }
