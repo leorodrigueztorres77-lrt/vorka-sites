@@ -1,12 +1,19 @@
 ---
 // Vorka — Anchor de valor (spec GTM de Leo 2026-07, Fase 6; reencuadrado en
-// Sprint 1 T5, 2026-07-23). Antes comparaba "freelance vs Vorka"; ahora
-// contrasta el status quo del prospecto — seguir solo con redes sociales / sin
-// web — contra tener su web con Vorka. Habla del dolor actual del dueño (no
-// aparece en Google, pierde pedidos en DMs), que es lo que de verdad mueve la
-// decisión. En mobile la tabla colapsa a cards apiladas (NUNCA tabla
-// horizontal con scroll, regla de la spec). Ordercash mantiene el framing del
-// sistema, no promesa de fecha.
+// Sprint 1 T5, 2026-07-23; segunda tabla añadida en la pasada GTM v3). Dos
+// tablas bajo un mismo ancla:
+//   1. El status quo del prospecto (solo redes / sin web) contra tener su web
+//      con Vorka. Habla del dolor actual del dueño (no aparece en Google,
+//      pierde pedidos en DMs), que es lo que de verdad mueve la decisión.
+//   2. Ordercash contra las apps de delivery (PedidosYa): el mismo argumento
+//      de la sección anti-comisión, pero en formato de tabla de features.
+// En mobile ambas colapsan a cards apiladas (NUNCA tabla horizontal con
+// scroll, regla de la spec).
+//
+// FRAMING ORDERCASH: coming-soon. La columna Ordercash de la tabla 2 lleva la
+// etiqueta "próximamente" para no prometer disponibilidad hoy (CLAUDE.md
+// "nunca prometer una integración que no existe"); describe capacidad, no
+// fecha de compra.
 import { buildWhatsAppLink } from '@/lib/whatsapp';
 import type { SiteConfig } from '@/data/types';
 
@@ -22,47 +29,83 @@ const href = buildWhatsAppLink({
   negocioSlug: site.negocioSlug,
 });
 
-const COL_ACTUAL = 'Solo redes / sin web';
-const COL_VORKA = 'Con Vorka';
+interface Tabla {
+  subtitulo: string;
+  colIzq: string;
+  colDer: string;
+  derProximamente?: boolean;
+  filas: { concepto: string; izq: string; der: string }[];
+  nota?: string;
+}
 
-const filas = [
-  { concepto: 'Te encuentran en Google', actual: 'No apareces', vorka: 'Apareces con SEO local' },
-  { concepto: 'Pedidos', actual: 'Se pierden en los DMs', vorka: 'Llegan directo a tu WhatsApp' },
-  { concepto: 'Facturación SRI', actual: 'Manual, uno por uno', vorka: 'Automatizada con Ordercash' },
-  { concepto: 'Imagen profesional', actual: 'Dependes del feed', vorka: 'Web propia que vende 24/7' },
-  { concepto: 'Costo de empezar', actual: '"Gratis", pero te cuesta ventas', vorka: 'Desde $350, fijo' },
+const tablas: Tabla[] = [
+  {
+    subtitulo: 'Seguir como estás vs. tener tu web con Vorka',
+    colIzq: 'Solo redes / sin web',
+    colDer: 'Con Vorka',
+    filas: [
+      { concepto: 'Te encuentran en Google', izq: 'No apareces', der: 'Apareces con SEO local' },
+      { concepto: 'Pedidos', izq: 'Se pierden en los DMs', der: 'Llegan directo a tu WhatsApp' },
+      { concepto: 'Facturación SRI', izq: 'Manual, uno por uno', der: 'Automatizada con Ordercash' },
+      { concepto: 'Imagen profesional', izq: 'Dependes del feed', der: 'Web propia que vende 24/7' },
+      { concepto: 'Costo de empezar', izq: '"Gratis", pero te cuesta ventas', der: 'Desde $249, fijo' },
+    ],
+  },
+  {
+    subtitulo: 'Ordercash vs. las apps de delivery',
+    colIzq: 'PedidosYa',
+    colDer: 'Ordercash',
+    derProximamente: true,
+    filas: [
+      { concepto: 'Costo por pedido', izq: '13% a 18% + IVA', der: '$0 por pedido' },
+      { concepto: 'Setup', izq: '$0 (pero cobra siempre)', der: '$99 único' },
+      { concepto: 'Factura SRI', izq: 'No automática', der: 'Automática' },
+      { concepto: 'Datos de tus clientes', izq: 'Son de ellos', der: 'Son tuyos' },
+      { concepto: 'Costo mensual real', izq: '$219 a $584', der: '$89' },
+    ],
+    nota: 'Costo mensual real estimado sobre $1.500 a $4.000/mes en ventas por delivery.',
+  },
 ];
 ---
 
 <section class="comparativa section" id="comparativa">
   <div class="container comparativa__inner">
-    <h2 class="section-title reveal">Seguir como estás vs. tener tu web con Vorka</h2>
+    <h2 class="section-title reveal">Por qué Vorka y Ordercash, y no las otras opciones</h2>
 
-    {/* Sprint 2 T1 (2026-07-24): antes la tabla entera llevaba un solo .reveal
-        (entraba como bloque). El spec pide que las FILAS entren escalonadas —
-        cada fila de datos lleva ahora su propio .reveal, así la cascada de
-        Capa 1 (agrupada por padre en BaseLayout) las anima una tras otra. La
-        fila de cabecera queda como marco estático, sin reveal. */}
-    <div class="comparativa__tabla" role="table" aria-label={`Comparación entre ${COL_ACTUAL} y ${COL_VORKA}`}>
-      <div class="comparativa__fila comparativa__fila--cabecera" role="row">
-        <span role="columnheader"></span>
-        <span role="columnheader">{COL_ACTUAL}</span>
-        <span role="columnheader" class="comparativa__col-vorka">{COL_VORKA}</span>
-      </div>
-      {filas.map((fila) => (
-        <div class="comparativa__fila reveal" role="row">
-          <span class="comparativa__concepto" role="rowheader">{fila.concepto}</span>
-          <span class="comparativa__valor" role="cell">
-            <span class="comparativa__etiqueta" aria-hidden="true">{COL_ACTUAL}</span>
-            {fila.actual}
-          </span>
-          <span class="comparativa__valor comparativa__valor--vorka" role="cell">
-            <span class="comparativa__etiqueta" aria-hidden="true">{COL_VORKA}</span>
-            {fila.vorka} <span class="comparativa__check" aria-hidden="true">✓</span>
-          </span>
+    {tablas.map((tabla) => (
+      <div class="comparativa__bloque">
+        <h3 class="comparativa__subtitulo reveal">{tabla.subtitulo}</h3>
+
+        {/* Sprint 2 T1: cada fila de datos lleva su propio .reveal para que la
+            cascada de Capa 1 las anime una tras otra; la cabecera queda como
+            marco estático. */}
+        <div class="comparativa__tabla" role="table" aria-label={`Comparación entre ${tabla.colIzq} y ${tabla.colDer}`}>
+          <div class="comparativa__fila comparativa__fila--cabecera" role="row">
+            <span role="columnheader"></span>
+            <span role="columnheader">{tabla.colIzq}</span>
+            <span role="columnheader" class="comparativa__col-vorka">
+              {tabla.colDer}
+              {tabla.derProximamente && <span class="comparativa__proximamente">próximamente</span>}
+            </span>
+          </div>
+          {tabla.filas.map((fila) => (
+            <div class="comparativa__fila reveal" role="row">
+              <span class="comparativa__concepto" role="rowheader">{fila.concepto}</span>
+              <span class="comparativa__valor" role="cell">
+                <span class="comparativa__etiqueta" aria-hidden="true">{tabla.colIzq}</span>
+                {fila.izq}
+              </span>
+              <span class="comparativa__valor comparativa__valor--vorka" role="cell">
+                <span class="comparativa__etiqueta" aria-hidden="true">{tabla.colDer}</span>
+                {fila.der} <span class="comparativa__check" aria-hidden="true">✓</span>
+              </span>
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
+
+        {tabla.nota && <p class="comparativa__nota reveal">{tabla.nota}</p>}
+      </div>
+    ))}
 
     <a class="btn btn--primario reveal" href={href} target="_blank" rel="noopener noreferrer">
       Hablemos por WhatsApp <span class="btn__flecha" aria-hidden="true">→</span>
@@ -82,10 +125,26 @@ const filas = [
     align-items: center;
   }
 
+  .comparativa__bloque {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .comparativa__subtitulo {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: var(--t-lg);
+    color: var(--color-texto);
+    text-align: center;
+    margin: 8px 0 20px;
+  }
+
   .comparativa__tabla {
     width: 100%;
     max-width: 860px;
-    margin: 0 0 40px;
+    margin: 0 0 12px;
     border: 1px solid var(--border-default);
     border-radius: var(--r-md);
     overflow: hidden;
@@ -115,6 +174,22 @@ const filas = [
 
   .comparativa__col-vorka {
     color: var(--color-primario);
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .comparativa__proximamente {
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--color-primario);
+    background: rgba(57, 211, 83, 0.12);
+    border: 1px solid rgba(57, 211, 83, 0.4);
+    border-radius: var(--r-full);
+    padding: 2px 8px;
+    text-transform: uppercase;
   }
 
   .comparativa__concepto {
@@ -140,6 +215,26 @@ const filas = [
     font-weight: 700;
   }
 
+  .comparativa__nota {
+    font-family: var(--font-texto);
+    font-size: var(--t-xs);
+    color: var(--color-gris);
+    opacity: 0.75;
+    max-width: 620px;
+    text-align: center;
+    margin: 0 0 40px;
+  }
+
+  /* Separación entre el primer bloque y el segundo cuando el primero no lleva
+     nota que ya cree el espacio. */
+  .comparativa__bloque + .comparativa__bloque {
+    margin-top: 40px;
+  }
+
+  .comparativa__bloque:first-of-type {
+    margin-bottom: 8px;
+  }
+
   /* Etiquetas solo visibles en el layout apilado de mobile. */
   .comparativa__etiqueta {
     display: none;
@@ -150,6 +245,10 @@ const filas = [
     font-size: var(--t-sm);
     color: var(--color-gris);
     margin: 12px 0 0;
+  }
+
+  .comparativa .btn--primario {
+    margin-top: 32px;
   }
 
   @media (max-width: 720px) {
