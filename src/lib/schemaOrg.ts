@@ -41,7 +41,9 @@ function parsearDias(dia: string): string[] | null {
 
 function parsearHorario(horario: string): { opens: string; closes: string } | null {
   if (/cerrado/i.test(horario)) return null;
-  const match = horario.match(/(\d{1,2}:\d{2})\s*[–-]\s*(\d{1,2}:\d{2})/);
+  // Acepta "11:00 – 20:00", "11:00 - 20:00" y "11:00 a 20:00" (esta última es
+  // la forma sin guion que usa el copy tras la limpieza de guiones 2026-07-31).
+  const match = horario.match(/(\d{1,2}:\d{2})\s*(?:[–-]|a)\s*(\d{1,2}:\d{2})/);
   return match ? { opens: match[1], closes: match[2] } : null;
 }
 
