@@ -21,7 +21,7 @@ export const siteConfigConsultorio: SiteConfig = {
   },
   mapaEmbedUrl: '',
   seo: {
-    tituloDefault: 'Nombre del Consultorio — Ciudad, Ecuador',
+    tituloDefault: 'Nombre del Consultorio: Ciudad, Ecuador',
     descripcionDefault:
       'Descripción SEO de ejemplo: especialidad, ciudad y diferenciador del consultorio.',
   },

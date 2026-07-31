@@ -88,9 +88,9 @@ export const galeriaSample: FotoGaleria[] = [
 ];
 
 export const horariosSample: HorarioDia[] = [
-  { dia: 'Lunes a Viernes', horario: '12:00 – 21:00' },
-  { dia: 'Sábado', horario: '12:00 – 22:00' },
-  { dia: 'Domingo', horario: '12:00 – 18:00' },
+  { dia: 'Lunes a Viernes', horario: '12:00 a 21:00' },
+  { dia: 'Sábado', horario: '12:00 a 22:00' },
+  { dia: 'Domingo', horario: '12:00 a 18:00' },
 ];
 
 // Placeholder — demo-personalizer lo llena con el historial real de pedidos

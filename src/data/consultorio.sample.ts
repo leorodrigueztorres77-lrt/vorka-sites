@@ -62,7 +62,7 @@ export const serviciosSample: CategoriaServicios[] = [
     servicios: [
       {
         nombre: 'Atención de urgencia',
-        descripcion: 'Dolor agudo, fractura o trauma dental — atención el mismo día.',
+        descripcion: 'Dolor agudo, fractura o trauma dental. Atención el mismo día.',
         precioDesde: 20,
         duracionMin: 30,
         tipo: 'Urgencias',
@@ -90,8 +90,8 @@ export const tecnologiaSample: ItemTecnologia[] = [
 ];
 
 export const horariosSample: HorarioDia[] = [
-  { dia: 'Lunes a Viernes', horario: '09:00 – 18:00' },
-  { dia: 'Sábado', horario: '09:00 – 13:00' },
+  { dia: 'Lunes a Viernes', horario: '09:00 a 18:00' },
+  { dia: 'Sábado', horario: '09:00 a 13:00' },
   { dia: 'Domingo', horario: 'Cerrado' },
 ];
 
@@ -101,7 +101,7 @@ export const historiaSample: HistoriaNegocio = {
   texto:
     'Contamos aquí la formación del profesional, su enfoque de atención (cercano, ' +
     'preventivo, indoloro) y qué distingue a este consultorio de una clínica ' +
-    'genérica — por qué un paciente nuevo debería elegirlo.',
+    'genérica: por qué un paciente nuevo debería elegirlo.',
 };
 
 export const testimoniosSample: Testimonio[] = [

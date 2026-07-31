@@ -19,7 +19,7 @@ export const siteConfig: SiteConfig = {
   },
   mapaEmbedUrl: '',
   seo: {
-    tituloDefault: 'Nombre del Restaurante — Ciudad, Ecuador',
+    tituloDefault: 'Nombre del Restaurante: Ciudad, Ecuador',
     descripcionDefault:
       'Descripción SEO de ejemplo: tipo de cocina, ciudad y diferenciador del negocio.',
   },
