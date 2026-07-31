@@ -90,15 +90,21 @@ latinoamericano neutro.
 
 ## Pricing vigente
 
-**Agencia de webs:**
-- Básica: $350 · Profesional: $500 · Premium: $750+
-- Mantenimiento: $40–80/mes — vender siempre como servicio activo (cambios de
-  contenido, reportes, soporte), **nunca como "hosting"** (el churn se dispara si el
-  cliente lo percibe así).
+**Agencia de webs (tarifario v3, oficial desde 2026-07):**
+- Starter: $249 (landing de 1 página) · Negocio: $449 (sitio de 4 a 5 secciones,
+  el más elegido) · Negocio + Ordercash: $649 (todo Negocio + integración
+  Ordercash completa).
+- Mantenimiento: $39/mes — vender siempre como servicio activo (hosting, SSL,
+  hasta 3 cambios de contenido/mes, reporte mensual de tráfico), **nunca como
+  "solo hosting"** (el churn se dispara si el cliente lo percibe así).
 
-**Ordercash:**
-- Gratis/Trial: $0 · Base: $19–29/mes · Pro (con SRI): $49–59/mes ·
-  Full + Web: $79–99/mes
+**Ordercash (stand-alone, para quien ya tiene web — en preventa, precio de
+lanzamiento):**
+- Básico: $99 setup + $49/mes · Pro (con SRI): $99 setup + $89/mes ·
+  Pro + Fidelización: $99 setup + $129/mes.
+- **Framing obligatorio: coming-soon/preventa.** Nunca prometer factura SRI
+  activa hoy; el CTA reserva un cupo al precio de lanzamiento y se avisa "apenas
+  esté disponible". Consistente con "Estado real de Ordercash" arriba.
 
 **Add-ons de reputación (aplica a ambos verticales, independiente de Ordercash):**
 - Radar de Competencia (reporte único, usado en la venta inicial): **sin costo**,
@@ -106,7 +112,8 @@ latinoamericano neutro.
 - Gestión de reputación recurrente (respuestas a reseñas + solicitud oportuna de
   reseñas nuevas): $25–40/mes add-on sobre el mantenimiento.
 - Radar de Competencia recurrente (trimestral, con histórico de evolución):
-  $20–30/mes add-on, o incluido de fábrica en el paquete Premium ($750+).
+  $20–30/mes add-on, o incluido de fábrica en el paquete más alto (Negocio +
+  Ordercash, $649).
 
 **Add-ons de reactivación de clientes/pacientes (ver skill `reactivation-campaigns`):**
 - Restaurante con Ordercash activo: se posiciona como caso de uso del cross-sell
@@ -117,8 +124,9 @@ latinoamericano neutro.
 
 **Add-on de fotografía profesional (nuevo, ver sección "Manejo de imágenes" abajo):**
 - Sesión de fotos básica coordinada con fotógrafo freelance local: $50–150,
-  cobrado como fee de coordinación dentro del paquete Premium ($750+), o como
-  línea aparte en Básica/Profesional si el cliente la solicita. Vorka coordina
+  cobrado como fee de coordinación dentro del paquete más alto (Negocio +
+  Ordercash, $649), o como línea aparte en los planes Starter/Negocio si el
+  cliente la solicita. Vorka coordina
   el servicio, no toma las fotos directamente.
 
 ## Por qué el Radar de Competencia es el gatillo de cierre más fuerte
@@ -500,7 +508,8 @@ fal.ai (pago por uso; script reutilizable en
 ### Nivel 3 — Add-on pagado: sesión de fotos profesional coordinada
 
 Ver pricing — Vorka coordina (no ejecuta) una sesión con fotógrafo freelance
-local, ofrecida como parte del paquete Premium o como línea aparte.
+local, ofrecida como parte del paquete más alto (Negocio + Ordercash) o como
+línea aparte.
 
 ### Reglas obligatorias de autenticidad (por vertical)
 
