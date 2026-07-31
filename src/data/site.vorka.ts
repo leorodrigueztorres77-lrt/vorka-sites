@@ -34,9 +34,9 @@ export const siteConfigVorka: SiteConfig = {
     // búsquedas objetivo "diseño web Ecuador" y "páginas web para negocios
     // Quito", sin keyword stuffing — la keyword abre el título y la primera
     // frase de la descripción, que es lo que Google pondera.
-    tituloDefault: 'Diseño web en Ecuador — Páginas web para negocios en Quito | Vorka',
+    tituloDefault: 'Diseño web en Ecuador: páginas web para negocios en Quito | Vorka',
     descripcionDefault:
-      'Diseño de páginas web para negocios locales en Quito y todo Ecuador: listas en 5–7 días, optimizadas para móvil, con ventas por WhatsApp y factura SRI automática con Ordercash.',
+      'Diseño de páginas web para negocios locales en Quito y todo Ecuador: listas en 5 a 7 días, optimizadas para móvil, con ventas por WhatsApp y factura SRI automática con Ordercash.',
   },
   webhookContactoUrl: '',
 };

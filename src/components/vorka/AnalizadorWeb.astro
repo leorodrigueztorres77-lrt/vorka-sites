@@ -243,7 +243,7 @@ const waBase = buildWhatsAppLink({
     hallazgosEl.innerHTML = '';
     for (const m of METRICAS) {
       const a = audits?.[m.id];
-      const valor = a?.displayValue ?? '—';
+      const valor = a?.displayValue ?? 'N/D';
       const nivel = nivelAudit(a?.score);
       const li = document.createElement('li');
       li.className = 'hallazgo';
@@ -302,7 +302,7 @@ const waBase = buildWhatsAppLink({
     try {
       new URL(url);
     } catch {
-      errorEl.textContent = 'Esa dirección no parece válida — revísala (ej. tunegocio.com).';
+      errorEl.textContent = 'Esa dirección no parece válida. Revísala (ej. tunegocio.com).';
       return;
     }
 
@@ -369,7 +369,7 @@ const waBase = buildWhatsAppLink({
         // 90 s sin respuesta: la web es tan lenta que ni se pudo medir — es un
         // gancho de venta honesto, no un fallo del analizador.
         errorEl.textContent =
-          'Tu web tardó más de 90 segundos en responder — eso ya es señal de que carga demasiado lento. Escríbenos por WhatsApp y lo revisamos contigo.';
+          'Tu web tardó más de 90 segundos en responder. Eso ya es señal de que carga demasiado lento. Escríbenos por WhatsApp y lo revisamos contigo.';
       } else if (e?.lighthouse) {
         // Lighthouse no pudo abrir el sitio (dirección mal escrita, sitio caído).
         errorEl.textContent =
