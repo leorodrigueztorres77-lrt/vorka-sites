@@ -20,7 +20,7 @@ export const serviciosEsteticdent: CategoriaServicios[] = [
   {
     categoria: 'Urgencias odontológicas',
     servicios: [
-      { nombre: 'Urgencias con atención prioritaria', descripcion: 'Dolor agudo, trauma o infección dental — te atendemos con prioridad dentro de nuestro horario de atención.', precioDesde: 25, duracionMin: 30, destacado: true, tipo: 'Urgencias' },
+      { nombre: 'Urgencias con atención prioritaria', descripcion: 'Dolor agudo, trauma o infección dental. Te atendemos con prioridad dentro de nuestro horario de atención.', precioDesde: 25, duracionMin: 30, destacado: true, tipo: 'Urgencias' },
     ],
   },
   {
@@ -212,8 +212,8 @@ export const tecnologiaEsteticdent: ItemTecnologia[] = [
 ];
 
 export const horariosEsteticdent: HorarioDia[] = [
-  { dia: 'Lunes a Viernes', horario: '09:00 – 18:00' },
-  { dia: 'Sábado', horario: '09:00 – 13:00' },
+  { dia: 'Lunes a Viernes', horario: '09:00 a 18:00' },
+  { dia: 'Sábado', horario: '09:00 a 13:00' },
   { dia: 'Domingo', horario: 'Cerrado' },
 ];
 

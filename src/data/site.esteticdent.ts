@@ -42,7 +42,7 @@ export const siteConfigEsteticdent: SiteConfig = {
     src2x: '/images/esteticdent/logo-estetic-dent-80.webp',
     src4x: '/images/esteticdent/logo-estetic-dent-160.webp',
   },
-  tagline: 'Especialistas en ortodoncia, endodoncia, odontopediatría y cirugía oral — al sur de Quito',
+  tagline: 'Especialistas en ortodoncia, endodoncia, odontopediatría y cirugía oral, al sur de Quito',
   ciudad: 'Quito, Ecuador',
   // Solo zona, sin dirección exacta confirmada todavía (ver comentario de
   // arriba) — nunca renderizar el caveat "por confirmar" en el sitio público
@@ -66,7 +66,7 @@ export const siteConfigEsteticdent: SiteConfig = {
   // inventar una calificación").
   instagramUrl: 'https://www.instagram.com/esteticdent.uio/',
   seo: {
-    tituloDefault: 'Estetic Dent — Odontología estética en Quito',
+    tituloDefault: 'Estetic Dent: Odontología estética en Quito',
     descripcionDefault:
       'Especialistas en ortodoncia, endodoncia, odontopediatría y cirugía oral al sur de Quito. Rayos X digital gratis en cada consulta. Agenda tu cita por WhatsApp.',
   },
