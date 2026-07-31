@@ -46,7 +46,7 @@ const schema = {
   url: 'https://vorka-sites.vercel.app/vorka/',
   logo: `${SITE_ORIGIN}/vorka-favicon.svg`,
   image: ogImageUrl,
-  priceRange: '$350 a $750+',
+  priceRange: '$249 a $649',
   slogan: 'Piensa rápido. Ejecuta más rápido.',
   // GEO G2: señales de entidad para motores generativos. `sameAs` desambigua
   // la marca enlazándola a su presencia social (el mismo Instagram del footer);
@@ -88,8 +88,8 @@ const faqSchema = {
 
 // Schema Service+Offer (Fase 4, SEO técnico) — construido a partir de los
 // mismos 3 planes exportados por Precios.astro. `precio` viene como texto
-// ("$350", "desde $750"); se extrae el número para `price` y se conserva el
-// "desde" solo como pista visual, no como parte del dato estructurado.
+// ("$249", "$649"); se extrae el número para `price`, no como parte del dato
+// estructurado.
 const extraerPrecio = (precio: string) => precio.replace(/[^\d]/g, '');
 
 const serviceSchema = {

@@ -1,8 +1,20 @@
 ---
-// Vorka — Precios (3 planes, corrección V2 de Leo 2026-07). El ancla visual
-// es el plan Profesional (borde --color-primario + badge "Más elegido").
-// Los precios provienen del pricing vigente de CLAUDE.md. La IA no se vende
-// como tecnología: se traduce en beneficios concretos para el cliente.
+// Vorka — Precios (reestructura GTM v3 · Sección 8). Dos subsecciones:
+//   A. Vorka Web: 3 planes de web (Starter $249 / Negocio $449 / Negocio +
+//      Ordercash $649) + fila de mantenimiento ($39/mes).
+//   B. Ordercash stand-alone: 3 planes para quien ya tiene web (Básico $49 /
+//      Pro $89 / Pro + Fidelización $129, todos con $99 de setup único).
+// Los precios son los del tarifario v3 (oficial desde 2026-07). El ancla
+// visual de la subsección A es el plan Negocio (borde verde + badge "Más
+// popular"); el plan Negocio + Ordercash lleva un badge de contorno
+// "Recomendado" sin robarle el foco.
+//
+// FRAMING ORDERCASH (decisión Leo 2026-07): Ordercash es coming-soon/preventa.
+// - El plan web $649 se vende hoy: la WEB se entrega, y queda "lista para el
+//   salto a Ordercash cuando esté disponible" (CLAUDE.md). Las features de
+//   Ordercash se listan como "al activar Ordercash", no como algo activo hoy.
+// - La subsección B entera va bajo un badge "Preventa": precio de lanzamiento
+//   y CTA que reserva cupo, sin prometer factura SRI activa todavía.
 import { buildWhatsAppLink } from '@/lib/whatsapp';
 import type { SiteConfig } from '@/data/types';
 
@@ -19,59 +31,114 @@ const linkPlan = (plan: string) =>
     negocioSlug: site.negocioSlug,
   });
 
+const linkOrdercash = (plan: string) =>
+  buildWhatsAppLink({
+    phone: site.telefonoWhatsApp,
+    message: `Hola Vorka, quiero reservar Ordercash plan ${plan} para mi negocio`,
+    negocioSlug: site.negocioSlug,
+  });
+
+const linkAyuda = buildWhatsAppLink({
+  phone: site.telefonoWhatsApp,
+  message: 'Hola Vorka, no sé cuál plan es el mío. ¿Me ayudan a elegir?',
+  negocioSlug: site.negocioSlug,
+});
+
 // Exportado (Fase 4, SEO técnico) para que /vorka/index.astro construya el
-// schema Service+Offer con estos mismos 3 planes — nunca duplicar precios a
-// mano en el schema, eso desalinearía copy visible vs. datos estructurados.
+// schema Service+Offer con estos mismos planes de web — nunca duplicar precios
+// a mano en el schema, eso desalinearía copy visible vs. datos estructurados.
 export const planes = [
   {
-    nombre: 'Básica',
-    precio: '$350',
-    subtitulo: 'Para negocios que necesitan presencia digital hoy',
+    nombre: 'Starter',
+    precio: '$249',
+    subtitulo: 'Para arrancar',
     baseDe: null,
     incluye: [
-      'Web de hasta 5 páginas',
-      'Diseño profesional adaptado a tu marca',
-      'Botón de WhatsApp con seguimiento',
-      'Optimización para Google (SEO local)',
-      'Entrega en 3 a 5 días hábiles',
-      '1 ronda de ajustes incluida',
+      'Landing de 1 página',
+      'Diseño mobile-first',
+      'WhatsApp como CTA principal',
+      'Dominio incluido el 1er año',
+      'Lista en 5 a 7 días',
     ],
-    mantenimiento: 'Mantenimiento opcional: desde $40/mes',
-    cta: 'Quiero mi web →',
+    nota: null,
+    badge: null,
+    badgeVariante: null,
     destacado: false,
   },
   {
-    nombre: 'Profesional',
-    precio: '$500',
-    subtitulo: 'Para negocios que quieren destacar y convertir visitas en clientes',
-    baseDe: 'Incluye todo lo de Básica, más:',
+    nombre: 'Negocio',
+    precio: '$449',
+    subtitulo: 'Para crecer',
+    baseDe: null,
     incluye: [
-      'Galería de fotos optimizada con IA',
-      'Copy escrito con IA adaptado a tu negocio y tus clientes',
-      'Sección de reseñas y testimonios',
-      'Integración con Google Maps',
-      'Entrega en 5 a 7 días hábiles',
-      '2 rondas de ajustes incluidas',
+      'Sitio de 4 a 5 secciones',
+      'Diseño propio, no plantilla',
+      'SEO on-page básico',
+      'WhatsApp integrado',
+      '1 ronda de revisiones',
+      'Lista en 5 a 7 días',
     ],
-    mantenimiento: 'Mantenimiento opcional: desde $60/mes',
-    cta: 'Quiero mi web →',
+    nota: null,
+    badge: 'Más popular',
+    badgeVariante: 'solido',
     destacado: true,
   },
   {
-    nombre: 'Premium',
-    precio: 'desde $750',
-    subtitulo: 'Para negocios que quieren automatizar ventas desde el primer día',
-    baseDe: 'Incluye todo lo de Profesional, más:',
+    nombre: 'Negocio + Ordercash',
+    precio: '$649',
+    subtitulo: 'Para vender sin comisiones',
+    baseDe: 'Incluye todo lo del plan Negocio, más:',
     incluye: [
-      'Formulario de pedidos listo para automatización por WhatsApp',
-      'Campo de RUC/cédula para facturación futura',
-      'Sección "producto en movimiento" (video o galería animada)',
-      'Coordinación de sesión fotográfica profesional',
-      'Entrega en 5 a 7 días hábiles',
-      'Ajustes ilimitados por 30 días',
+      'Web preparada para Ordercash desde el día uno',
+      'Pedidos por WhatsApp automatizados',
+      'Cobro con Payphone o Datafast',
+      'Factura electrónica SRI automática',
     ],
-    mantenimiento: 'Mantenimiento: desde $80/mes',
-    cta: 'Hablemos de tu proyecto →',
+    nota: 'Las funciones de Ordercash se activan apenas esté disponible; tu web se entrega lista desde el primer día.',
+    badge: 'Recomendado',
+    badgeVariante: 'contorno',
+    destacado: false,
+  },
+];
+
+// Subsección B — Ordercash stand-alone (preventa). Precio de lanzamiento.
+const ordercashPlanes = [
+  {
+    nombre: 'Básico',
+    setup: '$99 setup único',
+    precio: '$49',
+    incluye: [
+      'Pedidos por WhatsApp',
+      'Menú digital con QR',
+      'Panel de gestión de pedidos',
+    ],
+    badge: null,
+    destacado: false,
+  },
+  {
+    nombre: 'Pro',
+    setup: '$99 setup único',
+    precio: '$89',
+    incluye: [
+      'Todo el plan Básico',
+      'Factura electrónica SRI automática',
+      'Cobro integrado (Payphone o Datafast)',
+      'Reportes de ventas mensuales',
+    ],
+    badge: 'Más popular',
+    destacado: true,
+  },
+  {
+    nombre: 'Pro + Fidelización',
+    setup: '$99 setup único',
+    precio: '$129',
+    incluye: [
+      'Todo el plan Pro',
+      'Campañas de WhatsApp a clientes recurrentes',
+      'Historial de pedidos por cliente',
+      'Segmentación por frecuencia de compra',
+    ],
+    badge: null,
     destacado: false,
   },
 ];
@@ -79,14 +146,20 @@ export const planes = [
 
 <section class="precios section section--alterno" id="precios">
   <div class="container">
-    <h2 class="section-title reveal">Tu web lista en días. Sin sorpresas.</h2>
+    <h2 class="section-title reveal">Sin letra chica. Sin sorpresas.</h2>
     <p class="precios__sub reveal">Precio fijo, entrega rápida, resultado profesional.</p>
 
+    {/* Subsección A — Vorka Web */}
+    <h3 class="precios__grupo reveal">Tu web profesional</h3>
     <div class="precios__grid">
       {planes.map((plan) => (
         <article class={`plan reveal--scale ${plan.destacado ? 'plan--destacado' : ''}`}>
-          {plan.destacado && <span class="plan__badge">Más elegido</span>}
-          <h3 class="plan__nombre">{plan.nombre}</h3>
+          {plan.badge && (
+            <span class={`plan__badge ${plan.badgeVariante === 'contorno' ? 'plan__badge--contorno' : ''}`}>
+              {plan.badge}
+            </span>
+          )}
+          <h4 class="plan__nombre">{plan.nombre}</h4>
           <p class="plan__precio">{plan.precio}</p>
           <p class="plan__subtitulo">{plan.subtitulo}</p>
           {plan.baseDe && <p class="plan__base">{plan.baseDe}</p>}
@@ -98,25 +171,74 @@ export const planes = [
               </li>
             ))}
           </ul>
-          <p class="plan__mantenimiento">{plan.mantenimiento}</p>
+          {plan.nota && <p class="plan__nota">{plan.nota}</p>}
           <a
             class={`btn ${plan.destacado ? 'btn--primario' : 'plan__cta-secundario'}`}
             href={linkPlan(plan.nombre)}
             target="_blank"
             rel="noopener noreferrer"
           >
-            {/* Sprint 2 T2: flecha separada para animarla en hover (ver
-                index.astro global y estilos de abajo para el plan secundario). */}
-            {plan.cta.replace(/\s*→\s*$/, '')}
-            {plan.cta.includes('→') && <span class="btn__flecha" aria-hidden="true">→</span>}
+            {/* Sprint 2 T2: flecha separada para animarla en hover. */}
+            Hablemos por WhatsApp
+            <span class="btn__flecha" aria-hidden="true">→</span>
+          </a>
+        </article>
+      ))}
+    </div>
+
+    <div class="precios__mantenimiento reveal">
+      <p class="precios__mant-titulo">Mantenimiento mensual: <strong>$39/mes</strong></p>
+      <p class="precios__mant-detalle">
+        Incluye hosting, SSL, hasta 3 cambios de contenido al mes y reporte mensual de tráfico.
+        No es solo hosting.
+      </p>
+    </div>
+
+    {/* Subsección B — Ordercash stand-alone (preventa) */}
+    <div class="precios__grupo-ordercash reveal">
+      <span class="precios__preventa">Preventa</span>
+      <h3 class="precios__grupo precios__grupo--oc">¿Ya tienes web? Activa Ordercash solo.</h3>
+      <p class="precios__grupo-sub">Para restaurantes y negocios con delivery o reservas frecuentes.</p>
+    </div>
+
+    <div class="precios__grid">
+      {ordercashPlanes.map((plan) => (
+        <article class={`plan plan--oc reveal--scale ${plan.destacado ? 'plan--destacado' : ''}`}>
+          {plan.badge && <span class="plan__badge">{plan.badge}</span>}
+          <h4 class="plan__nombre">{plan.nombre}</h4>
+          <p class="plan__precio">{plan.precio}<span class="plan__periodo">/mes</span></p>
+          <p class="plan__setup">{plan.setup}</p>
+          <ul class="plan__lista">
+            {plan.incluye.map((item) => (
+              <li>
+                <span class="plan__check" aria-hidden="true">✓</span>
+                {item}
+              </li>
+            ))}
+          </ul>
+          <a
+            class={`btn ${plan.destacado ? 'btn--primario' : 'plan__cta-secundario'}`}
+            href={linkOrdercash(plan.nombre)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Reserva tu cupo
+            <span class="btn__flecha" aria-hidden="true">→</span>
           </a>
         </article>
       ))}
     </div>
 
     <p class="precios__nota reveal">
-      El mantenimiento mensual incluye hasta 2 cambios de contenido, reporte
-      mensual de visitas y soporte por WhatsApp. No es solo hosting.
+      Ordercash está en preventa: reserva tu cupo al precio de lanzamiento y te avisamos
+      apenas esté disponible. Sin permanencia mínima.
+    </p>
+
+    <p class="precios__ayuda reveal">
+      ¿No sabes cuál plan es el tuyo?
+      <a href={linkAyuda} target="_blank" rel="noopener noreferrer">
+        Hablemos <span class="btn__flecha" aria-hidden="true">→</span>
+      </a>
     </p>
   </div>
 </section>
@@ -127,7 +249,16 @@ export const planes = [
     font-size: var(--t-md);
     color: var(--color-gris);
     text-align: center;
-    margin: -24px 0 48px;
+    margin: -24px 0 40px;
+  }
+
+  .precios__grupo {
+    font-family: var(--font-titulos);
+    font-weight: 700;
+    font-size: var(--t-lg);
+    color: var(--color-texto);
+    text-align: center;
+    margin: 0 0 24px;
   }
 
   .precios__grid {
@@ -147,12 +278,10 @@ export const planes = [
     background: var(--color-fondo);
     border: 1px solid var(--border-default);
     box-shadow: var(--shadow-elevar);
+    height: 100%;
   }
 
-  /* Sprint 2 T2b — card de precio: glow verde en hover/focus-within. En los
-     planes no destacados el borde pasa a verde 40%; el destacado conserva su
-     borde verde sólido de 2px (su ancla visual). El translateY va detrás de
-     prefers-reduced-motion; el color/sombra cambian siempre. */
+  /* Sprint 2 T2b — card de precio: glow verde en hover/focus-within. */
   .plan:hover,
   .plan:focus-within {
     box-shadow: var(--shadow-elevar), var(--accent-glow);
@@ -202,6 +331,13 @@ export const planes = [
     white-space: nowrap;
   }
 
+  /* Badge de contorno: para el plan recomendado que NO es el ancla visual. */
+  .plan__badge--contorno {
+    background: var(--color-fondo);
+    color: var(--color-primario);
+    border: 1px solid var(--color-primario);
+  }
+
   .plan__nombre {
     font-family: var(--font-titulos);
     font-weight: 700;
@@ -216,6 +352,20 @@ export const planes = [
     font-size: var(--t-2xl);
     line-height: 1;
     color: var(--color-primario);
+    margin: 0;
+  }
+
+  .plan__periodo {
+    font-size: var(--t-md);
+    font-weight: 600;
+    color: var(--color-gris);
+  }
+
+  .plan__setup {
+    font-family: var(--font-texto);
+    font-size: var(--t-xs);
+    font-weight: 600;
+    color: var(--color-gris);
     margin: 0;
   }
 
@@ -245,6 +395,7 @@ export const planes = [
     list-style: none;
     margin: 0;
     padding: 0;
+    flex-grow: 1;
   }
 
   .plan__lista li {
@@ -262,19 +413,22 @@ export const planes = [
     flex-shrink: 0;
   }
 
-  .plan__mantenimiento {
+  .plan__nota {
     font-family: var(--font-texto);
     font-size: var(--t-xs);
+    line-height: 1.5;
     color: var(--color-gris);
-    margin: 8px 0 4px;
+    margin: 4px 0 0;
   }
 
   .plan__cta-secundario {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
     min-height: 44px;
     padding: 12px 24px;
+    margin-top: 8px;
     border: 1px solid var(--color-primario);
     border-radius: var(--r-full);
     color: var(--color-primario);
@@ -289,14 +443,102 @@ export const planes = [
     color: var(--color-fondo);
   }
 
+  .plan .btn--primario {
+    margin-top: 8px;
+  }
+
+  /* Fila de mantenimiento — ancho completo, bajo los planes de web. */
+  .precios__mantenimiento {
+    margin: 32px 0 0;
+    padding: 24px 32px;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--r-md);
+    background: var(--color-fondo);
+    text-align: center;
+  }
+
+  .precios__mant-titulo {
+    font-family: var(--font-texto);
+    font-size: var(--t-base);
+    color: var(--color-texto);
+    margin: 0 0 4px;
+  }
+
+  .precios__mant-titulo strong {
+    color: var(--color-primario);
+  }
+
+  .precios__mant-detalle {
+    font-family: var(--font-texto);
+    font-size: var(--t-sm);
+    color: var(--color-gris);
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Cabecera de la subsección Ordercash (preventa). */
+  .precios__grupo-ordercash {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 64px 0 24px;
+  }
+
+  .precios__preventa {
+    font-family: var(--font-texto);
+    font-weight: 700;
+    font-size: var(--t-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-primario);
+    background: rgba(57, 211, 83, 0.12);
+    border: 1px solid rgba(57, 211, 83, 0.4);
+    border-radius: var(--r-full);
+    padding: 4px 16px;
+    margin-bottom: 16px;
+  }
+
+  .precios__grupo--oc {
+    margin: 0 0 8px;
+  }
+
+  .precios__grupo-sub {
+    font-family: var(--font-texto);
+    font-size: var(--t-sm);
+    color: var(--color-gris);
+    text-align: center;
+    max-width: 480px;
+    margin: 0;
+  }
+
   .precios__nota {
     font-family: var(--font-texto);
     font-size: var(--t-sm);
     color: var(--color-gris);
     text-align: center;
     max-width: 560px;
-    margin: 40px auto 0;
+    margin: 24px auto 0;
     line-height: 1.6;
+  }
+
+  .precios__ayuda {
+    font-family: var(--font-texto);
+    font-size: var(--t-base);
+    color: var(--color-texto);
+    text-align: center;
+    margin: 40px auto 0;
+  }
+
+  .precios__ayuda a {
+    color: var(--color-primario);
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .precios__ayuda a:hover {
+    text-decoration: underline;
   }
 
   @media (max-width: 960px) {
@@ -308,6 +550,12 @@ export const planes = [
 
     .plan--destacado {
       order: -1;
+    }
+
+    /* En 1 columna el orden manual romperia la secuencia de precio; se
+       neutraliza para que Ordercash Pro no salte sobre Básico. */
+    .plan--oc.plan--destacado {
+      order: 0;
     }
   }
 </style>
