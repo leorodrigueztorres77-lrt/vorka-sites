@@ -5,6 +5,7 @@
 // Aquí el fondo es oscuro en toda la página, así que el nav nace ya con
 // --color-fondo y solo gana sombra/blur extra al hacer scroll.
 import WhatsAppButton from '@/components/common/WhatsAppButton.astro';
+import { ORDERCASH_URL } from '@/data/site.vorka';
 import type { SiteConfig } from '@/data/types';
 
 interface Props {
@@ -13,11 +14,14 @@ interface Props {
 
 const { site } = Astro.props;
 
+// `externo: true` abre en pestaña nueva (mismo patrón que Footer/Servicios/
+// CtaFinal para Ordercash). Los demás son anclas dentro de la home.
 const navItems = [
-  { label: 'Servicios', href: '#servicios' },
-  { label: 'Portafolio', href: '#portafolio' },
-  { label: 'Nosotros', href: '#nosotros' },
-  { label: 'Contacto', href: '#contacto' },
+  { label: 'Servicios', href: '#servicios', externo: false },
+  { label: 'Portafolio', href: '#portafolio', externo: false },
+  { label: 'Ordercash', href: ORDERCASH_URL, externo: true },
+  { label: 'Nosotros', href: '#nosotros', externo: false },
+  { label: 'Contacto', href: '#contacto', externo: false },
 ];
 ---
 
@@ -27,7 +31,9 @@ const navItems = [
     <nav class="nav__links" aria-label="Navegación principal">
       <ul>
         {navItems.map((item) => (
-          <li><a href={item.href}>{item.label}</a></li>
+          <li>
+            <a href={item.href} {...(item.externo ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{item.label}</a>
+          </li>
         ))}
       </ul>
     </nav>
@@ -47,7 +53,9 @@ const navItems = [
   <nav class="nav__movil" aria-label="Navegación móvil" data-nav-movil hidden>
     <ul>
       {navItems.map((item) => (
-        <li><a href={item.href} data-nav-movil-link>{item.label}</a></li>
+        <li>
+          <a href={item.href} data-nav-movil-link {...(item.externo ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{item.label}</a>
+        </li>
       ))}
     </ul>
   </nav>
