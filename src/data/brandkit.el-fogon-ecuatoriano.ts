@@ -26,6 +26,6 @@ export const brandKitElFogonEcuatoriano = {
   },
   wordmark: {
     tipo: 'tipografico' as const,
-    nota: 'Nombre del negocio en Cormorant Garamond 700 itálica, color primario — sin ícono/símbolo.',
+    nota: 'Nombre del negocio en Cormorant Garamond 700 itálica, color primario, sin ícono/símbolo.',
   },
 };

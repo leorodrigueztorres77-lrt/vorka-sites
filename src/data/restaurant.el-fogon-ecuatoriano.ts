@@ -83,8 +83,8 @@ export const menuElFogon: CategoriaMenu[] = [
 
 // PLACEHOLDER — horario de referencia; confirmar con el cliente.
 export const horariosElFogon: HorarioDia[] = [
-  { dia: 'Martes a Sábado', horario: '11:00 – 20:00' },
-  { dia: 'Domingo', horario: '11:00 – 16:00' },
+  { dia: 'Martes a Sábado', horario: '11:00 a 20:00' },
+  { dia: 'Domingo', horario: '11:00 a 16:00' },
   { dia: 'Lunes', horario: 'Cerrado' },
 ];
 
