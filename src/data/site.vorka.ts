@@ -9,7 +9,7 @@ export const siteConfigVorka: SiteConfig = {
   tagline: 'Piensa rápido. Ejecuta más rápido.',
   ciudad: 'Ecuador',
   direccion: 'Atención remota',
-  telefonoWhatsApp: '593997109978',
+  telefonoWhatsApp: '593993521693',
   colores: {
     primario: '#39D353',
     acento: '#1DA1F2',
