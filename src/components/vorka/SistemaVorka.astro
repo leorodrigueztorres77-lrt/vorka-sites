@@ -157,17 +157,35 @@
   .seq canvas {
     position: absolute;
     inset: 0;
-    /* Contención (2026-07-29): la fuente de video es 720p (1280×810 real). A
-       pantalla completa se estiraba 1.5–3x y se veía pixelada. Se centra el
-       canvas en una banda de máx. 1440px (= ancho de los frames → 1:1 en
-       monitores DPR-1, sin upscale del navegador); el fondo #0d0d0d de .seq
-       hace de letterbox a los lados. La nitidez total edge-to-edge requiere
-       regenerar la fuente a ≥1080p (ver docs/vorka-backlog.md). */
+    /* Contención (2026-07-29): la fuente se centra en una banda de máx. 1440px
+       (= ancho de los frames → 1:1 en monitores DPR-1, sin upscale); el fondo
+       #0d0d0d de .seq hace de letterbox a los lados.
+       Fundido de bordes (2026-07-31): el clip 1080p de la escena de conversión
+       trae un fondo de estudio con luz asimétrica (borde izq ~#070707, der
+       ~#151515) que NO coincide con el #0d0d0d de la banda → se veía una línea
+       dura de "dos colores" a los lados. La máscara horizontal disuelve los
+       64px de cada borde del canvas hacia la banda, así el fondo se lee como
+       uno solo. En la escena de construcción los bordes ya son #0d0d0d exacto,
+       así que ahí el fundido es un no-op (mismo color). */
     max-width: 1440px;
     margin-inline: auto;
     width: 100%;
     height: 100%;
     display: block;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 64px,
+      #000 calc(100% - 64px),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 64px,
+      #000 calc(100% - 64px),
+      transparent 100%
+    );
   }
 
   .seq-fallback {
