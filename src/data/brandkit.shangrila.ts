@@ -27,6 +27,6 @@ export const brandKitShangrila = {
   },
   wordmark: {
     tipo: 'tipografico' as const,
-    nota: 'Nombre del negocio en Fredoka 700, color primario — sin ícono/símbolo.',
+    nota: 'Nombre del negocio en Fredoka 700, color primario, sin ícono/símbolo.',
   },
 };

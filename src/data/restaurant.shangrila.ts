@@ -87,7 +87,7 @@ export const menuShangrila: CategoriaMenu[] = [
 
 // PLACEHOLDER — horario de referencia; confirmar con el cliente.
 export const horariosShangrila: HorarioDia[] = [
-  { dia: 'Martes a Domingo', horario: '12:00 – 21:00' },
+  { dia: 'Martes a Domingo', horario: '12:00 a 21:00' },
   { dia: 'Lunes', horario: 'Cerrado' },
 ];
 
@@ -98,7 +98,7 @@ export const historiaShangrila: HistoriaNegocio = {
     'En Shangrila el carbón nunca se apaga: parrilladas servidas al punto, ' +
     'porciones generosas y ese ambiente de fin de semana en familia que se ' +
     'siente apenas llegas. Nacimos en el Valle de los Chillos con una idea ' +
-    'simple — la parrillada de siempre, sin vueltas, directo del carbón a tu mesa.',
+    'simple: la parrillada de siempre, sin vueltas, directo del carbón a tu mesa.',
 };
 
 // PLACEHOLDER — Nivel 2 (banco de fotos con licencia comercial, Pexels), usado
@@ -136,7 +136,7 @@ export const testimoniosShangrila: Testimonio[] = [
   {
     nombre: 'Andrés Salazar',
     texto:
-      'La parrillada Shangrila no falla — llega calientita y las porciones son ' +
+      'La parrillada Shangrila no falla, llega calientita y las porciones son ' +
       'bien generosas. Nuestro plan de casi todos los sábados.',
     calificacion: 5,
   },
