@@ -11,7 +11,7 @@ export const serviciosOdontocrea: CategoriaServicios[] = [
   {
     categoria: 'Urgencias odontológicas',
     servicios: [
-      { nombre: 'Atención de urgencia', descripcion: 'Dolor agudo, trauma dental o infección — atención prioritaria.', precioDesde: 25, duracionMin: 30, destacado: true, tipo: 'Urgencias' },
+      { nombre: 'Atención de urgencia', descripcion: 'Dolor agudo, trauma dental o infección. Atención prioritaria.', precioDesde: 25, duracionMin: 30, destacado: true, tipo: 'Urgencias' },
     ],
   },
   {
@@ -82,16 +82,16 @@ export const galeriaOdontocrea: FotoGaleria[] = [
 export const historiaOdontocrea: HistoriaNegocio = {
   texto:
     'Tu sonrisa y tu salud oral son nuestra prioridad. En Odontocrea encuentras ' +
-    'todas las especialidades — desde una limpieza de rutina hasta ortodoncia, ' +
-    'cirugía o una urgencia dental — en un solo lugar, con un equipo que te ' +
+    'todas las especialidades (desde una limpieza de rutina hasta ortodoncia, ' +
+    'cirugía o una urgencia dental) en un solo lugar, con un equipo que te ' +
     'conoce por tu nombre y te explica cada paso antes de hacerlo. Atendemos en ' +
     'dos sedes en Quito: Chillogallo y La Magdalena.',
   foto: '/images/odontocrea/historia.webp?v=2',
 };
 
 export const horariosOdontocrea: HorarioDia[] = [
-  { dia: 'Lunes a Viernes', horario: '09:00 – 19:00' },
-  { dia: 'Sábado', horario: '09:00 – 14:00' },
+  { dia: 'Lunes a Viernes', horario: '09:00 a 19:00' },
+  { dia: 'Sábado', horario: '09:00 a 14:00' },
   { dia: 'Domingo', horario: 'Cerrado' },
 ];
 

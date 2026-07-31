@@ -39,7 +39,7 @@ const sedeLaMagdalena: Sede = {
 export const siteConfigOdontocrea: SiteConfig = {
   negocioSlug: 'odontocrea',
   nombre: 'Odontocrea',
-  tagline: 'Tu sonrisa y salud oral, nuestra prioridad — con sedes en Chillogallo y La Magdalena',
+  tagline: 'Tu sonrisa y salud oral, nuestra prioridad, con sedes en Chillogallo y La Magdalena',
   ciudad: 'Quito, Ecuador',
   direccion: 'Carlos Freile y pasaje Mercedes Cadena Lt. 301, La Libertad de Chillogallo, Quito (sede matriz)',
   telefonoWhatsApp: TELEFONO_WHATSAPP_IG,
@@ -54,7 +54,7 @@ export const siteConfigOdontocrea: SiteConfig = {
   // calificación").
   instagramUrl: 'https://www.instagram.com/odontocrea.uio/',
   seo: {
-    tituloDefault: 'Odontocrea — Todas las especialidades odontológicas en Quito',
+    tituloDefault: 'Odontocrea: Todas las especialidades odontológicas en Quito',
     descripcionDefault:
       'Clínica dental en Quito con todas las especialidades y atención cercana. Agenda tu cita por WhatsApp.',
   },
